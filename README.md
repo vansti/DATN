@@ -18,4 +18,8 @@ $ npm run client-install
 
 # Start app
 $ npm run dev (npm run client / npm run server)
+
+# Login 
+ mail: hs@gmail.com
+ password: hs1234
 ```
