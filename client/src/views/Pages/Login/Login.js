@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginStudent } from '../../../actions/authActions';
+import { loginUser } from '../../../actions/authActions';
+import icon from '../../../assets/img/e-icon.png'
 
 class Login extends Component {
   constructor() {
@@ -33,11 +34,11 @@ class Login extends Component {
   onSubmit = e => {
     e.preventDefault();
 
-    const studentData = {
+    const userData = {
       email: this.state.email,
       password: this.state.password
     };
-    this.props.loginStudent(studentData);
+    this.props.loginUser(userData);
   }
 
   onChange = e => {
@@ -45,7 +46,7 @@ class Login extends Component {
   }
 
   render() {
-    //const { errors } = this.state;
+    const { errors } = this.state;
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -55,8 +56,8 @@ class Login extends Component {
                 <Card className="p-4">
                   <CardBody>
                     <Form onSubmit={this.onSubmit}>
-                      <h1>Login</h1>
-                      <p className="text-muted">Sign In to your account</p>
+                      <h1>Đăng nhập</h1>
+                      <p className="text-muted">Đăng nhập vào tài khoản của bạn</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
@@ -71,14 +72,16 @@ class Login extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" name="password" placeholder="Password" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
+                        <Input type="password" name="password" placeholder="Mật khẩu" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
                       </InputGroup>
+                      {errors.email && <Alert color="danger">{errors.email}</Alert>}
+                      {errors.password && <Alert color="danger">{errors.password}</Alert>}
                       <Row>
                         <Col xs="6">
-                          <Button color="primary" className="px-4" onClick={this.onSubmit}>Login</Button>
+                          <Button color="primary" className="px-4" onClick={this.onSubmit}>Đăng nhập</Button>
                         </Col>
                         <Col xs="6" className="text-right">
-                          <Button color="link" className="px-0">Forgot password?</Button>
+                          <Button color="link" className="px-0">Quên mật khẩu?</Button>
                         </Col>
                       </Row>
                     </Form>
@@ -87,11 +90,11 @@ class Login extends Component {
                 <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
                   <CardBody className="text-center">
                     <div>
-                      <h2>Sign up</h2>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua.</p>
+                      <h2>Đăng ký</h2>
+                      
+                      <p><img alt="Logo" src={icon} style={{width: 100, height: 100}} /></p>
                       <Link to="/register">
-                        <Button color="primary" className="mt-3" active tabIndex={-1}>Register Now!</Button>
+                        <Button color="primary" className="mt-3" active tabIndex={-1}>Đăng ký ngay!</Button>
                       </Link>
                     </div>
                   </CardBody>
@@ -106,7 +109,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  loginStudent: PropTypes.func.isRequired,
+  loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -116,4 +119,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { loginStudent })(Login);
+export default connect(mapStateToProps, { loginUser })(Login);

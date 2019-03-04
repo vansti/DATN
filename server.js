@@ -5,7 +5,7 @@ const cors = require('cors');
 const passport = require('passport');
 const path = require('path');
 
-const students = require('./server/routes/api/students');
+const users = require('./server/routes/api/users');
 
 
 const app = express();
@@ -27,6 +27,9 @@ mongoose
   .connect(db, { useNewUrlParser: true })
   .then(()=> console.log('Mongodb connected ...'))
   .catch(err => console.log(err));
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 // Passport middleware
 app.use(passport.initialize());
@@ -34,8 +37,8 @@ app.use(passport.initialize());
 // Passport Config
 require('./server/config/passport')(passport);
 
-// Students Route
-app.use('/api/students', students)
+// users Route
+app.use('/api/users', users)
 
 
 // Server static assets if in production

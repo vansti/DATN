@@ -19,7 +19,7 @@ import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
 
-import { logoutStudent } from '../../actions/authActions';
+import { logoutUser } from '../../actions/authActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -33,12 +33,12 @@ class DefaultLayout extends Component {
 
   signOut(e) {
     e.preventDefault();
-    this.props.logoutStudent();
+    this.props.logoutUser();
     this.props.history.push('/login');
   }
   
   render() {
-    //console.log(this.props.auth);
+
     return (
       <div className="app">
         <AppHeader fixed>
@@ -95,7 +95,7 @@ class DefaultLayout extends Component {
 }
 
 DefaultLayout.propTypes = {
-  logoutStudent: PropTypes.func.isRequired,
+  logoutUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };
 
@@ -103,4 +103,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { logoutStudent })(DefaultLayout);
+export default connect(mapStateToProps, { logoutUser })(DefaultLayout);

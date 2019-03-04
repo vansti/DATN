@@ -2,12 +2,12 @@ import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 
-import { GET_ERRORS, SET_CURRENT_STUDENT } from './types';
+import { GET_ERRORS, SET_CURRENT_USER } from './types';
 
-// Register Student
-export const registerStudent = (studentData, history) => dispatch => {
+// Register User
+export const registerUser = (userData, history) => dispatch => {
   axios
-    .post('http://localhost:5000/api/students/register', studentData)
+    .post('/api/users/register', userData)
     .then(res => history.push('/login'))
     .catch(err =>
       dispatch({
@@ -17,10 +17,10 @@ export const registerStudent = (studentData, history) => dispatch => {
     );
 };
 
-// Login - Get Student Token
-export const loginStudent = studentData => dispatch => {
+// Login - Get User Token
+export const loginUser = userData => dispatch => {
   axios
-    .post('http://localhost:5000/api/students/login', studentData)
+    .post('/api/users/login', userData)
     .then(res => {
       // Save to localStorage
       const { token } = res.data;
@@ -31,7 +31,7 @@ export const loginStudent = studentData => dispatch => {
       // Decode token to get user data
       const decoded = jwt_decode(token);
       // Set current user
-      dispatch(setCurrentStudent(decoded));
+      dispatch(setCurrentUser(decoded));
     })
     .catch(err =>
       dispatch({
@@ -42,19 +42,19 @@ export const loginStudent = studentData => dispatch => {
 };
 
 // Set logged in user
-export const setCurrentStudent = decoded => {
+export const setCurrentUser = decoded => {
   return {
-    type: SET_CURRENT_STUDENT,
+    type: SET_CURRENT_USER,
     payload: decoded
   };
 };
 
 // Log user out
-export const logoutStudent = () => dispatch => {
+export const logoutUser = () => dispatch => {
   // Remove token from localStorage
   localStorage.removeItem('jwtToken');
   // Remove auth header for future requests
   setAuthToken(false);
   // Set current user to {} which will set isAuthenticated to false
-  dispatch(setCurrentStudent({}));
+  dispatch(setCurrentUser({}));
 };

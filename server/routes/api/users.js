@@ -9,14 +9,15 @@ const passport = require('passport');
 // Load Input Validation
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
+const validateProfileInput = require('../../validation/profile');
 
-// Student Model
-const Student = require('../../models/Student');
+// User Model
+const User = require('../../models/User');
 
 router.use(cors());
 
-// @route   POST api/students/register
-// @desc    Register student
+// @route   POST api/Users/register
+// @desc    Register User
 // @access  Public
 router.post('/register', (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -26,25 +27,25 @@ router.post('/register', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  Student.findOne({ email: req.body.email }).then(student => {
-    if (student) {
+  User.findOne({ email: req.body.email }).then(user => {
+    if (user) {
       errors.email = 'Email already exists';
       return res.status(400).json(errors);
     } else {
 
-      const newStudent = new Student({
+      const newUser = new User({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password
       });
 
       bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newStudent.password, salt, (err, hash) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
-          newStudent.password = hash;
-          newStudent
+          newUser.password = hash;
+          newUser
             .save()
-            .then(student => res.json(student))
+            .then(user => res.json(user))
             .catch(err => console.log(err));
         });
       });
@@ -52,8 +53,8 @@ router.post('/register', (req, res) => {
   });
 });
 
-// @route   GET api/students/login
-// @desc    Login Student / Returning JWT Token
+// @route   GET api/Users/login
+// @desc    Login User / Returning JWT Token
 // @access  Public
 router.post('/login', (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
@@ -66,19 +67,19 @@ router.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // Find student by email
-  Student.findOne({ email }).then(student => {
-    // Check for Student
-    if (!student) {
-      errors.email = 'Student not found';
+  // Find User by email
+  User.findOne({ email }).then(user => {
+    // Check for User
+    if (!user) {
+      errors.email = 'User not found';
       return res.status(404).json(errors);
     }
 
     // Check Password
-    bcrypt.compare(password, student.password).then(isMatch => {
+    bcrypt.compare(password, user.password).then(isMatch => {
       if (isMatch) {
-        // Student Matched
-        const payload = { id: student.id, name: student.name }; // Create JWT Payload
+        // User Matched
+        const payload = { id: user.id, name: user.name, photo: user.photo, email: user.email, phone: user.phone }; // Create JWT Payload
 
         // Sign Token
         jwt.sign(
@@ -100,15 +101,46 @@ router.post('/login', (req, res) => {
   });
 });
 
-// @route   GET api/students/current
-// @desc    Return current student
+// @route   GET api/Users/current
+// @desc    Return current User
 // @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.json({
-      id: req.student.id,
-      name: req.student.name,
-      email: req.student.email
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      phone: req.user.phone,
+      photo: req.user.photo
     });
   }
 );
+
+// @route   POST api/profile
+// @desc    Create or edit user profile
+// @access  Private
+router.post(
+  '/edit-profile',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateProfileInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    // Get fields
+    const profileFields = {};
+    profileFields.id = req.user.id;
+    if (req.body.email) profileFields.email = req.body.email;
+    if (req.body.name) profileFields.name = req.body.name;
+    if (req.body.phone) profileFields.phone = req.body.phone;
+    if (req.body.photo) profileFields.photo = req.body.photo;
+    
+    User.findByIdAndUpdate(req.user.id, profileFields, {new: true}).then(profile => res.json(profile));
+
+  }
+);
+
 module.exports = router;

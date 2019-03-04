@@ -3,9 +3,9 @@ import Loadable from 'react-loadable';
 import setAuthToken from './utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 import store from './store/store';
-import { setCurrentStudent, logoutStudent } from './actions/authActions';
+import { setCurrentUser, logoutUser } from './actions/authActions';
 import './App.scss';
-import { TransitionGroup } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Switch, Route , withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -37,17 +37,29 @@ if (localStorage.jwtToken) {
   // Decode token and get user info and exp
   const decoded = jwt_decode(localStorage.jwtToken);
   // Set user and isAuthenticated
-  store.dispatch(setCurrentStudent(decoded));
+  store.dispatch(setCurrentUser(decoded));
 
   // Check for expired token
   const currentTime = Date.now() / 1000;
   if (decoded.exp < currentTime) {
     // Logout user
-    store.dispatch(logoutStudent());
+    store.dispatch(logoutUser());
     // Redirect to login
     window.location.href = '/login';
   }
 }
+
+const PageFade = (props) => {
+  return (
+    <CSSTransition
+      {...props}
+      classNames="fadeTranslate"
+      timeout={1000}
+      mountOnEnter={true}
+      unmountOnExit={true}
+    />
+  )
+};
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
@@ -73,11 +85,13 @@ class App extends Component {
           ? <PrivateRoute path="/" component={DefaultLayout} />
           : <div className="main">
               <TransitionGroup>
-                <Switch location={location}>
-                  <Route path="/login" component={Login} />
-                  <Route path="/register" component={Register} />
-                  <Route exact path="/" component={Login}  />
-                </Switch>
+                <PageFade key={location.pathname}>
+                  <Switch location={location}>
+                    <Route path="/login" component={Login} />
+                    <Route path="/register" component={Register} />
+                    <Route component={Login}  />
+                  </Switch>
+                </PageFade>
               </TransitionGroup>
             </div>
         }
