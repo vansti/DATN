@@ -11,7 +11,7 @@ export default {
     },
     {
       title: true,
-      name: 'Theme',
+      name: 'Khóa học',
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -19,14 +19,14 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'Colors',
-      url: '/theme/colors',
-      icon: 'icon-drop',
+      name: 'Thêm khóa học',
+      url: '/add-course',
+      icon: 'icon-plus',
     },
     {
-      name: 'Typography',
+      name: 'Danh sách khóa học',
       url: '/theme/typography',
-      icon: 'icon-pencil',
+      icon: 'icon-list',
     },
     {
       title: true,

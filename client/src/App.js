@@ -5,7 +5,6 @@ import jwt_decode from 'jwt-decode';
 import store from './store/store';
 import { setCurrentUser, logoutUser } from './actions/authActions';
 import './App.scss';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Switch, Route , withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -49,18 +48,6 @@ if (localStorage.jwtToken) {
   }
 }
 
-const PageFade = (props) => {
-  return (
-    <CSSTransition
-      {...props}
-      classNames="fadeTranslate"
-      timeout={1000}
-      mountOnEnter={true}
-      unmountOnExit={true}
-    />
-  )
-};
-
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => (
     Auth.isUserAuthenticated() ? (
@@ -84,15 +71,11 @@ class App extends Component {
         { auth.isAuthenticated === true
           ? <PrivateRoute path="/" component={DefaultLayout} />
           : <div className="main">
-              <TransitionGroup>
-                <PageFade key={location.pathname}>
-                  <Switch location={location}>
-                    <Route path="/login" component={Login} />
-                    <Route path="/register" component={Register} />
-                    <Route component={Login}  />
-                  </Switch>
-                </PageFade>
-              </TransitionGroup>
+              <Switch location={location}>
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route component={Login}  />
+              </Switch>
             </div>
         }
         </div>

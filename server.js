@@ -7,6 +7,7 @@ const path = require('path');
 
 const users = require('./server/routes/api/users');
 
+const courses = require('./server/routes/api/courses');
 
 const app = express();
 
@@ -40,6 +41,8 @@ require('./server/config/passport')(passport);
 // users Route
 app.use('/api/users', users)
 
+// courses Route
+app.use('/api/courses', courses)
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

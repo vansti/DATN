@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import {Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { editProfile, getCurrentProfile } from '../../actions/profileActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import ModalChangePasword from '../../components/ModalChangePassword';
+import { addCourse } from '../../actions/courseActions';
 
 const styles = {
   bigAvatar: {
-    width: 75,
-    height: 75,
+    width: 100,
+    height: 100,
     margin: 'auto',
     borderRadius:50
   },
@@ -17,24 +16,22 @@ const styles = {
     fontSize: 10
   }
 }
-class EditProfile extends Component {
+
+class AddCourse extends Component {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.state = {
-      name:'',
-      email:'',
-      photo: '',
-      phone: '',
+      title:'',
+      courseCode:'',
+      coursePhoto: '',
       collapse: true,
       fadeIn: true,
       timeout: 300,
       isShowSuccess: false,
-      errors:{},
-      file_avatar: null,
-      imagePreviewUrl: '',
+      errors:{}
     };
   }
 
@@ -47,9 +44,7 @@ class EditProfile extends Component {
   }
 
   handleChange = name => event => {
-    const value = name === 'photo'
-      ? event.target.files[0]
-      : event.target.value
+    const value = event.target.value
     this.setState({ [name]: value })
   }
 
@@ -58,15 +53,11 @@ class EditProfile extends Component {
     let reader = new FileReader();
     reader.onloadend = () => {
       this.setState({
-        photo: reader.result
+        coursePhoto: reader.result
       });
     }
     reader.readAsDataURL(file)
 
-  }
-  
-  componentDidMount = () => {
-    this.props.getCurrentProfile();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,45 +65,43 @@ class EditProfile extends Component {
       this.setState({ errors: nextProps.errors });
     }
 
-    if (nextProps.profile.profile) {
-      const profile = nextProps.profile.profile
-      this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo})
-    }
 
-    if (nextProps.success.data === "Thay đổi thành công") {
+    if (nextProps.success.data === "Thêm khóa học thành công") {
       this.setState({isShowSuccess: true})
     }
   }
 
   onSubmit = e => {
     e.preventDefault();
-    const profileData = {
-      name: this.state.name,
-      email: this.state.email,
-      phone: this.state.phone,
-      photo: this.state.photo,
+    const courseData = {
+      title: this.state.title,
+      courseCode: this.state.courseCode,
+      coursePhoto: this.state.coursePhoto,
     };
 
-    this.props.editProfile(profileData, this.props.history);
+    console.log(courseData)
+    this.props.addCourse(courseData, this.props.history);
   }
 
   hideAlertSuccess(){
     this.setState({
-      isShowSuccess: false
+      isShowSuccess: false,
+      title:'',
+      courseCode:'',
+      coursePhoto: '',
     })
   }
 
   render() {
     const { errors } = this.state;
     return (
-      
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
             <Fade timeout={this.state.timeout} in={this.state.fadeIn}>
               <Card>
                 <CardHeader>
-                  <i className="fa fa-edit"></i>Chỉnh sửa thông tin cá nhân
+                  <i className="fa fa-edit"></i>Thêm khóa học mới
                   <div className="card-header-actions">
                     <Button color="link" className="card-header-action btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></Button>
                     <Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>
@@ -122,47 +111,40 @@ class EditProfile extends Component {
                   <CardBody>
                     <Form className="form-horizontal" onSubmit={this.onSubmit}>
                       <FormGroup>
-                        <Label htmlFor="prependedInput">Email</Label>
+                        <Label htmlFor="prependedInput">Tên khóa học</Label>
                         <div className="controls">
                           <InputGroup className="input-prepend">
                             <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
+                              <InputGroupText><i className="fa fa-book"></i></InputGroupText>
                             </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
+                            <Input size="16" type="text" value={this.state.title} onChange={this.handleChange('title')}/>
                           </InputGroup>
-                          {errors.email && <Alert color="danger">{errors.email}</Alert>}
+                          {errors.title && <Alert color="danger">{errors.title}</Alert>}
                         </div>
                       </FormGroup>
                       <FormGroup>
-                        <Label htmlFor="prependedInput">Họ và Tên</Label>
+                        <Label htmlFor="prependedInput">Mã khóa học </Label>
                         <div className="controls">
                           <InputGroup className="input-prepend">
                             <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="icon-user"></i></InputGroupText>
+                              <InputGroupText><i className="fa fa-barcode"></i></InputGroupText>
                             </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.name} onChange={this.handleChange('name')}/>
+                            <Input size="16" type="text" value={this.state.courseCode} onChange={this.handleChange('courseCode')}/>
                           </InputGroup>
-                          {errors.name && <Alert color="danger">{errors.name}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Số điện thoại</Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="icon-phone"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.phone} onChange={this.handleChange('phone')}/>
-                          </InputGroup>
-                          {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+                          {errors.courseCode && <Alert color="danger">{errors.courseCode}</Alert>}
                         </div>
                       </FormGroup>
                       <hr/>
-                      <Label htmlFor="prependedInput">Hình đại diện</Label>
+                      <Label htmlFor="prependedInput">Hình đại diện khóa học</Label>
                       <br/>
-
                       <div className="preview-image">
-                        <img src={this.state.photo} alt="avatar" style={styles.bigAvatar}/>
+                      {
+                        this.state.coursePhoto === ''
+                        ?
+                        <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551871672/defaultcourse.jpg' alt="avatar" style={styles.bigAvatar}/>
+                        :
+                        <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+                      }
                       </div>
 
                       <br/>
@@ -170,12 +152,9 @@ class EditProfile extends Component {
                       <br/>
 
                     </Form>
-                    <div >
-                      <ModalChangePasword />
-                    </div>
                   </CardBody>
                   <CardFooter>
-                    <Button type="submit" color="primary" onClick={this.onSubmit}>Lưu thay đổi</Button>
+                    <Button type="submit" color="primary" onClick={this.onSubmit}>Thêm</Button>
                   </CardFooter>
                 </Collapse>
               </Card>
@@ -186,7 +165,7 @@ class EditProfile extends Component {
           	success
           	confirmBtnText="OK"
           	confirmBtnBsStyle="success"
-          	title="Thay đổi thành công!"
+          	title="Thêm khóa học thành công!"
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>
@@ -196,17 +175,12 @@ class EditProfile extends Component {
   }
 }
 
-EditProfile.propTypes = {
-  editProfile: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired,
-  getCurrentProfile: PropTypes.func.isRequired,
-  success: PropTypes.object.isRequired,
+AddCourse.propTypes = {
+  addCourse: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  profile: state.profile,
   errors: state.errors,
   success: state.success
 });
-export default connect(mapStateToProps, { editProfile,getCurrentProfile})(EditProfile); 
+export default connect(mapStateToProps, { addCourse })(AddCourse); 

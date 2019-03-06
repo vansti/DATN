@@ -2,26 +2,38 @@ import React, { Component } from 'react';
 import {withRouter, Link } from 'react-router-dom';
 import { Badge, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink } from 'reactstrap';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import { AppAsideToggler, AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
 import logo from '../../assets/img/e-icon.png'
-
-const propTypes = {
-  children: PropTypes.node,
-};
+import { getCurrentProfile } from '../../actions/profileActions';
 
 const defaultProps = {};
 
 class DefaultHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      photo: ''
+    };
+  }
 
   toEditProfile = e => {
     this.props.history.push('/edit-profile');
   }
 
-  render() {
+  componentDidMount = () => {
+    this.props.getCurrentProfile();
+  }
 
-    // eslint-disable-next-line
-    const { children, ...attributes } = this.props;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.profile.profile) {
+      const profile = nextProps.profile.profile
+      this.setState({photo: profile.photo})
+    }
+  }
+
+  componentDidMount
+  render() {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -51,7 +63,7 @@ class DefaultHeader extends Component {
           </NavItem>
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={'../../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+              <img src={this.state.photo} className="img-avatar" alt="ava" />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
@@ -68,7 +80,16 @@ class DefaultHeader extends Component {
   }
 }
 
-DefaultHeader.propTypes = propTypes;
+DefaultHeader.propTypes = {
+  profile: PropTypes.object.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+};
+
 DefaultHeader.defaultProps = defaultProps;
 
-export default withRouter(DefaultHeader);
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
+
+export default connect(mapStateToProps, { getCurrentProfile })(withRouter(DefaultHeader));

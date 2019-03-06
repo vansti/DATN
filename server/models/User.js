@@ -12,8 +12,7 @@ const UserSchema = new Schema({
     required: true
   },
   phone: {
-    type: String,
-    required: true
+    type: String
   },
   password: {
     type: String,
@@ -24,8 +23,8 @@ const UserSchema = new Schema({
     default : Date.now
   },
   photo: {
-    data: Buffer,
-    contentType: String
+    type: String,
+    default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551844990/defaultavatar.png'
   },
   role: { 
     type: String,
@@ -36,7 +35,7 @@ const UserSchema = new Schema({
       // Store ObjectIds in the array
       type: Schema.Types.ObjectId,
       // The ObjectIds will refer to the ids in the Course model
-      ref: "Course"
+      ref: "courses"
     }
   ]
 
