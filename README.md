@@ -1,25 +1,30 @@
-# MERN
+# Learning Management System
 mern stack aplication
 
 
-## Installation and Start
+## Các bước cài đặt
 ``` bash
-# clone the repo
-$ git clone https://github.com/vansti/MERN.git my-project
+1. git clone https://github.com/vansti/MERN.git my-project
 
-# go into app's directory
-$ cd my-project
+2. cd my-project
 
-# install server dependencies
-$ npm install
+3. Tạo file .env với nội dung
 
-# install client dependencies
-$ npm run client-install
+  MONGO_URI = 
+  SECRETORKEY = 
+  CLOUD_NAME = 
+  CLOUD_API_KEY = 
+  CLOUD_API_SECRET = 
 
-# Start app
-$ npm run dev (npm run client / npm run server)
+  ----------------------------------------------------------------
+  Nếu chưa có tài khoản mlab và cloudinary thì truy cập các link:
+  - https://mlab.com/
+  - https://cloudinary.com/
 
-# Login 
- mail: hs@gmail.com
- password: hs1234
+4. npm install
+
+5. npm run client-install
+
+6. npm run dev
+
 ```

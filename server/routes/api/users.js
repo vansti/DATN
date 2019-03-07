@@ -5,12 +5,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const keys = require('../../config/keys');
 const passport = require('passport');
+require('dotenv').config()
 
 var cloudinary = require('cloudinary');
 cloudinary.config({ 
-  cloud_name: 'dk9jsd8vf', 
-  api_key: '547842791548264', 
-  api_secret: 'EfwMSaL8AQG9QOFGBFsti8txE0Y' 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.CLOUD_API_KEY, 
+  api_secret: process.env.CLOUD_API_SECRET 
 });
 
 // Load Input Validation

@@ -3,12 +3,14 @@ const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
 var cloudinary = require('cloudinary');
+require('dotenv').config()
 
 cloudinary.config({ 
-  cloud_name: 'dk9jsd8vf', 
-  api_key: '547842791548264', 
-  api_secret: 'EfwMSaL8AQG9QOFGBFsti8txE0Y' 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.CLOUD_API_KEY, 
+  api_secret: process.env.CLOUD_API_SECRET 
 });
+
 
 // Load Input Validation
 const validateAddCourseInput = require('../../validation/addcourse');

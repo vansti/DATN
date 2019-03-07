@@ -1,4 +1,5 @@
+require('dotenv').config()
 module.exports = {
-  mongoURI: 'mongodb://admin:admin123@ds155614.mlab.com:55614/sms',
-  secretOrKey: 'secret'
+  mongoURI: process.env.MONGO_URI,
+  secretOrKey: process.env.SECRETORKEY 
 }
