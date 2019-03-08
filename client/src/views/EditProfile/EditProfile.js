@@ -94,6 +94,7 @@ class EditProfile extends Component {
     };
 
     this.props.editProfile(profileData, this.props.history);
+    document.getElementById("editform").reset();
   }
 
   hideAlertSuccess(){
@@ -120,7 +121,7 @@ class EditProfile extends Component {
                 </CardHeader>
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
-                    <Form className="form-horizontal" onSubmit={this.onSubmit}>
+                    <Form className="form-horizontal" id="editform" onSubmit={this.onSubmit}>
                       <FormGroup>
                         <Label htmlFor="prependedInput">Email</Label>
                         <div className="controls">

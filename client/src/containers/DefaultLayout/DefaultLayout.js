@@ -15,7 +15,8 @@ import {
   AppSidebarNav,
 } from '@coreui/react';
 // sidebar nav config
-import navigation from '../../_nav';
+import TeacherNavigation from '../../TeacherNav';
+import StudentNavigation from '../../StudentNav';
 // routes config
 import routes from '../../routes';
 
@@ -38,6 +39,14 @@ class DefaultLayout extends Component {
   }
   
   render() {
+    const role = this.props.auth.user.role
+    let AppSidebarNavRole;
+
+    if (role.toString() === 'student') {
+      AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;
+    } else if(role.toString() === 'teacher'){
+      AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;
+    }
 
     return (
       <div className="app">
@@ -51,7 +60,7 @@ class DefaultLayout extends Component {
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-            <AppSidebarNav navConfig={navigation} {...this.props} />
+              {AppSidebarNavRole}
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />

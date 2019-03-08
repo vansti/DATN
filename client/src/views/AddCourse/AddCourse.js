@@ -7,10 +7,10 @@ import { addCourse } from '../../actions/courseActions';
 
 const styles = {
   bigAvatar: {
-    width: 100,
     height: 100,
     margin: 'auto',
-    borderRadius:50
+    border: '1px solid #ddd',
+    borderRadius: 5
   },
   input: {
     fontSize: 10
@@ -79,6 +79,7 @@ class AddCourse extends Component {
       coursePhoto: this.state.coursePhoto,
     };
     this.props.addCourse(courseData, this.props.history);
+    document.getElementById("add-course-form").reset();
   }
 
   hideAlertSuccess(){
@@ -107,7 +108,7 @@ class AddCourse extends Component {
                 </CardHeader>
                 <Collapse isOpen={this.state.collapse} id="collapseExample">
                   <CardBody>
-                    <Form className="form-horizontal" onSubmit={this.onSubmit}>
+                    <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
                       <FormGroup>
                         <Label htmlFor="prependedInput">Tên khóa học</Label>
                         <div className="controls">
@@ -139,7 +140,7 @@ class AddCourse extends Component {
                       {
                         this.state.coursePhoto === ''
                         ?
-                        <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551871672/defaultcourse.jpg' alt="avatar" style={styles.bigAvatar}/>
+                        <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
                         :
                         <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                       }

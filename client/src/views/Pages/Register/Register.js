@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
+import { Label, FormGroup ,Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ class Register extends Component {
       password: '',
       password2: '',
       errors: {},
+      role: ''
     };
   }
   componentDidMount() {
@@ -39,7 +40,8 @@ class Register extends Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
-      password2: this.state.password2
+      password2: this.state.password2,
+      role: this.state.role
     };
 
     this.props.registerUser(newUser, this.props.history);
@@ -60,15 +62,15 @@ class Register extends Component {
                 <Card className="mx-4">
                   <CardBody className="p-4">
                     <Form onSubmit={this.onSubmit}>
-                      <h1>Register</h1>
-                      <p className="text-muted">Create your account</p>
+                      <h1>Đăng ký</h1>
+                      <p className="text-muted">Tạo tài khoản nếu bạn là học viên hoặc giáo viên</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" placeholder="Username" autoComplete="username" name="name" value={this.state.name} onChange={this.onChange} />
+                        <Input type="text" placeholder="Họ và Tên" autoComplete="username" name="name" value={this.state.name} onChange={this.onChange} />
                       </InputGroup>
                       {errors.name && <Alert color="danger">{errors.name}</Alert>}
                       <InputGroup className="mb-3">
@@ -84,7 +86,7 @@ class Register extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" placeholder="Password" autoComplete="new-password" name="password" value={this.state.password} onChange={this.onChange}/>
+                        <Input type="password" placeholder="Mật khẩu" autoComplete="new-password" name="password" value={this.state.password} onChange={this.onChange}/>
                       </InputGroup>
                       {errors.password && <Alert color="danger">{errors.password}</Alert>}
                       <InputGroup className="mb-4">
@@ -93,10 +95,26 @@ class Register extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" placeholder="Repeat password" autoComplete="new-password" name="password2" value={this.state.password2} onChange={this.onChange}/>
+                        <Input type="password" placeholder="Xác nhận lại mật khẩu" autoComplete="new-password" name="password2" value={this.state.password2} onChange={this.onChange}/>
                       </InputGroup>                
                       {errors.password2 && <Alert color="danger">{errors.password2}</Alert>}
-                      <Button color="success" onClick={this.onSubmit} block>Create Account</Button>
+                      <InputGroup className="mb-3">
+                        <Col md="3">
+                          <Label>Bạn là ai? </Label>
+                        </Col>
+                        <Col md="9">
+                          <FormGroup check inline>
+                            <Input className="form-check-input" type="radio" id="inline-radio1" name="role" value="student" onChange={this.onChange}/>
+                            <Label className="form-check-label" check htmlFor="inline-radio1">Học viên</Label>
+                          </FormGroup>
+                          <FormGroup check inline>
+                            <Input className="form-check-input" type="radio" id="inline-radio2" name="role" value="teacher" onChange={this.onChange}/>
+                            <Label className="form-check-label" check htmlFor="inline-radio2">Giáo viên</Label>
+                          </FormGroup>
+                        </Col>
+                      </InputGroup>
+                      {errors.role && <Alert color="danger">{errors.role}</Alert>}
+                      <Button color="success" onClick={this.onSubmit} block>Tạo Tài Khoản</Button>
                     </Form>
                   </CardBody>
                 </Card>

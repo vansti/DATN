@@ -10,34 +10,38 @@ module.exports = function validateRegisterInput(data) {
   data.password2 = !isEmpty(data.password2) ? data.password2 : '';
 
   if (!Validator.isLength(data.name, { min: 2, max: 30 })) {
-    errors.name = 'Name must be between 2 and 30 characters';
+    errors.name = 'Họ Tên phải ít nhất 2 ký tự';
   }
 
   if (Validator.isEmpty(data.name)) {
-    errors.name = 'Name field is required';
+    errors.name = 'Họ Tên không được bỏ trống';
+  }
+
+  if (Validator.isEmpty(data.role)) {
+    errors.role = 'Hãy chọn vai trò của bạn';
   }
 
   if (Validator.isEmpty(data.email)) {
-    errors.email = 'Email field is required';
+    errors.email = 'Email không được bỏ trống';
   }
 
   if (!Validator.isEmail(data.email)) {
-    errors.email = 'Email is invalid';
+    errors.email = 'Email không hợp lệ';
   }
 
   if (Validator.isEmpty(data.password)) {
-    errors.password = 'Password field is required';
+    errors.password = 'Password không được bỏ trống';
   }
 
   if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
-    errors.password = 'Password must be at least 6 characters';
+    errors.password = 'Password phải ít nhất 6 ký tự';
   }
 
   if (Validator.isEmpty(data.password2)) {
-    errors.password2 = 'Confirm Password field is required';
+    errors.password2 = 'Password xác nhận không được bỏ trống';
   } else {
     if (!Validator.equals(data.password, data.password2)) {
-      errors.password2 = 'Passwords must match';
+      errors.password2 = 'Password xác nhận không chính xác';
     }
   }
 

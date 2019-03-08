@@ -12,7 +12,7 @@ const CourseSchema = new Schema({
   },
   coursePhoto: {
     type: String,
-    default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551871672/defaultcourse.jpg'
+    default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png'
   },
   mainteacher: { type: String },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],

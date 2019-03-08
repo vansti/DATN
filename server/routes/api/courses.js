@@ -86,10 +86,9 @@ router.post(
 // @desc    Return current user courses
 // @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-  User.findById(req.user.id).then(user=>{
     const courses = [];
 
-    return Promise.all(user.courses.map(courseid => {
+    return Promise.all(req.user.courses.map(courseid => {
       return Course.findById(courseid).then(course=>{
         courses.push(course)
       });
@@ -101,8 +100,6 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
       });
       res.json(courses)
     })
-  })
-  .catch(err => console.log(err));
 });
 
 // @route   POST api/courses/enroll-course

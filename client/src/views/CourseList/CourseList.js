@@ -6,6 +6,15 @@ import { getCurentCourse } from '../../actions/courseActions';
 import ModalEnroll from '../../components/ModalEnroll';
 import Moment from 'react-moment'; 
 
+const styles = {
+  bigAvatar: {
+    height: 60,
+    margin: 'auto',
+    border: '1px solid #ddd',
+    borderRadius: 5
+  }
+}
+
 class CourseList extends Component {
   constructor(props) {
     super(props);
@@ -44,8 +53,8 @@ class CourseList extends Component {
                   this.props.courses.currentcourses.map(course=>
                     <tr key={course._id}>
                       <td className="text-center">
-                        <div className="avatar">
-                          <img src={course.coursePhoto} className="img-avatar" alt="" />
+                        <div>
+                          <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
                         </div>
                       </td>
                       <td>
