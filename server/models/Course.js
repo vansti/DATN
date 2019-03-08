@@ -14,6 +14,7 @@ const CourseSchema = new Schema({
     type: String,
     default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551871672/defaultcourse.jpg'
   },
+  mainteacher: { type: String },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   students: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   comments: 

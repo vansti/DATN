@@ -25,7 +25,7 @@ export default {
     },
     {
       name: 'Danh sách khóa học',
-      url: '/theme/typography',
+      url: '/course-list',
       icon: 'icon-list',
     },
     {

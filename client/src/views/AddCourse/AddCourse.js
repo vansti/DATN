@@ -78,8 +78,6 @@ class AddCourse extends Component {
       courseCode: this.state.courseCode,
       coursePhoto: this.state.coursePhoto,
     };
-
-    console.log(courseData)
     this.props.addCourse(courseData, this.props.history);
   }
 

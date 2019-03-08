@@ -4,6 +4,7 @@ const cors = require('cors');
 const passport = require('passport');
 var cloudinary = require('cloudinary');
 require('dotenv').config()
+const Validator = require('validator');
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -18,7 +19,7 @@ const validateAddCourseInput = require('../../validation/addcourse');
 
 // Course Model
 const Course = require('../../models/Course');
-
+const User = require('../../models/User');
 router.use(cors());
 
 
@@ -46,25 +47,119 @@ router.post(
           title: req.body.title,
           courseCode: req.body.courseCode
         });
-        if (req.body.coursePhoto === '') 
-        {
-          newCourse
-          .save()
-          .then(course => res.json(course))
-          .catch(err => console.log(err));
-
-        }else{
-          cloudinary.v2.uploader.upload(req.body.coursePhoto)
-            .then(result => {
-              newCourse.coursePhoto = result.secure_url
-              
-              newCourse
-              .save()
-              .then(course => res.json(course))
+        
+        User.findById(req.user.id).then(user=>{
+          newCourse.mainteacher = user.name;
+          newCourse.teachers.push(req.user.id)
+          if (req.body.coursePhoto === '') 
+          {
+            newCourse
+            .save()
+            .then(course => {
+              user.courses.push(course.id)
+              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
               .catch(err => console.log(err));
             })
+            .catch(err => console.log(err));
+          }else{
+            cloudinary.v2.uploader.upload(req.body.coursePhoto)
+              .then(result => {
+                newCourse.coursePhoto = result.secure_url
+                
+                newCourse
+                .save()
+                .then(course => {
+                  user.courses.push(course.id)
+                  User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+                  .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
+              })
+          }
+        })
+      }
+    })
+  }
+);
+
+// @route   GET api/courses/current
+// @desc    Return current user courses
+// @access  Private
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.user.id).then(user=>{
+    const courses = [];
+
+    return Promise.all(user.courses.map(courseid => {
+      return Course.findById(courseid).then(course=>{
+        courses.push(course)
+      });
+    })).then(() =>{
+      courses.sort(function(a, b) {
+        a = new Date(a.created);
+        b = new Date(b.created);
+        return a>b ? -1 : a<b ? 1 : 0;
+      });
+      res.json(courses)
+    })
+  })
+  .catch(err => console.log(err));
+});
+
+// @route   POST api/courses/enroll-course
+// @desc    enroll course
+// @access  Private
+router.post(
+  '/enroll-course',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    let errors = {};
+
+    if (Validator.isEmpty(req.body.courseCode)) {
+      errors.courseCode = 'Hãy điền mã khóa học';
+      return res.status(400).json(errors);
+    }
+
+    var isEnroll = false;
+
+    Course.findOne({ courseCode: req.body.courseCode }).then(course => {
+      if (course) {
+        req.user.courses.map(courseid => {
+          if(courseid.toString() == course._id.toString())
+          {
+            isEnroll = true;
+            errors.courseCode = 'Đã ghi danh vào khóa học này';
+            return res.status(400).json(errors);
+          }
+        })
+
+        if(isEnroll == false)
+        {
+            if(req.user.role === 'student') {
+              const user = req.user;
+              course.students.push(req.user.id)
+              Course.findByIdAndUpdate(course._id, course, {new: true})
+              .then(course2 => {
+                user.courses.push(course2._id)
+                User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+                .catch(err => console.log(err));
+              })
+            }
+            else if(req.user.role === 'teacher') {
+              const user = req.user;
+              course.teachers.push(req.user.id)
+              Course.findByIdAndUpdate(course._id, course, {new: true})
+              .then(course2 => {
+                user.courses.push(course2._id)
+                User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+                .catch(err => console.log(err));
+              })
+            }
         }
 
+      } else {
+        errors.courseCode = 'Mã khóa học không tồn tại';
+        return res.status(400).json(errors);
       }
     })
   }
