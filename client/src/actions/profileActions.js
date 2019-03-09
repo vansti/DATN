@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_ERRORS, GET_PROFILE, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS } from './types';
+import { GET_ERRORS, GET_PROFILE, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS} from './types';
 
 // Edit Profle
 export const editProfile = (userData, history) => dispatch => {
@@ -20,13 +20,11 @@ export const editProfile = (userData, history) => dispatch => {
         type: GET_ERRORS,
         payload: err.response.data
       })
-    );
+    )
 };
 
 // Get Profle
 export const getCurrentProfile = () => dispatch => {
-  dispatch(clearErrors());
-  dispatch(clearSuccess());
   axios
     .get('/api/users/current')
     .then(res =>

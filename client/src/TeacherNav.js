@@ -10,24 +10,21 @@ export default {
       },
     },
     {
-      title: true,
       name: 'Khóa học',
-      wrapper: {            // optional wrapper object
-        element: '',        // required valid HTML5 element tag
-        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
-      },
-      class: ''             // optional class names space delimited list for title item ex: "text-center"
-    },
-    {
-      name: 'Thêm khóa học',
-      url: '/add-course',
-      icon: 'icon-plus',
-    },
-    {
-      name: 'Danh sách khóa học',
-      url: '/course-list',
-      icon: 'icon-list',
-    },
+      icon: 'fa fa-book',
+      children: [
+        {
+          name: 'Thêm khóa học',
+          url: '/add-course',
+          icon: 'icon-plus',
+        },
+        {
+          name: 'Danh sách khóa học',
+          url: '/course-list',
+          icon: 'icon-list',
+        },
+      ]
+    }
     // {
     //   title: true,
     //   name: 'Components',

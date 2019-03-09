@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { enrollCourse } from '../actions/courseActions';
+import ReactLoading from 'react-loading';
+import isEmptyObj from '../validation/is-empty';
 
 class ModalEnroll extends Component {
 
@@ -14,6 +16,7 @@ class ModalEnroll extends Component {
       courseCode:'',
       errors: {},
       isShowSuccess: false,
+      isLoading: false
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -33,17 +36,21 @@ class ModalEnroll extends Component {
     const courseData = {};
     courseData.courseCode = this.state.courseCode;
     this.props.enrollCourse(courseData);
+    this.setState({isLoading: true});
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+    
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false});
     }
 
-    if (nextProps.success.data === "Đã tham gia vào khoa học") {
+    this.setState({ errors: nextProps.errors});
+
+    if (nextProps.success.data === "Đã tham gia vào khóa học") {
       this.setState({
         isShowSuccess: true,
-
+        isLoading: false
       })
     }
   }
@@ -86,6 +93,13 @@ class ModalEnroll extends Component {
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>
         </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang ghi danh</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

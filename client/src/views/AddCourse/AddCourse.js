@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import {Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
+import {Modal, ModalBody, Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { addCourse } from '../../actions/courseActions';
+import ReactLoading from 'react-loading';
+import isEmptyObj from '../../validation/is-empty';
 
 const styles = {
   bigAvatar: {
@@ -31,7 +33,8 @@ class AddCourse extends Component {
       fadeIn: true,
       timeout: 300,
       isShowSuccess: false,
-      errors:{}
+      errors:{},
+      isLoading: false
     };
   }
 
@@ -61,13 +64,16 @@ class AddCourse extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false});
     }
+
+    this.setState({ errors: nextProps.errors});
 
 
     if (nextProps.success.data === "Thêm khóa học thành công") {
-      this.setState({isShowSuccess: true})
+      this.setState({isShowSuccess: true, isLoading: false})
     }
   }
 
@@ -80,6 +86,7 @@ class AddCourse extends Component {
     };
     this.props.addCourse(courseData, this.props.history);
     document.getElementById("add-course-form").reset();
+    this.setState({isLoading: true});
   }
 
   hideAlertSuccess(){
@@ -169,6 +176,13 @@ class AddCourse extends Component {
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>
         </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang thêm khóa học</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     )
   }

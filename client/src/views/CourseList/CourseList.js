@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { getCurentCourse } from '../../actions/courseActions';
 import ModalEnroll from '../../components/ModalEnroll';
 import Moment from 'react-moment'; 
+import ReactLoading from 'react-loading';
 
 const styles = {
   bigAvatar: {
@@ -30,6 +31,41 @@ class CourseList extends Component {
 
 
   render() {
+    var list = '';
+    if(this.props.courses.currentcourses === null)
+    {
+      list = <tr><td></td><td></td><td ><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td><td></td></tr>
+    }
+    else{
+      if(this.props.courses.currentcourses.length === 0)
+      {
+        list = <tr><td></td><td></td><td >Bạn hiện không có khóa học nào</td><td></td></tr>
+      }
+      else{
+        list = this.props.courses.currentcourses.map(course=>
+                        <tr key={course._id}>
+                          <td className="text-center">
+                            <div>
+                              <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                            </div>
+                          </td>
+                          <td>
+                            <div>{course.title}</div>
+                          </td>
+                          <td>
+                            <div>{course.mainteacher}</div>
+                          </td>
+                          <td>
+                            <Moment format="DD/MM/YYYY">
+                              {course.created}
+                            </Moment>
+                          </td>
+
+                        </tr>
+                      )
+      }
+    }
+
     return (
       <div className="animated fadeIn">
         <Card>
@@ -47,31 +83,7 @@ class CourseList extends Component {
                 </tr>
               </thead>
               <tbody>
-                {
-                  this.props.courses.currentcourses === null ? <tr></tr>
-                  :
-                  this.props.courses.currentcourses.map(course=>
-                    <tr key={course._id}>
-                      <td className="text-center">
-                        <div>
-                          <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                        </div>
-                      </td>
-                      <td>
-                        <div>{course.title}</div>
-                      </td>
-                      <td>
-                        <div>{course.mainteacher}</div>
-                      </td>
-                      <td>
-                        <Moment format="DD/MM/YYYY">
-                          {course.created}
-                        </Moment>
-                      </td>
-
-                    </tr>
-                  )
-                }
+                {list}
               </tbody>
             </Table>
           </CardBody>

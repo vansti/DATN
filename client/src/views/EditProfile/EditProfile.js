@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import {Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
+import {Modal,ModalBody,Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { editProfile, getCurrentProfile } from '../../actions/profileActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ModalChangePasword from '../../components/ModalChangePassword';
+import ReactLoading from 'react-loading';
+import isEmptyObj from '../../validation/is-empty'
 
 const styles = {
   bigAvatar: {
@@ -35,6 +37,7 @@ class EditProfile extends Component {
       errors:{},
       file_avatar: null,
       imagePreviewUrl: '',
+      isLoading: false
     };
   }
 
@@ -70,9 +73,12 @@ class EditProfile extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false});
     }
+
+    this.setState({ errors: nextProps.errors});
 
     if (nextProps.profile.profile) {
       const profile = nextProps.profile.profile
@@ -80,8 +86,9 @@ class EditProfile extends Component {
     }
 
     if (nextProps.success.data === "Thay đổi thành công") {
-      this.setState({isShowSuccess: true})
+      this.setState({isShowSuccess: true, isLoading: false})
     }
+
   }
 
   onSubmit = e => {
@@ -95,6 +102,7 @@ class EditProfile extends Component {
 
     this.props.editProfile(profileData, this.props.history);
     document.getElementById("editform").reset();
+    this.setState({isLoading: true})
   }
 
   hideAlertSuccess(){
@@ -192,6 +200,13 @@ class EditProfile extends Component {
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>
         </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang lưu thay đổi</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     )
   }
@@ -202,7 +217,7 @@ EditProfile.propTypes = {
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   getCurrentProfile: PropTypes.func.isRequired,
-  success: PropTypes.object.isRequired,
+  success: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
