@@ -31,7 +31,7 @@ export const enrollCourse = (courseData) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Đã tham gia vào khoa học'}
+        payload: {data: 'Đã tham gia vào khóa học'}
       })
       dispatch(getCurentCourse())
     })

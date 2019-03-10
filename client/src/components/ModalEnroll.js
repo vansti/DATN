@@ -88,7 +88,7 @@ class ModalEnroll extends Component {
           	success
           	confirmBtnText="OK"
           	confirmBtnBsStyle="success"
-          	title="Đã tham gia vào khoa học!"
+          	title="Đã tham gia vào khóa học!"
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>
