@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+require('dotenv').config();
 
 const CourseSchema = new Schema({
   title: {
@@ -12,7 +13,7 @@ const CourseSchema = new Schema({
   },
   coursePhoto: {
     type: String,
-    default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png'
+    default: process.env.COURSE_PHOTO_DEFAULT
   },
   mainteacher: { type: String },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],

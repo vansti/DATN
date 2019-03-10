@@ -37,8 +37,8 @@ const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/Users'));
 const User = React.lazy(() => import('./views/Users/User'));
 const EditProfile = React.lazy(() => import('./views/EditProfile/EditProfile'));
-const AddCourse = React.lazy(() => import('./views/AddCourse/AddCourse'));
-const CourseList = React.lazy(() => import('./views/CourseList/CourseList'));
+const AddCourse = React.lazy(() => import('./views/Courses/AddCourse'));
+const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [

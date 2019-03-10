@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+require('dotenv').config();
 
 //Create Schema
 const UserSchema = new Schema({
@@ -24,7 +25,7 @@ const UserSchema = new Schema({
   },
   photo: {
     type: String,
-    default: 'https://res.cloudinary.com/dk9jsd8vf/image/upload/v1551844990/defaultavatar.png'
+    default: process.env.USER_PHOTO_DEFAULT
   },
   role: { 
     type: String,

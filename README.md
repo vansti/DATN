@@ -15,7 +15,8 @@ mern stack aplication
   CLOUD_NAME = 
   CLOUD_API_KEY = 
   CLOUD_API_SECRET = 
-
+  COURSE_PHOTO_DEFAULT= 
+  USER_PHOTO_DEFAULT= 
   ----------------------------------------------------------------
   Nếu chưa có tài khoản mlab và cloudinary thì truy cập các link:
   - https://mlab.com/
