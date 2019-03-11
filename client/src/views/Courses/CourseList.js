@@ -6,6 +6,7 @@ import { getCurentCourse } from '../../actions/courseActions';
 import ModalEnroll from '../../components/ModalEnroll';
 import Moment from 'react-moment'; 
 import ReactLoading from 'react-loading';
+import { Link } from 'react-router-dom';
 
 const styles = {
   bigAvatar: {
@@ -15,6 +16,7 @@ const styles = {
     borderRadius: 5
   }
 }
+
 
 class CourseList extends Component {
   constructor(props) {
@@ -46,11 +48,13 @@ class CourseList extends Component {
                         <tr key={course._id}>
                           <td className="text-center">
                             <div>
+                              <Link to={`/courses/${course._id}`}>
                               <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                              </Link>
                             </div>
                           </td>
                           <td>
-                            <div>{course.title}</div>
+                            <Link to={`/courses/${course._id}`}>{course.title}</Link>
                           </td>
                           <td>
                             <div>{course.mainteacher}</div>
@@ -97,7 +101,8 @@ class CourseList extends Component {
 }
 
 CourseList.propTypes = {
-  getCurentCourse : PropTypes.func.isRequired
+  getCurentCourse : PropTypes.func.isRequired,
+  courses: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({

@@ -5,3 +5,4 @@ export const GET_PROFILE = 'GET_PROFILE';
 export const GET_SUCCESS = 'GET_SUCCESS';
 export const CLEAR_SUCCESS = 'CLEAR_SUCCESS';
 export const GET_CURRENT_COURSES = 'GET_CURRENT_COURSES';
+export const GET_USERS = 'GET_USERS';

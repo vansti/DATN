@@ -20,7 +20,7 @@ export default {
     },
     {
       name: 'Danh sách khóa học',
-      url: '/course-list',
+      url: '/courses',
       icon: 'icon-list',
     },
     // {

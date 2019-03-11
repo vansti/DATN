@@ -22,6 +22,7 @@ const validateChangePasswordInput = require('../../validation/password');
 
 // User Model
 const User = require('../../models/User');
+const Course = require('../../models/Course');
 
 router.use(cors());
 
@@ -196,4 +197,29 @@ router.post(
   }
 );
 
+// @route   POST api/users/get-list-users
+// @desc    Change password
+// @access  Private
+router.post(
+  '/get-list-users',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const users = {
+      teachers:[],
+      students:[]
+    };
+
+    Course.findById(req.body.courseid).then(course=>{
+      User.find({'_id': { $in: course.teachers}}, { name: 1, photo: 1 },function(err, teachers){
+        users.teachers = teachers;
+        User.find({'_id': { $in: course.students}}, { name: 1, photo: 1 }, function(err, students){
+          users.students = students;
+          res.json(users)
+        });
+      });
+    })
+
+    
+  }
+);
 module.exports = router;
