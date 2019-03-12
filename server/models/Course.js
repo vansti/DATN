@@ -18,14 +18,7 @@ const CourseSchema = new Schema({
   mainteacher: { type: String },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   students: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
-  comments: 
-  [
-    {
-      text: String,
-      created: { type: Date, default: Date.now },
-      postedBy: { type: mongoose.Schema.ObjectId, ref: 'users'}
-    }
-  ],
+  exercises: [{type: mongoose.Schema.ObjectId, ref: 'exercises'}],
   created: {
     type: Date,
     default: Date.now

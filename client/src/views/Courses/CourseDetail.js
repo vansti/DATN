@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, CardBody, CardHeader, Card } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, CardBody, CardHeader, Card } from 'reactstrap';
 import classnames from 'classnames';
 import { getCurentCourse } from '../../actions/courseActions';
 import { getUsers } from '../../actions/userActions';
 import PeopleInCourse from '../../components/PeopleInCourse';
+import PostInCourse from '../../components/PostInCourse';
 
 class CourseDetail extends Component {
   constructor(props) {
@@ -70,11 +71,7 @@ class CourseDetail extends Component {
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
               <TabPane tabId="1">
-                <Row>
-                  <Col sm="12">
-                    <h4>Tab 1 Contents</h4>
-                  </Col>
-                </Row>
+                <PostInCourse />
               </TabPane>
               <TabPane tabId="2">
                 <PeopleInCourse />

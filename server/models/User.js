@@ -19,10 +19,6 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  date:{
-    type: Date,
-    default : Date.now
-  },
   photo: {
     type: String,
     default: process.env.USER_PHOTO_DEFAULT
@@ -38,7 +34,11 @@ const UserSchema = new Schema({
       // The ObjectIds will refer to the ids in the Course model
       ref: "courses"
     }
-  ]
+  ],
+  created:{
+    type: Date,
+    default : Date.now
+  },
 
 });
 

@@ -6,6 +6,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { addCourse } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
+import ReactDropzone from "react-dropzone";
 
 const styles = {
   bigAvatar: {
@@ -51,16 +52,15 @@ class AddCourse extends Component {
     this.setState({ [name]: value })
   }
 
-  handleChangePhoto = e =>{
-    let file = e.target.files[0]
+  onDrop = (files) => {
+    let file = files[0]
     let reader = new FileReader();
     reader.onloadend = () => {
       this.setState({
-        coursePhoto: reader.result
+        photo: reader.result
       });
     }
     reader.readAsDataURL(file)
-
   }
 
   componentWillReceiveProps(nextProps) {
@@ -154,7 +154,12 @@ class AddCourse extends Component {
                       </div>
 
                       <br/>
-                      <Input style={styles.input} accept="image/*" onChange={this.handleChangePhoto} type="file" />
+                      <ReactDropzone
+                        accept="image/*"
+                        onDrop={this.onDrop}
+                      >
+                        Thả hình vào đây!
+                      </ReactDropzone>
                       <br/>
 
                     </Form>

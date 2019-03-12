@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {  Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
-
+import PostBox from './PostBox';
 
 class PostInCourse extends Component {
  
@@ -11,7 +11,8 @@ class PostInCourse extends Component {
       <Container>
         <Row>
           <Col>
-            Bài tập
+            <PostBox/>
+        
           </Col>
         </Row>
       </Container>

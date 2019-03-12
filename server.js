@@ -10,6 +10,8 @@ const users = require('./server/routes/api/users');
 
 const courses = require('./server/routes/api/courses');
 
+const exercises = require('./server/routes/api/exercises');
+
 const app = express();
 
 //Bodyparser Middleware
@@ -44,6 +46,9 @@ app.use('/api/users', users)
 
 // courses Route
 app.use('/api/courses', courses)
+
+// exercises Route
+app.use('/api/exercises', exercises)
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

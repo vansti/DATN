@@ -7,6 +7,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import ModalChangePasword from '../../components/ModalChangePassword';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty'
+import ReactDropzone from "react-dropzone";
 
 const styles = {
   bigAvatar: {
@@ -55,18 +56,6 @@ class EditProfile extends Component {
       : event.target.value
     this.setState({ [name]: value })
   }
-
-  handleChangePhoto = e =>{
-    let file = e.target.files[0]
-    let reader = new FileReader();
-    reader.onloadend = () => {
-      this.setState({
-        photo: reader.result
-      });
-    }
-    reader.readAsDataURL(file)
-
-  }
   
   componentDidMount = () => {
     this.props.getCurrentProfile();
@@ -109,6 +98,17 @@ class EditProfile extends Component {
     this.setState({
       isShowSuccess: false
     })
+  }
+
+  onDrop = (files) => {
+    let file = files[0]
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      this.setState({
+        photo: reader.result
+      });
+    }
+    reader.readAsDataURL(file)
   }
 
   render() {
@@ -175,7 +175,12 @@ class EditProfile extends Component {
                       </div>
 
                       <br/>
-                      <Input style={styles.input} accept="image/*" onChange={this.handleChangePhoto} type="file" />
+                      <ReactDropzone
+                        accept="image/*"
+                        onDrop={this.onDrop}
+                      >
+                        Thả avatar của bạn vào đây!
+                      </ReactDropzone>
                       <br/>
 
                     </Form>
