@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {  Row, Col, Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import PostBox from './PostBox';
+import PostList from './PostList';
 
 class PostInCourse extends Component {
  
@@ -12,7 +13,7 @@ class PostInCourse extends Component {
         <Row>
           <Col>
             <PostBox/>
-        
+            <PostList/>
           </Col>
         </Row>
       </Container>

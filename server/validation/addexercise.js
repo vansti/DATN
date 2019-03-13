@@ -5,10 +5,15 @@ module.exports = function validateAddCourseInput(data) {
   let errors = {};
 
   data.title = !isEmpty(data.title) ? data.title : '';
-  data.courseCode = !isEmpty(data.courseCode) ? data.courseCode : '';
-
+  data.text = !isEmpty(data.text) ? data.text : '';
+  data.deadline = !isEmpty(data.deadline) ? data.deadline : '';
+  
   if (Validator.isEmpty(data.title)) {
     errors.title = 'Hãy điền tiêu đề bài tập';
+  }
+
+  if (Validator.isEmpty(data.deadline)) {
+    errors.deadline = 'Hãy điền hạn chót nộp bài';
   }
 
   if (Validator.isEmpty(data.text)) {

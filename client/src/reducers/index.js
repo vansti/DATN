@@ -5,6 +5,7 @@ import profileReducer from './profileReducer';
 import successReducer from './successReducer';
 import courseReducer from './courseReducer';
 import usersReducer from './usersReducer';
+import exerciseReducer from './exerciseReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   profile: profileReducer,
   success: successReducer,
   courses: courseReducer,
-  users: usersReducer
+  users: usersReducer,
+  exercises: exerciseReducer
 });

@@ -1,13 +1,13 @@
 import React, { Component,Fragment } from 'react';
-import {  Button, Modal, ModalHeader, ModalBody, ModalFooter,FormGroup,Col,Label,Input } from 'reactstrap';
+import {  Button, Modal, ModalHeader, ModalBody, ModalFooter,FormGroup,Col,Label,Input,Alert,ListGroup,ListGroupItem,Row } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import ReactDropzone from "react-dropzone";
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
 import { addExercise } from '../actions/exerciseActions';
 import isEmptyObj from '../validation/is-empty';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import DateTimePicker from 'react-datetime-picker';
 
 class PostBox extends Component {
   constructor(props) {
@@ -15,10 +15,12 @@ class PostBox extends Component {
     this.state = {
       title: '',
       text: '',
-      attachFile:'',
+      attachFiles: [],
+      deadline: null,
       large: false,
       errors: {},
       isShowSuccess: false,
+      
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
@@ -29,6 +31,8 @@ class PostBox extends Component {
       large: !this.state.large,
       title: '',
       text: '',
+      attachFiles: [],
+      deadline: null
     });
   }
 
@@ -38,10 +42,11 @@ class PostBox extends Component {
     const exerciseData = {
       title: this.state.title,
       text: this.state.text,
-      attachFile: this.state.attachFile,
-      courseId: this.props.match.params.id
+      attachFiles: this.state.attachFiles,
+      deadline: this.state.deadline,
+      courseId: this.props.match.params.id,
     };
-    
+
     this.props.addExercise(exerciseData);
     this.setState({isLoading: true});
   }
@@ -62,7 +67,9 @@ class PostBox extends Component {
         isShowSuccess: true,
         title: '',
         text: '',
-        isLoading: false
+        isLoading: false,
+        attachFiles: [],
+        deadline: null
       })
     }
   }
@@ -74,8 +81,56 @@ class PostBox extends Component {
     })
   }
 
-  render() {
 
+  showWidget =()=>{
+    let widget = window.cloudinary.createUploadWidget({
+      cloudName:"dk9jsd8vf",
+      uploadPreset:"yxscp4ft",
+    },(err, result)=>
+    {
+      if(result.event === 'success'){
+        const file = {
+          id: result.info.public_id,
+          name: result.info.original_filename,
+          url: result.info.secure_url,
+          thumbnail: result.info.thumbnail_url
+        } 
+        this.setState(prevState => ({
+          attachFiles: [...prevState.attachFiles, file]
+        }))
+      }
+    })
+    widget.open()
+  }
+
+  delete(file){
+    const attachFiles = this.state.attachFiles.filter(i => i.id !== file.id)
+    this.setState({attachFiles})
+  }
+
+  onChangeDeadline = deadline => this.setState({ deadline })
+
+  render() {
+    const { errors } = this.state;
+    var listFile = '';
+    if(isEmptyObj(this.state.attachFiles))
+    {
+      listFile = <ListGroupItem>Không có tệp được chọn</ListGroupItem>
+    }else{
+      listFile = this.state.attachFiles.map(file=>
+        <ListGroupItem key={file.name}>
+          <Row>
+            <Col xs="10">
+              <a href={file.url}><img src={file.thumbnail} alt=""/> {file.name} </a>
+            </Col>
+            <Col >
+              <Button color="danger" onClick={this.delete.bind(this, file)}><i className="fa fa-trash-o"></i></Button>
+            </Col>
+          </Row>
+        </ListGroupItem>
+      )
+    }
+    
     return (
       <Fragment>
         <Button color="danger" onClick={this.toggleLarge} className="mr-1">Tạo bài tập</Button>
@@ -88,7 +143,9 @@ class PostBox extends Component {
               </Col>
               <Col xs="12" md="9">
                 <Input type="text" name="title" value={this.state.title} onChange={this.onChange} placeholder="Tiêu đề..." />
+                {errors.title && <Alert color="danger">{errors.title}</Alert>}
               </Col>
+              
             </FormGroup>
             <FormGroup row>
               <Col md="3">
@@ -96,19 +153,31 @@ class PostBox extends Component {
               </Col>
               <Col xs="12" md="9">
                 <Input type="textarea" name="text" value={this.state.text} onChange={this.onChange} rows="9" placeholder="Nội dung..." />
+                {errors.text && <Alert color="danger">{errors.text}</Alert>}
               </Col>
+  
+            </FormGroup>
+            <FormGroup row>
+              <Col md="3">
+                <Label>Hạn nộp</Label>
+              </Col>
+              <Col xs="12" md="9">
+                <DateTimePicker value={this.state.deadline} onChange={this.onChangeDeadline} />
+                {errors.deadline && <Alert color="danger">{errors.deadline}</Alert>}
+              </Col>
+  
             </FormGroup>
             <FormGroup row>
               <Col md="3">
                 <Label>Đính kèm tập tin</Label>
               </Col>
-              <Col xs="3" md="4">
-                <ReactDropzone onDrop={this.onDrop} >
-                  Thả file của bạn vào đây!
-                </ReactDropzone>
+              <Col md="2">
+                <Button color="danger" onClick={this.showWidget}>Đính kèm</Button>
               </Col>
-              <Col xs="4" style={{wordWrap:'break-word'}}>
-                
+              <Col md="7" style={{wordWrap:'break-word'}}>
+                <ListGroup>
+                  {listFile}
+                </ListGroup>
               </Col>
             </FormGroup>
           </ModalBody>

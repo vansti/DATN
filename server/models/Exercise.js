@@ -2,16 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ExerciseSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
-  },
-  userName: {
-    type: String
-  },
-  userPhoto: {
-    type: String
-  },
   title: {
     type: String,
     required: true
@@ -19,9 +9,22 @@ const ExerciseSchema = new Schema({
   text: {
     type: String
   },
-  attachFile:{
-    type: String
-  },
+  attachFiles: [
+    {      
+      id: {
+        type: String
+      },
+      name: {
+        type: String
+      },
+      url: {
+        type: String
+      },
+      thumbnail: {
+        type: String
+      }
+    }
+  ],
   comments: [
     {
       user: {
@@ -44,6 +47,9 @@ const ExerciseSchema = new Schema({
       }
     }
   ],
+  deadline:{
+    type: Date
+  },
   created: {
     type: Date,
     default: Date.now

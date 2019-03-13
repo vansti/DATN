@@ -38,37 +38,32 @@ router.post(
     }
 
     const newExercise = new Exercise({
-      user: req.user.id,
-      userName: req.user.name,
-      userPhoto: req.user.photo,
       title: req.body.title,
-      text: req.body.text
+      text: req.body.text,
+      attachFiles: req.body.attachFiles,
+      deadline: req.body.deadline
     });
 
-    if (req.body.attachFile === '') 
-    {
-      newExercise.save().then(exercise=>{
-        Course.findById(req.body.courseId).then(course => {
-          course.exercises.unshift(exercise._id);
-          course.save().then(course => res.json(course));
-        })
+    newExercise.save().then(exercise=>{
+      Course.findById(req.body.courseId).then(course => {
+        course.exercises.unshift(exercise._id);
+        course.save().then(course => res.json(course));
       })
-
-    }else{
-      cloudinary.v2.uploader.upload(req.body.attachFile)
-      .then(result => {
-        newExercise.attachFile = result.secure_url
-        newExercise.save().then(exercise=>{
-          Course.findById(req.body.courseId).then(course => {
-            course.exercises.unshift(exercise._id);
-            course.save().then(course => res.json(course));
-          })
-        })
-      })
-    }
-
+    })
   }
 );
 
+// @route   POST api/exercises/get-exercise-list
+// @desc    Return exercise list
+// @access  Private
+router.post('/get-exercise-list', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Course.findById(req.body.courseId).then(course => {
+    Exercise.find({
+        '_id': { $in: course.exercises}
+    }, function(err, exercises){
+      res.json(exercises)
+    });
+  })
+});
 
 module.exports = router;
