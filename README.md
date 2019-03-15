@@ -22,10 +22,17 @@ mern stack aplication
   - https://mlab.com/
   - https://cloudinary.com/
 
-4. npm install
+4. Tạo file /client/src/config.js với nội dung
 
-5. npm run client-install
+  export default {
+    CLOUD_NAME: ,
+    UPLOAD_PERSET: ,
+  };
 
-6. npm run dev
+5. npm install
+
+6. npm run client-install
+
+7. npm run dev
 
 ```

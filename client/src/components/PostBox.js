@@ -8,7 +8,7 @@ import { addExercise } from '../actions/exerciseActions';
 import isEmptyObj from '../validation/is-empty';
 import { withRouter } from 'react-router-dom';
 import DateTimePicker from 'react-datetime-picker';
-
+import config from '../config'
 class PostBox extends Component {
   constructor(props) {
     super(props);
@@ -84,8 +84,8 @@ class PostBox extends Component {
 
   showWidget =()=>{
     let widget = window.cloudinary.createUploadWidget({
-      cloudName:"dk9jsd8vf",
-      uploadPreset:"yxscp4ft",
+      cloudName: config.CLOUD_NAME,
+      uploadPreset: config.UPLOAD_PERSET
     },(err, result)=>
     {
       if(result.event === 'success'){

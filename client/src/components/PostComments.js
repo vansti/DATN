@@ -80,7 +80,6 @@ class PostComments extends Component {
   render() {
     const exercise = this.props.exercise
     var cexercise = this.props.comments.comments
-    console.log(cexercise)
     var CommentList = '';
     var ModalButton = '';
     if(cexercise === null)
