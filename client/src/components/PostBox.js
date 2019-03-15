@@ -118,7 +118,7 @@ class PostBox extends Component {
       listFile = <ListGroupItem>Không có tệp được chọn</ListGroupItem>
     }else{
       listFile = this.state.attachFiles.map(file=>
-        <ListGroupItem key={file.name}>
+        <ListGroupItem key={file.id}>
           <Row>
             <Col xs="10">
               <a href={file.url}><img src={file.thumbnail} alt=""/> {file.name} </a>

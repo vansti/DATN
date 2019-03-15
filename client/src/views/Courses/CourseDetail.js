@@ -28,10 +28,7 @@ class CourseDetail extends Component {
 
   componentDidMount = () => {
     this.props.getCurentCourse();
-
-    var arr={};
-    arr.courseid = this.props.match.params.id
-    this.props.getUsers(arr);
+    this.props.getUsers(this.props.match.params.id);
   }
 
   render() {
@@ -41,8 +38,6 @@ class CourseDetail extends Component {
       course = this.props.courses.currentcourses.find(course => course._id.toString() === this.props.match.params.id);
 
     }
-
-
 
     return (
       <div className="animated fadeIn">

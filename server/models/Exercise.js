@@ -27,19 +27,15 @@ const ExerciseSchema = new Schema({
   ],
   comments: [
     {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
-      },
-      text: {
-        type: String,
-        required: true
-      },
       userName: {
         type: String
       },
       userPhoto: {
         type: String
+      },
+      text: {
+        type: String,
+        required: true
       },
       created: {
         type: Date,

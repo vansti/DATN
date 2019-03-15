@@ -1,10 +1,13 @@
 import React, { Component,Fragment } from 'react';
-import {  Card, CardHeader, CardBody, Button, Collapse } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Button, Collapse,ListGroupItem,Row,Col,CardFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getExerciseList } from '../actions/exerciseActions';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../validation/is-empty';
+import ReactLoading from 'react-loading';
+import Moment from 'react-moment'; 
+import PostComments from './PostComments';
 
 class PostList extends Component {
   constructor(props) {
@@ -16,9 +19,7 @@ class PostList extends Component {
   }
 
   componentDidMount = () => {
-    var arr = {};
-    arr.courseId = this.props.match.params.id
-    this.props.getExerciseList(arr);
+    this.props.getExerciseList(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,7 +33,6 @@ class PostList extends Component {
 
 
   toggleAccordion(tab) {
-
     const prevState = this.state.accordion;
     const state = prevState.map((x, index) => tab === index ? !x : false);
 
@@ -42,60 +42,72 @@ class PostList extends Component {
   }
 
   render() {
-    //console.log(this.props.exercises)
+    const exercises = this.props.exercises.exercises;
+    var ExerciseCard = '';
+    if(exercises === null)
+    {
+      ExerciseCard = <ReactLoading type='bars' color='#05386B' height={100} width={50} />
+    }else{
+      if(exercises.length === 0)
+      {
+        ExerciseCard = <h2>Hiện không có bài tập nào</h2>
+      }else{
+        ExerciseCard = exercises.map((exercise,index) => 
+          <Card className="mb-0" key={index}>
+            <CardHeader id="headingOne">
+              <Row>
+                <Col xs="10">
+                  <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(index)} aria-expanded={this.state.accordion[index]} aria-controls="collapseOne">
+                    <h5 className="m-0 p-0">{exercise.title}</h5>
+                  </Button>
+                  <small>  
+                    <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
+                      {exercise.created}
+                    </Moment>
+                  </small>
+                </Col>
+                <Col >
+                  <small>                  
+                    Hạn
+                    <Moment format=" HH:mm ngày DD/MM/YYYY">
+                      {exercise.deadline}
+                    </Moment>
+                  </small>
+                </Col>
+              </Row>
+            </CardHeader>
+            <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
+              <CardBody>
+                {
+                  exercise.text.split('\n').map((itemChild, key) => {
+                    return <span key={key}>{itemChild}<br/></span>
+                  })
+                }
+                <br/>
+                {
+                  exercise.attachFiles.map(file=>
+                    <ListGroupItem key={file.id}>
+                      <a href={file.url}><img src={file.thumbnail} alt=""/> {file.name} </a>
+                    </ListGroupItem>
+                  )
+                }
+              </CardBody>
+              <CardFooter>
+                <PostComments exercise={exercise}/>
+              </CardFooter>
+
+            </Collapse>
+          </Card>
+        )
+      }
+    }
+
     return (
       <Fragment>
         <div id="accordion">
           <br/>
           <br/>
-          <Card className="mb-0">
-            <CardHeader id="headingOne">
-              <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(0)} aria-expanded={this.state.accordion[0]} aria-controls="collapseOne">
-                <h5 className="m-0 p-0">Collapsible Group Item #1</h5>
-              </Button>
-            </CardHeader>
-            <Collapse isOpen={this.state.accordion[0]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-              <CardBody>
-                        1. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non
-                        cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                        on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
-                        nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
-                        beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </CardBody>
-            </Collapse>
-          </Card>
-          <Card className="mb-0">
-            <CardHeader id="headingOne">
-              <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(1)} aria-expanded={this.state.accordion[1]} aria-controls="collapseOne">
-                <h5 className="m-0 p-0">Collapsible Group Item #1</h5>
-              </Button>
-            </CardHeader>
-            <Collapse isOpen={this.state.accordion[1]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-              <CardBody>
-                        1. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non
-                        cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                        on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
-                        nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
-                        beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </CardBody>
-            </Collapse>
-          </Card>
-          <Card className="mb-0">
-            <CardHeader id="headingOne">
-              <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(2)} aria-expanded={this.state.accordion[2]} aria-controls="collapseOne">
-                <h5 className="m-0 p-0">Collapsible Group Item #1</h5>
-              </Button>
-            </CardHeader>
-            <Collapse isOpen={this.state.accordion[2]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-              <CardBody>
-                        1. Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non
-                        cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-                        on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
-                        nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
-                        beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </CardBody>
-            </Collapse>
-          </Card>
+          {ExerciseCard}
         </div>
       </Fragment>
     )

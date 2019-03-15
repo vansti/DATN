@@ -7,3 +7,4 @@ export const CLEAR_SUCCESS = 'CLEAR_SUCCESS';
 export const GET_CURRENT_COURSES = 'GET_CURRENT_COURSES';
 export const GET_USERS = 'GET_USERS';
 export const GET_EXERCISE_LIST = 'GET_EXERCISE_LIST';
+export const GET_COMMENT = 'GET_COMMENT';

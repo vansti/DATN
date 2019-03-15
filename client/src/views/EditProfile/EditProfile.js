@@ -11,8 +11,8 @@ import ReactDropzone from "react-dropzone";
 
 const styles = {
   bigAvatar: {
-    width: 75,
-    height: 75,
+    width: 200,
+    height: 200,
     margin: 'auto',
     borderRadius:50
   },
@@ -161,7 +161,7 @@ class EditProfile extends Component {
                             <InputGroupAddon addonType="prepend">
                               <InputGroupText><i className="icon-phone"></i></InputGroupText>
                             </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.phone} onChange={this.handleChange('phone')}/>
+                            <Input size="16" type="text" value={this.state.phone || ''} onChange={this.handleChange('phone')}/>
                           </InputGroup>
                           {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
                         </div>
@@ -169,20 +169,18 @@ class EditProfile extends Component {
                       <hr/>
                       <Label htmlFor="prependedInput">Hình đại diện</Label>
                       <br/>
-
-                      <div className="preview-image">
-                        <img src={this.state.photo} alt="avatar" style={styles.bigAvatar}/>
-                      </div>
-
-                      <br/>
-                      <ReactDropzone
-                        accept="image/*"
-                        onDrop={this.onDrop}
-                      >
-                        Thả avatar của bạn vào đây!
-                      </ReactDropzone>
-                      <br/>
-
+                      <Row>
+                        <Col xs="4">
+                          <div className="preview-image">
+                            <img src={this.state.photo} alt="avatar" style={styles.bigAvatar}/>
+                          </div>
+                        </Col>
+                        <Col>
+                          <ReactDropzone accept="image/*" onDrop={this.onDrop} >
+                            Thả avatar của bạn vào đây!
+                          </ReactDropzone>
+                        </Col>
+                      </Row>
                     </Form>
                     <div >
                       <ModalChangePasword />

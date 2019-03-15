@@ -10,7 +10,7 @@ import ReactDropzone from "react-dropzone";
 
 const styles = {
   bigAvatar: {
-    height: 100,
+    height: 200,
     margin: 'auto',
     border: '1px solid #ddd',
     borderRadius: 5
@@ -143,24 +143,25 @@ class AddCourse extends Component {
                       <hr/>
                       <Label htmlFor="prependedInput">Hình đại diện khóa học</Label>
                       <br/>
-                      <div className="preview-image">
-                      {
-                        this.state.coursePhoto === ''
-                        ?
-                        <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
-                        :
-                        <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
-                      }
-                      </div>
 
-                      <br/>
-                      <ReactDropzone
-                        accept="image/*"
-                        onDrop={this.onDrop}
-                      >
-                        Thả hình vào đây!
-                      </ReactDropzone>
-                      <br/>
+                      <Row>
+                        <Col xs="4">
+                          <div className="preview-image">
+                          {
+                            this.state.coursePhoto === ''
+                            ?
+                            <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
+                            :
+                            <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+                          }
+                          </div>
+                        </Col>
+                        <Col>
+                          <ReactDropzone accept="image/*" onDrop={this.onDrop} >
+                            Thả hình vào đây!
+                          </ReactDropzone>
+                        </Col>
+                      </Row>
 
                     </Form>
                   </CardBody>

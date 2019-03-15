@@ -5,7 +5,7 @@ import { GET_USERS } from './types';
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
   axios
-    .post('/api/users/get-list-users',courseid)
+    .get('/api/users/get-users-in-course/' + courseid)
     .then(res =>
       dispatch({
         type: GET_USERS,

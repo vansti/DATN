@@ -2,14 +2,9 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
-var cloudinary = require('cloudinary');
 require('dotenv').config()
+const Validator = require('validator');
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUD_NAME, 
-  api_key: process.env.CLOUD_API_KEY, 
-  api_secret: process.env.CLOUD_API_SECRET 
-});
 
 
 // Load Input Validation
@@ -53,17 +48,51 @@ router.post(
   }
 );
 
-// @route   POST api/exercises/get-exercise-list
+// @route   GET api/exercises/:courseId
 // @desc    Return exercise list
 // @access  Private
-router.post('/get-exercise-list', passport.authenticate('jwt', { session: false }), (req, res) => {
-  Course.findById(req.body.courseId).then(course => {
+router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Course.findById(req.params.courseId).then(course => {
     Exercise.find({
         '_id': { $in: course.exercises}
     }, function(err, exercises){
       res.json(exercises)
     });
   })
+});
+
+// @route   Get api/exercises/get-comments/:exerciseId
+// @desc    Get comments
+// @access  Private
+router.get('/get-comments/:exerciseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Exercise.find({'_id': req.params.exerciseId},{ comments: 1 },function(err, comments){
+    res.json(comments)
+  });
+});
+
+// @route   POST api/exercises/comment/:exerciseId
+// @desc    Comment on a exercise
+// @access  Private
+router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  let errors = {};
+
+  if (Validator.isEmpty(req.body.text)) {
+    errors.text = 'Hãy nhập bình luận';
+    return res.status(400).json(errors);
+  }
+
+  Exercise.findById(req.params.exerciseId).then(exercise=>{
+    const newComment = {
+      userName: req.user.name,
+      userPhoto: req.user.photo,
+      text: req.body.text
+    }
+
+    exercise.comments.push(newComment);
+    exercise.save().then(exercise => res.json(exercise));
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
 });
 
 module.exports = router;
