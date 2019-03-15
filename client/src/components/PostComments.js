@@ -79,26 +79,27 @@ class PostComments extends Component {
 
   render() {
     const exercise = this.props.exercise
-    var comments = this.props.comments.comments
+    var cexercise = this.props.comments.comments
+    console.log(cexercise)
     var CommentList = '';
     var ModalButton = '';
-    if(comments === null)
+    if(cexercise === null)
     {
       CommentList = <ReactLoading type='bars' color='#05386B' height={100} width={50} />
       ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>  
     }else{
-      if(exercise._id === comments[0]._id)
+      if(exercise._id === cexercise._id)
       {
-        ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{comments[0].comments.length} bình luận</Button>
+        ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{cexercise.comments.length} bình luận</Button>
       }else{
         ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>  
       }
       
-      if(comments[0].comments.length === 0)
+      if(cexercise.comments.length === 0)
       {
         CommentList = <b>Không có bình luận nào</b>
       }else{
-        comments = comments[0].comments
+        var comments = cexercise.comments
         CommentList = comments.map(comment=>
           <Fragment key={comment._id}>
             <Row >

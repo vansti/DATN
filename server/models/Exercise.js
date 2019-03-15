@@ -27,11 +27,8 @@ const ExerciseSchema = new Schema({
   ],
   comments: [
     {
-      userName: {
-        type: String
-      },
-      userPhoto: {
-        type: String
+      user: {
+        type: mongoose.Schema.ObjectId, ref: 'users'
       },
       text: {
         type: String,

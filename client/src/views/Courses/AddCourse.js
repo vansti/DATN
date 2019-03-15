@@ -57,7 +57,7 @@ class AddCourse extends Component {
     let reader = new FileReader();
     reader.onloadend = () => {
       this.setState({
-        photo: reader.result
+        coursePhoto: reader.result
       });
     }
     reader.readAsDataURL(file)

@@ -65,9 +65,36 @@ router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req,
 // @desc    Get comments
 // @access  Private
 router.get('/get-comments/:exerciseId', passport.authenticate('jwt', { session: false }), (req, res) => {
-  Exercise.find({'_id': req.params.exerciseId},{ comments: 1 },function(err, comments){
-    res.json(comments)
-  });
+  // Exercise.find({'_id': req.params.exerciseId},{ comments: 1 },function(err, comments){
+  //   res.json(comments)
+  // });
+
+  Exercise.findById(req.params.exerciseId).then(exercise => {
+    var cexercise = {
+      comments: [],
+      _id: exercise._id
+    }
+
+    return Promise.all(exercise.comments.map(comment=>{
+      return User.findById(comment.user).then(user=>{
+        var temp_comment = {
+          _id: comment._id,
+          userName: user.name,
+          userPhoto: user.photo,
+          text: comment.text,
+          created: comment.created,
+        }
+        cexercise.comments.push(temp_comment)
+      })
+    })).then(()=>{
+      cexercise.comments.sort(function(a, b) {
+        a = new Date(a.created);
+        b = new Date(b.created);
+        return a<b ? -1 : a>b ? 1 : 0;
+      });
+      res.json(cexercise)
+    })
+  })
 });
 
 // @route   POST api/exercises/comment/:exerciseId
@@ -84,8 +111,7 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
 
   Exercise.findById(req.params.exerciseId).then(exercise=>{
     const newComment = {
-      userName: req.user.name,
-      userPhoto: req.user.photo,
+      user: req.user.id,
       text: req.body.text
     }
 

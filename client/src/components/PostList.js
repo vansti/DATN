@@ -50,7 +50,7 @@ class PostList extends Component {
     }else{
       if(exercises.length === 0)
       {
-        ExerciseCard = <h2>Hiện không có bài tập nào</h2>
+        ExerciseCard = <h4>Hiện không có bài tập nào!</h4>
       }else{
         ExerciseCard = exercises.map((exercise,index) => 
           <Card className="mb-0" key={index}>

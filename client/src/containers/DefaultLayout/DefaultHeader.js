@@ -42,13 +42,10 @@ class DefaultHeader extends Component {
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
-            <NavLink href="/">Dashboard</NavLink>
+            <Link to="/">Dashboard</Link>
           </NavItem>
           <NavItem className="px-3">
-            <Link to="/users">Users</Link>
-          </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#">Settings</NavLink>
+            <Link to="/edit-profile">Thông tin cá nhân</Link>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
@@ -66,15 +63,13 @@ class DefaultHeader extends Component {
               <img src={this.state.photo} className="img-avatar" alt="ava" />
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
-              <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
-              {/* <DropdownItem><i className="fa fa-wrench"></i> Updates<Badge color="info">42</Badge></DropdownItem> */}
+              <DropdownItem header tag="div" className="text-center"><strong>Tài khoản</strong></DropdownItem>
               <DropdownItem onClick={this.toEditProfile}><i className="fa fa-wrench"></i> Thay đổi thông tin </DropdownItem>
               <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i> Đăng Xuất</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
         <AppAsideToggler className="d-md-down-none" />
-        {/*<AppAsideToggler className="d-lg-none" mobile />*/}
       </React.Fragment>
     );
   }
