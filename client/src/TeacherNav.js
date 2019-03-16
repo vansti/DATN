@@ -20,6 +20,22 @@ export default {
           icon: 'icon-list',
         },
       ]
+    },
+    {
+      name: 'Điểm danh',
+      icon: 'fa fa-clock-o',
+      children: [
+        {
+          name: 'Điểm danh học viên',
+          url: '/check-attendance',
+          icon: 'fa fa-check',
+        },
+        {
+          name: 'Lịch sử điểm danh',
+          url: '/list-attendance',
+          icon: 'fa fa-history',
+        },
+      ]
     }
     // {
     //   title: true,
