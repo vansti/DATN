@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
 
 const AttendanceSchema = new Schema({
   courseId: {
@@ -16,7 +17,8 @@ const AttendanceSchema = new Schema({
     }
   ],
   date: {
-    type: Date
+    type: Date,
+    default: moment(new Date()).format('YYYY-MM-DD')
   }
 })
 

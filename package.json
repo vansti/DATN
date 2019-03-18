@@ -23,6 +23,7 @@
     "express": "^4.16.4",
     "is-phone": "^2.0.0",
     "jsonwebtoken": "^8.4.0",
+    "moment": "^2.24.0",
     "mongoose": "^5.4.6",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",

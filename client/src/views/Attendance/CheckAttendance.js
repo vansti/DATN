@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import {  Card, CardHeader, CardBody, Input, Table, Badge, Button } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Table, Badge, Button, ModalBody, Modal } from 'reactstrap';
 import { connect } from 'react-redux';
 import Moment from 'react-moment'; 
-import { getCurentCourse } from '../../actions/courseActions';
+import { getCurentCourse, clearSuccess } from '../../actions/courseActions';
 import { getUsers } from '../../actions/userActions';
+import { addAttendance } from '../../actions/attendanceActions';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
-
-//import ReactLoading from 'react-loading';
+import SweetAlert from 'react-bootstrap-sweetalert';
+import ReactLoading from 'react-loading';
 
 class CheckAttendance extends Component {
   constructor() {
     super();
     this.state = {
       user:[],
-      courseId: ''
+      courseId: '',
+      isShowSuccess: false,
     };
   }
  
@@ -35,6 +37,11 @@ class CheckAttendance extends Component {
       })
       this.setState({ user: nextProps.users.users.students });
     }
+
+    if (nextProps.success.data === "Điểm danh thành công") {
+      this.setState({isShowSuccess: true, isLoading: false})
+    }
+
   }
 
   onChangeSwitch(userid){
@@ -46,13 +53,16 @@ class CheckAttendance extends Component {
   }
 
   submit = () => {
+    var d = new Date();
+    d.setHours(0,0,0,0);
+
     var newAttendance = {
       courseId: this.state.courseId,
-      date: Date.now(),
+      date: d,
       students: []
     };
 
-    newAttendance.students = this.state.user.slice(0);
+    newAttendance.students = JSON.parse(JSON.stringify(this.state.user));
     newAttendance.students.map(student => {
       student.userId = student._id
       delete student._id
@@ -60,8 +70,17 @@ class CheckAttendance extends Component {
       delete student.photo
       return student
     })
-    console.log(newAttendance)
+    //console.log(newAttendance)
+    this.props.addAttendance(newAttendance);
+    this.setState({isLoading: true})
 
+  }
+
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false
+    })
+    this.props.clearSuccess()
   }
 
   render() {
@@ -136,6 +155,22 @@ class CheckAttendance extends Component {
             </Table>
           </CardBody>
         </Card>
+        <SweetAlert
+          	success
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="success"
+          	title="Điểm danh thành công!"
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}
+            onCancel={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang xử lý</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     )
   }
@@ -146,11 +181,15 @@ CheckAttendance.propTypes = {
   users: PropTypes.object.isRequired,
   getCurentCourse : PropTypes.func.isRequired,
   getUsers : PropTypes.func.isRequired,
+  addAttendance: PropTypes.func.isRequired,
+  clearSuccess: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   courses: state.courses,
-  users: state.users
+  users: state.users,
+  errors: state.errors,
+  success: state.success
 });
 
-export default connect(mapStateToProps, { getCurentCourse, getUsers })(CheckAttendance);  
+export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, clearSuccess })(CheckAttendance);  
