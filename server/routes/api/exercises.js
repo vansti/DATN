@@ -36,7 +36,8 @@ router.post(
       title: req.body.title,
       text: req.body.text,
       attachFiles: req.body.attachFiles,
-      deadline: req.body.deadline
+      deadline: req.body.deadline,
+      courseId: req.body.courseId
     });
 
     newExercise.save().then(exercise=>{
