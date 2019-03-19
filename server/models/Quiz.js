@@ -7,17 +7,17 @@ const QuizSchema = new Schema({
     required: true
   },
   courseId: {
-    type: String,
-    required: true
+    type: mongoose.Schema.ObjectId, 
+    ref: 'courses'
   },
   listQuiz: [
     {      
       question: {
         type: String
       },
-      answers: [],
-      correctAnswer: [],
-      time: Date,
+      answers: [{}],
+      correctAnswer: [{}],
+      time: {},
       questionType: {
         type: String
       }
