@@ -46,7 +46,8 @@ const ExerciseSchema = new Schema({
   created: {
     type: Date,
     default: Date.now
-  }
+  },
+  courseId:{type: mongoose.Schema.ObjectId, ref: 'courses'}
 })
 
 module.exports = Exercise = mongoose.model('exercises', ExerciseSchema)
