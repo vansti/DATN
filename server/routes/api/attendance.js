@@ -44,13 +44,12 @@ router.post(
 // @desc    add attendance
 // @access  Private
 router.post(
-  '/get-attendance',
+  '/get-attendance/:courseId',
   (req, res) => {
-    var d = new Date();
-    d.setHours(0,0,0,0);
+
     Attendance.aggregate([
       {
-        $match:{'date': d}
+        $match:{ 'courseId': req.params.courseId}
       },
       {
         $lookup:
@@ -60,8 +59,36 @@ router.post(
           foreignField : "_id",
           as: "attendance_users"
         }
-    }]).then((attendance)=>res.json(attendance))
+      }
+    ]).then((attendance)=>{
+      attendance.map(element=>{
+        element.students.map((student)=>{
+          const temp = element.attendance_users.filter(user => user._id.toString() === student.userId.toString());
+          student.name = temp[0].name
+          student.photo = temp[0].photo
+        })
+        delete element.attendance_users
+      })
+      res.json(attendance)
+    })
 
+  }
+);
+
+// @route   POST api/attendance/edit-attendance
+// @desc    edit attendance
+// @access  Private
+router.post(
+  '/edit-attendance',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Attendance.updateOne(
+      { "_id" : req.body._id},
+      { $set: { "students" :  req.body.students} }
+    )    
+    .then(attendance => {
+      res.json(attendance)
+    })
   }
 );
 

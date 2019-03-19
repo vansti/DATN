@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_USERS } from './types';
+import { GET_USERS, CLEAR_USER } from './types';
 
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
@@ -20,3 +20,9 @@ export const getUsers = (courseid) => dispatch => {
     );
 };
 
+// Clear a list of users
+export const clearUsers = () => {
+  return {
+    type: CLEAR_USER
+  };
+};

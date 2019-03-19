@@ -8,3 +8,7 @@ export const GET_CURRENT_COURSES = 'GET_CURRENT_COURSES';
 export const GET_USERS = 'GET_USERS';
 export const GET_EXERCISE_LIST = 'GET_EXERCISE_LIST';
 export const GET_COMMENT = 'GET_COMMENT';
+export const GET_ATTENDANCE = 'GET_ATTENDANCE';
+export const CLEAR_ATTENDANCE = 'CLEAR_ATTENDANCE';
+export const CLEAR_USER = 'CLEAR_USER';
+

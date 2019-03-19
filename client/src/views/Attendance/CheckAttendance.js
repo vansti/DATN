@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import {  Card, CardHeader, CardBody, Input, Table, Badge, Button, ModalBody, Modal } from 'reactstrap';
+import React, { Component, Fragment } from 'react';
+import {  Card, CardHeader, CardBody, Input, Table, Button, ModalBody, Modal, Badge } from 'reactstrap';
 import { connect } from 'react-redux';
 import Moment from 'react-moment'; 
 import { getCurentCourse, clearSuccess } from '../../actions/courseActions';
-import { getUsers } from '../../actions/userActions';
-import { addAttendance } from '../../actions/attendanceActions';
+import { getUsers, clearUsers } from '../../actions/userActions';
+import { addAttendance, getAttendance, editAttendance, clearAttendance } from '../../actions/attendanceActions';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
@@ -16,6 +16,8 @@ class CheckAttendance extends Component {
     super();
     this.state = {
       user:[],
+      userAttendance:[],
+      attendanceId:'',
       courseId: '',
       isShowSuccess: false,
     };
@@ -23,10 +25,17 @@ class CheckAttendance extends Component {
  
   componentDidMount = () => {
     this.props.getCurentCourse();
+    this.props.clearAttendance();
+    this.props.clearUsers();
   }
 
   onChangeSelectCourse = e => {
-    this.props.getUsers(e.target.value);
+    if(e.target.value !== '0')
+    {
+      this.props.getAttendance(e.target.value);
+      this.props.getUsers(e.target.value);
+    }
+    
     this.setState({ courseId: e.target.value });
   }
 
@@ -36,6 +45,20 @@ class CheckAttendance extends Component {
         return user.isPresent = true;
       })
       this.setState({ user: nextProps.users.users.students });
+    }
+
+    if (!isEmptyObj(nextProps.attendance.attendance)) {
+      var d = new Date();
+      d.setHours(0,0,0,0);
+      nextProps.attendance.attendance.forEach(element => {
+        if(new Date(element.date).getTime() === d.getTime())
+        {
+          this.setState({
+            userAttendance: element.students,
+            attendanceId: element._id
+          })
+        }
+      })
     }
 
     if (nextProps.success.data === "Điểm danh thành công") {
@@ -51,6 +74,15 @@ class CheckAttendance extends Component {
       return user;
     })
   }
+
+  onChangeSwitch2(userid){
+    this.state.userAttendance.map(user => {
+      if(user.userId.toString() === userid.toString())
+        return user.isPresent = !user.isPresent;
+      return user;
+    })
+  }
+
 
   submit = () => {
     var d = new Date();
@@ -70,8 +102,19 @@ class CheckAttendance extends Component {
       delete student.photo
       return student
     })
-    //console.log(newAttendance)
+ 
     this.props.addAttendance(newAttendance);
+    this.setState({isLoading: true})
+
+  }
+
+  submit2 = () => {
+    var editAttendance = {
+      _id: this.state.attendanceId,
+      students: this.state.userAttendance
+    };
+ 
+    this.props.editAttendance(editAttendance);
     this.setState({isLoading: true})
 
   }
@@ -81,63 +124,77 @@ class CheckAttendance extends Component {
       isShowSuccess: false
     })
     this.props.clearSuccess()
+    this.props.getAttendance(this.state.courseId);
   }
 
   render() {
-    
-    var SelectCourse = '';
-    if(this.props.courses.currentcourses === null)
-    {
-      SelectCourse = null;
-    }
-    else{
-      SelectCourse = this.props.courses.currentcourses.map(course=>
-                      <option key={course._id} value={course._id}>{course.title}</option>
-                    )
+    const {currentcourses} = this.props.courses;
+    const {users} = this.props.users;
+
+    var SelectCourse = 
+                <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
+                  <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
+                </div>
+
+    if(!isEmptyObj(currentcourses)){
+      SelectCourse = 
+              <div className="card-header-actions" style={{marginRight:10}}>
+                <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+                  <option value="0">Hãy chọn khóa học</option>
+                    { 
+                      currentcourses.map(course=>
+                        <option key={course._id} value={course._id}>{course.title}</option>
+                      )
+                    }
+                </Input>
+              </div>
     }
 
-    var StudentList = '';
-    if(isEmptyObj(this.props.users.users))
-    {
-      StudentList = <tr><td></td><td>Chọn khóa học và ngày điểm danh</td></tr>
-    }
-    else{
-      if(this.props.users.users.students.length === 0)
+    var StudentList = <h2>Hãy chọn khóa học</h2>;
+    if(!isEmptyObj(users) && isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
+      if(users.students.length === 0)
       {
-        StudentList = <tr><td></td><td>Chưa có học viên ghi danh</td></tr>
+        StudentList = <h2>Chưa có học viên ghi danh</h2>
       }
       else{
-        StudentList = this.props.users.users.students.map((user, index) =>
-        <tr key={user._id}>
-          <th>                      
-            <div className="avatar">
-              <img src={user.photo} className="img-avatar" alt="" />
-            </div>
-          </th>
-          <td>{user.name}</td>
-          
-          <td><Badge className="mr-1" color="dark" pill>Chưa điểm danh</Badge></td>
-          
-          <td><AppSwitch onChange={this.onChangeSwitch.bind(this, user._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
-        </tr>
-        )
+        StudentList = 
+          <Fragment>
+            <Button color="danger" onClick={this.submit}> Lưu điểm danh </Button>
+            <br/>
+            <br/>
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>Hình</th>
+                  <th>Họ Tên</th>
+                  <th>Điểm danh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  users.students.map((user, index) =>
+                  <tr key={user._id}>
+                    <th>                      
+                      <div className="avatar">
+                        <img src={user.photo} className="img-avatar" alt="" />
+                      </div>
+                    </th>
+                    <td>{user.name}</td>
+                    
+                    <td><AppSwitch onChange={this.onChangeSwitch.bind(this, user._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
+                  </tr>
+                  )
+                }
+              </tbody>
+            </Table>
+          </Fragment>
       }
     }
 
-    return (
-      <div className="animated fadeIn">
-        <Card>
-          <CardHeader>
-            <strong>Điểm danh ngày <Moment format="DD/MM/YYYY"></Moment></strong>
-            <div className="card-header-actions">
-              <Input type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                <option value="0">Hãy chọn khóa học</option>
-                {SelectCourse}
-              </Input>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <Button color="danger" onClick={this.submit}> Lưu điểm danh <i className="fa fa-save"></i></Button>
+    if(!isEmptyObj(users) && !isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
+        StudentList = 
+          <Fragment>
+            <Button color="danger" onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
             <br/>
             <br/>
             <Table responsive>
@@ -150,9 +207,38 @@ class CheckAttendance extends Component {
                 </tr>
               </thead>
               <tbody>
-                {StudentList}
+                {
+                  this.state.userAttendance.map((user, index) =>
+                  <tr key={user._id}>
+                    <th>                      
+                      <div className="avatar">
+                        <img src={user.photo} className="img-avatar" alt="" />
+                      </div>
+                    </th>
+                    <td>{user.name}</td>
+                    <td>{user.isPresent === true
+                        ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
+                        :<Badge className="mr-1" color="danger" pill>Vắng</Badge>
+                        }
+                    </td>
+                    <td><AppSwitch onChange={this.onChangeSwitch2.bind(this, user.userId)} className={'mx-1'} variant={'pill'} color={'success'} checked={user.isPresent} label dataOn={'Có'} dataOff={'Ko'} /></td>
+                  </tr>
+                  )
+                }
               </tbody>
             </Table>
+          </Fragment>
+    }
+    
+    return (
+      <div className="animated fadeIn">
+        <Card>
+          <CardHeader>
+            <strong>Điểm danh ngày <Moment format="DD/MM/YYYY"></Moment></strong>
+            {SelectCourse}
+          </CardHeader>
+          <CardBody>
+            {StudentList}
           </CardBody>
         </Card>
         <SweetAlert
@@ -181,15 +267,21 @@ CheckAttendance.propTypes = {
   users: PropTypes.object.isRequired,
   getCurentCourse : PropTypes.func.isRequired,
   getUsers : PropTypes.func.isRequired,
+  getAttendance: PropTypes.func.isRequired,
   addAttendance: PropTypes.func.isRequired,
-  clearSuccess: PropTypes.func.isRequired
+  clearSuccess: PropTypes.func.isRequired,
+  attendance : PropTypes.object.isRequired,
+  editAttendance: PropTypes.func.isRequired,
+  clearAttendance: PropTypes.func.isRequired,
+  clearUsers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   courses: state.courses,
   users: state.users,
   errors: state.errors,
-  success: state.success
+  success: state.success,
+  attendance: state.attendance
 });
 
-export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, clearSuccess })(CheckAttendance);  
+export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, getAttendance, clearSuccess, editAttendance, clearAttendance, clearUsers })(CheckAttendance);  
