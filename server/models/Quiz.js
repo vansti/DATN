@@ -1,29 +1,37 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-require('dotenv').config();
 
-//Create Schema
 const QuizSchema = new Schema({
-  question: {
-    type: String,
-    required: true
-  },
-  answer: {
-    type: Array,
-    required: true
-  },
-  course_id: {
-    type: String,
-    required: true
-  },
   title: {
     type: String,
     required: true
   },
-  deadline: {
+  courseId: {
+    type: mongoose.Schema.ObjectId, 
+    ref: 'courses'
+  },
+  listQuiz: [
+    {      
+      question: {
+        type: String
+      },
+      answers: [{}],
+      correctAnswer: [{}],
+      time: {},
+      questionType: {
+        type: String
+      }
+    }
+  ],
+  deadline:{
     type: Date,
     required: true
   },
-});
+  created: {
+    type: Date,
+    default: Date.now
+  }
+})
 
 module.exports = Quiz = mongoose.model('quiz', QuizSchema)
+
