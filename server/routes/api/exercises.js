@@ -19,7 +19,11 @@ const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
 router.use(cors());
 
-router.use(fileUpload());
+router.use(fileUpload({
+  limit:{
+    fileSize: 5 * 1024 * 1024
+  }
+}));
 
 
 // @route   POST api/exercise/add-exercise
@@ -131,24 +135,36 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
 // @access  Private
 router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
 
-  let errors = {};
-
   if (Object.keys(req.files).length == 0) {
     return res.send('No files were uploaded.');
   }
-
+  
   let uploadedFile = req.files.file;
+  
+  // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
+  //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
+  //   return res.send('.txt/.pdf/.docx/.doc extension only');
+  // }
 
-  Exercise.findById(req.params.exerciseId).then(exercise=>{
-    const newComment = {
-      user: req.user.id,
-      text: req.body.text
-    }
+  if(uploadedFile.size > 5 * 1024 * 1024){
+    return res.send('File is too large!');
+  }
 
-    exercise.comments.push(newComment);
-    exercise.save().then(exercise => res.json(exercise));
-  })
-  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+  //Path /file_upload/:userId/:exerciseId
+  uploadedFile.mv('/file_upload/' + req.user.Id + '/' + req.params.exerciseId, function(err) {
+    if (err)
+      return res.status(500).send(err);
+
+    res.send('File uploaded!');
+  });
+});
+
+// @route   POST api/exercises/:exerciseId/download
+// @desc    download a submission to exercise
+// @access  Private
+router.post('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  
 });
 
 module.exports = router;
