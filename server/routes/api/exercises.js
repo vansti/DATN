@@ -5,6 +5,8 @@ const passport = require('passport');
 require('dotenv').config()
 const Validator = require('validator');
 
+const fileUpload = require('express-fileupload');
+
 
 
 // Load Input Validation
@@ -16,6 +18,8 @@ const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
 router.use(cors());
+
+router.use(fileUpload());
 
 
 // @route   POST api/exercise/add-exercise
@@ -108,6 +112,31 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
     errors.text = 'Hãy nhập bình luận';
     return res.status(400).json(errors);
   }
+
+  Exercise.findById(req.params.exerciseId).then(exercise=>{
+    const newComment = {
+      user: req.user.id,
+      text: req.body.text
+    }
+
+    exercise.comments.push(newComment);
+    exercise.save().then(exercise => res.json(exercise));
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+});
+
+// @route   POST api/exercises/:exerciseId/submit
+// @desc    submit a exercise
+// @access  Private
+router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  let errors = {};
+
+  if (Object.keys(req.files).length == 0) {
+    return res.send('No files were uploaded.');
+  }
+
+  let uploadedFile = req.files.file;
 
   Exercise.findById(req.params.exerciseId).then(exercise=>{
     const newComment = {
