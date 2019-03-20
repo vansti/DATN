@@ -6,7 +6,7 @@ require('dotenv').config()
 const Validator = require('validator');
 
 const fileUpload = require('express-fileupload');
-
+const fs = require('fs');
 
 
 // Load Input Validation
@@ -163,8 +163,14 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
 // @desc    download a submission to exercise
 // @access  Private
 router.post('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
-
-  
+  let file = fs.readdirSync('./file_upload')[0];
+  //Path /file_upload/:userId/exerciseId/file
+  res.download(__dirname + './file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file, 
+    (err)=>{
+      if(err){
+        res.send("Can't download file");
+      }
+  });
 });
 
 module.exports = router;
