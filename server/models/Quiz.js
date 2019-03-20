@@ -6,6 +6,10 @@ const QuizSchema = new Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String,
+    required: true
+  },
   courseId: {
     type: mongoose.Schema.ObjectId, 
     ref: 'courses'
@@ -17,12 +21,15 @@ const QuizSchema = new Schema({
       },
       answers: [{}],
       correctAnswer: [{}],
-      time: {},
       questionType: {
         type: String
       }
     }
   ],
+  time: {
+    type: Date,
+    required: true
+  },
   deadline:{
     type: Date,
     required: true

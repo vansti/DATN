@@ -22,6 +22,22 @@ export default {
       ]
     },
     {
+      name: 'Example',
+      icon: 'fa fa-question-circle',
+      children: [
+        {
+          name: 'Demo react form',
+          url: '/example/react-form',
+          icon: 'icon-plus',
+        },
+        {
+          name: 'Danh sách quiz',
+          url: '/quiz',
+          icon: 'icon-list',
+        }
+      ]
+    },
+    {
       name: 'Quiz',
       icon: 'fa fa-question-circle',
       children: [

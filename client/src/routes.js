@@ -43,6 +43,7 @@ const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
 const AddQuiz = React.lazy(() => import('./views/Quiz/AddQuiz/AddQuiz'));
 const QuizList = React.lazy(() => import('./views/Quiz/QuizList/QuizList'));
 const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail'));
+const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -94,6 +95,7 @@ const routes = [
   { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
   { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },
   { path: '/quiz/:id', exact: true, name: 'Nội dung khóa học', component: QuizDetail },
+  { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
 ];
 
 export default routes;
