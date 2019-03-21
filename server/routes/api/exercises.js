@@ -17,6 +17,8 @@ const validateAddExerciseInput = require('../../validation/addexercise');
 const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
+const SubExercise = require('../../models/SubExercise');
+
 router.use(cors());
 
 router.use(fileUpload({
@@ -154,8 +156,24 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
   uploadedFile.mv('/file_upload/' + req.user.Id + '/' + req.params.exerciseId, function(err) {
     if (err)
       return res.status(500).send(err);
+  });
+  const submission = {
+      attachFiles:{
+        name: uploadedFile.name,
+        url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId,
+      }
+    }
 
-    res.send('File uploaded!');
+  SubExercise.findByIdAndUpdate(
+    //condition query
+    {exerciseId: req.params.exerciseId},
+    //new Data
+    {
+      user: req.user.id,
+      "$push": {attachFiles: submission}
+    }, (err)=>{
+    if(err) return res.status(500).send(err);
+    console.log('The raw response from Mongo was ', raw);
   });
 });
 

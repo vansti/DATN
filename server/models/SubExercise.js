@@ -7,7 +7,7 @@ const SubExerciseSchema = new Schema({
   studenExercise:[
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
-      attachFiles: [
+      attachFiles: 
         {      
           id: {
               type: String
@@ -21,13 +21,16 @@ const SubExerciseSchema = new Schema({
           thumbnail: {
             type: String
           }
-        }
-      ],
+        },
       note:{
         type: String,
       },
       point:{ 
         type: Double,
+      },
+      created: {
+        type: Date,
+        default: Date.now
       },
     }
   ],
