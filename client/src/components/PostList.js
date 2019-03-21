@@ -1,5 +1,5 @@
 import React, { Component,Fragment } from 'react';
-import {  Card, CardHeader, CardBody, Button, Collapse,ListGroupItem,Row,Col,CardFooter } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Button, Collapse,ListGroupItem,Row,Col,CardFooter, Form, Input, Label } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getExerciseList } from '../actions/exerciseActions';
 import { withRouter } from 'react-router-dom';
@@ -93,6 +93,11 @@ class PostList extends Component {
                 }
               </CardBody>
               <CardFooter>
+              <Form action={"/api/exercises/" + exercise._id + "/submit"} method="post">
+                <Label>Nộp bài</Label>
+                <Input type="file" id="file" name="file" />
+                <Input type="submit" id="submit" value="Nộp" />
+              </Form>
                 <PostComments exercise={exercise}/>
               </CardFooter>
 

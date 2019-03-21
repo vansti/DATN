@@ -135,46 +135,46 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
 // @route   POST api/exercises/:exerciseId/submit
 // @desc    submit a exercise
 // @access  Private
-router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/:exerciseId/submit', (req, res) => {
+  console.log("abc");
+  // if (Object.keys(req.files).length == 0) {
+  //   return res.send('No files were uploaded.');
+  // }
+  
+  // let uploadedFile = req.files.file;
+  
+  // // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
+  // //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
+  // //   return res.send('.txt/.pdf/.docx/.doc extension only');
+  // // }
 
-  if (Object.keys(req.files).length == 0) {
-    return res.send('No files were uploaded.');
-  }
-  
-  let uploadedFile = req.files.file;
-  
-  // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
-  //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
-  //   return res.send('.txt/.pdf/.docx/.doc extension only');
+  // if(uploadedFile.size > 5 * 1024 * 1024){
+  //   return res.send('File is too large!');
   // }
 
-  if(uploadedFile.size > 5 * 1024 * 1024){
-    return res.send('File is too large!');
-  }
+  // //Path /file_upload/:userId/:exerciseId
+  // uploadedFile.mv('/file_upload/' + req.user.Id + '/' + req.params.exerciseId, function(err) {
+  //   if (err)
+  //     return res.status(500).send(err);
+  // });
+  // const submission = {
+  //     attachFiles:{
+  //       name: uploadedFile.name,
+  //       url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId,
+  //     }
+  //   }
 
-  //Path /file_upload/:userId/:exerciseId
-  uploadedFile.mv('/file_upload/' + req.user.Id + '/' + req.params.exerciseId, function(err) {
-    if (err)
-      return res.status(500).send(err);
-  });
-  const submission = {
-      attachFiles:{
-        name: uploadedFile.name,
-        url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId,
-      }
-    }
-
-  SubExercise.findByIdAndUpdate(
-    //condition query
-    {exerciseId: req.params.exerciseId},
-    //new Data
-    {
-      user: req.user.id,
-      "$push": {attachFiles: submission}
-    }, (err)=>{
-    if(err) return res.status(500).send(err);
-    console.log('The raw response from Mongo was ', raw);
-  });
+  // SubExercise.findByIdAndUpdate(
+  //   //condition query
+  //   {exerciseId: req.params.exerciseId},
+  //   //new Data
+  //   {
+  //     user: req.user.id,
+  //     "$push": {attachFiles: submission}
+  //   }, (err)=>{
+  //   if(err) return res.status(500).send(err);
+  //   console.log('The raw response from Mongo was ', raw);
+  // });
 });
 
 // @route   POST api/exercises/:exerciseId/download
