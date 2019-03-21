@@ -21,11 +21,7 @@ const SubExercise = require('../../models/SubExercise');
 
 router.use(cors());
 
-router.use(fileUpload({
-  limit:{
-    fileSize: 5 * 1024 * 1024
-  }
-}));
+router.use(fileUpload());
 
 
 // @route   POST api/exercise/add-exercise
@@ -135,32 +131,32 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
 // @route   POST api/exercises/:exerciseId/submit
 // @desc    submit a exercise
 // @access  Private
-router.post('/:exerciseId/submit', (req, res) => {
-  console.log("abc");
-  // if (Object.keys(req.files).length == 0) {
-  //   return res.send('No files were uploaded.');
-  // }
+router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
   
-  // let uploadedFile = req.files.file;
-  
-  // // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
-  // //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
-  // //   return res.send('.txt/.pdf/.docx/.doc extension only');
-  // // }
-
-  // if(uploadedFile.size > 5 * 1024 * 1024){
-  //   return res.send('File is too large!');
+  let uploadedFile = req.files.file;
+  // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
+  //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
+  //   return res.send('.txt/.pdf/.docx/.doc extension only');
   // }
 
-  // //Path /file_upload/:userId/:exerciseId
-  // uploadedFile.mv('/file_upload/' + req.user.Id + '/' + req.params.exerciseId, function(err) {
-  //   if (err)
-  //     return res.status(500).send(err);
-  // });
+  if(uploadedFile.size > 5 * 1024 * 1024){
+    return res.send('File is too large!');
+  }
+
+  var dir = './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/'; 
+  
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, {recursive: true}, err=>{});
+  }
+  //Path /file_upload/:userId/:exerciseId
+  uploadedFile.mv('./file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name, function(err) {
+    if (err)
+      return res.status(500).send(err);
+  });
   // const submission = {
   //     attachFiles:{
   //       name: uploadedFile.name,
-  //       url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId,
+  //       url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId + uploadedFile.name,
   //     }
   //   }
 
@@ -172,6 +168,7 @@ router.post('/:exerciseId/submit', (req, res) => {
   //     user: req.user.id,
   //     "$push": {attachFiles: submission}
   //   }, (err)=>{
+  //     console.log(err);
   //   if(err) return res.status(500).send(err);
   //   console.log('The raw response from Mongo was ', raw);
   // });

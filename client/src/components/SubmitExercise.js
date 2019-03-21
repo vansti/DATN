@@ -1,9 +1,11 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Col, FormGroup, Label } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
+import { addSubmission } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { withRouter } from 'react-router-dom';
 
 class SubmitExercise extends Component {
   constructor(props) {
@@ -27,9 +29,6 @@ class SubmitExercise extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isEmptyObj(nextProps.errors)) {
-      this.setState({ errors: nextProps.errors, isLoading: false});
-    }
 
     this.setState({ errors: nextProps.errors});
 
@@ -60,11 +59,14 @@ class SubmitExercise extends Component {
     })
   }
 
-  onsubmit = () => {
-    console.log(this.props.exerciseId);
-    console.log(this.state.attachFile);
-    console.log(this.state.studentNote);
-
+  onsubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      file: this.state.attachFile,
+      note: this.props.studentNote,
+    }
+    console.log(data);
+    this.props.addSubmission(data, this.props.exerciseId);
     // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
   }
 
@@ -126,6 +128,7 @@ class SubmitExercise extends Component {
 }
 
 SubmitExercise.propTypes = {
+  addSubmission: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   success: PropTypes.object.isRequired
 };
@@ -135,4 +138,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default connect(mapStateToProps, {  })(SubmitExercise);  
+export default withRouter(connect(mapStateToProps, { addSubmission })(SubmitExercise)); 
