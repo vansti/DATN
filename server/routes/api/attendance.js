@@ -3,12 +3,9 @@ const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
 require('dotenv').config()
-const Validator = require('validator');
 
 
 
-// Load Input Validation
-const validateAddCourseInput = require('../../validation/addcourse');
 
 
 // Course Model

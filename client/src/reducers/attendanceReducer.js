@@ -13,7 +13,9 @@ export default function(state = initialState, action) {
         attendance: action.payload,
       };
     case CLEAR_ATTENDANCE:
-      return {};
+      return {
+        attendance: null
+      };
     default:
       return state;
   }

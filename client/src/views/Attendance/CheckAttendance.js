@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {  Card, CardHeader, CardBody, Input, Table, Button, ModalBody, Modal, Badge } from 'reactstrap';
 import { connect } from 'react-redux';
 import Moment from 'react-moment'; 
@@ -36,7 +36,11 @@ class CheckAttendance extends Component {
       this.props.getUsers(e.target.value);
     }
     
-    this.setState({ courseId: e.target.value });
+    this.setState({ 
+      courseId: e.target.value, 
+      user:[],
+      userAttendance:[]
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,10 +52,12 @@ class CheckAttendance extends Component {
     }
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var d = new Date();
-      d.setHours(0,0,0,0);
+      var today = new Date();
+
       nextProps.attendance.attendance.forEach(element => {
-        if(new Date(element.date).getTime() === d.getTime())
+        if(new Date(element.date).getFullYear() === today.getFullYear()
+        && new Date(element.date).getMonth() === today.getMonth()
+        && new Date(element.date).getDate() === today.getDate())
         {
           this.setState({
             userAttendance: element.students,
@@ -85,12 +91,11 @@ class CheckAttendance extends Component {
 
 
   submit = () => {
-    var d = new Date();
-    d.setHours(0,0,0,0);
+    var today = new Date();
 
     var newAttendance = {
       courseId: this.state.courseId,
-      date: d,
+      date: today,
       students: []
     };
 
@@ -130,7 +135,7 @@ class CheckAttendance extends Component {
   render() {
     const {currentcourses} = this.props.courses;
     const {users} = this.props.users;
-
+    
     var SelectCourse = 
                 <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
                   <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
@@ -152,21 +157,24 @@ class CheckAttendance extends Component {
 
     var StudentList = <h2>Hãy chọn khóa học</h2>;
     if(!isEmptyObj(users) && isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
+      
       if(users.students.length === 0)
       {
         StudentList = <h2>Chưa có học viên ghi danh</h2>
       }
       else{
         StudentList = 
-          <Fragment>
+          <div className="animated fadeIn">
             <Button color="danger" onClick={this.submit}> Lưu điểm danh </Button>
             <br/>
             <br/>
-            <Table responsive>
+            <Table hover bordered striped responsive size="sm">
               <thead>
                 <tr>
-                  <th>Hình</th>
-                  <th>Họ Tên</th>
+                  <th>Hình đại diện</th>
+                  <th>Mã số</th>
+                  <th>Họ và Tên</th>
+                  <th>Trạng thái</th>
                   <th>Điểm danh</th>
                 </tr>
               </thead>
@@ -179,29 +187,31 @@ class CheckAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
+                    <td>{user._id}</td>
                     <td>{user.name}</td>
-                    
+                    <td> <Badge className="mr-1" color="dark" pill>Chưa điểm danh</Badge> </td>
                     <td><AppSwitch onChange={this.onChangeSwitch.bind(this, user._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
                   </tr>
                   )
                 }
               </tbody>
             </Table>
-          </Fragment>
+          </div>
       }
     }
 
     if(!isEmptyObj(users) && !isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
         StudentList = 
-          <Fragment>
+          <div className="animated fadeIn">
             <Button color="danger" onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
             <br/>
             <br/>
-            <Table responsive>
+            <Table hover bordered striped responsive size="sm">
               <thead>
                 <tr>
-                  <th>Hình</th>
-                  <th>Họ Tên</th>
+                  <th>Hình đại diện</th>
+                  <th>Mã số</th>
+                  <th>Họ và Tên</th>
                   <th>Trạng thái</th>
                   <th>Điểm danh</th>
                 </tr>
@@ -215,6 +225,7 @@ class CheckAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
+                    <td>{user._id}</td>
                     <td>{user.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
@@ -227,7 +238,7 @@ class CheckAttendance extends Component {
                 }
               </tbody>
             </Table>
-          </Fragment>
+          </div>
     }
     
     return (

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Badge, Table } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Badge, Table, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getCurentCourse } from '../../actions/courseActions';
 import { getAttendance, clearAttendance} from '../../actions/attendanceActions';
@@ -14,6 +14,7 @@ class ListAttendance extends Component {
     super();
     this.state = {
       users:[],
+      intialUsers: [],
       courseId: '',
       isLoading: false,
       startDate: null,
@@ -55,35 +56,64 @@ class ListAttendance extends Component {
     this.props.clearAttendance();
   }
   
+
   submit=()=>{
-    this.setState({
-      users: []
-    })
-    var userList = [];
-    this.props.attendance.attendance.forEach(element => {
-      if(this.state.startDate.getTime() === new Date(element.date).getTime())
-        userList = element.students
-    })
-    this.setState({
-      users: userList
-    })
+    if(this.state.startDate !== null)
+    {
+      this.setState({
+        users: []
+      })
+      var userList = [];
+      this.props.attendance.attendance.forEach(element => {
+        if(this.state.startDate.getFullYear() === new Date(element.date).getFullYear()
+          && this.state.startDate.getMonth() === new Date(element.date).getMonth()
+          && this.state.startDate.getDate() === new Date(element.date).getDate())
+          userList = element.students
+      })
+      this.setState({
+        users: userList,
+        intialUsers: userList
+      })
+    }
+  }
+
+  onchange = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialUsers));
+    updatedList = updatedList.filter((user)=>
+      user.userId.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      user.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
+    this.setState({users: updatedList});
   }
 
   render() {
-    var SelectCourse = '';
-    if(this.props.courses.currentcourses === null)
+    const {currentcourses} = this.props.courses;
+    const {attendance} = this.props.attendance;
+
+    var SelectCourse =                 
+              <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
+                <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
+              </div>
+
+    if(!isEmptyObj(currentcourses))
     {
-      SelectCourse = null;
-    }
-    else{
-      SelectCourse = this.props.courses.currentcourses.map(course=>
+      SelectCourse = 
+              <div className="card-header-actions">
+                <Input type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+                  <option value = '0'>Hãy chọn khóa học</option>
+                  {
+                    this.props.courses.currentcourses.map(course=>
                       <option key={course._id} value={course._id}>{course.title}</option>
                     )
+                  }
+                </Input>
+              </div>
     }
+
     var SelectDate = <div></div>;
     
 
-    if(!isEmptyObj(this.props.attendance.attendance) && this.state.courseId !== 0)
+    if(!isEmptyObj(attendance) && this.state.courseId !== '0')
     {
       SelectDate = 
           <div className="animated fadeIn">
@@ -111,61 +141,74 @@ class ListAttendance extends Component {
       SelectDate = <div></div>;
     }
     
-    var StudentList = '';
-    if(isEmptyObj(this.state.users))
+    var StudentList = <div className="animated fadeIn"><h4>Hãy chọn khóa học và ngày điểm danh</h4></div>;
+
+    if(!isEmptyObj(this.state.intialUsers) && isEmptyObj(this.state.users) && this.state.courseId !== '0')
     {
-      StudentList = <tr><td></td><td>Chọn khóa học và ngày điểm danh</td></tr>
+      StudentList = <div className="animated fadeIn">
+                      <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Mã số hoặc Họ Tên ..."  />
+                      <br/>
+                      <h4>Không tìm thấy kết quả</h4>
+                    </div>
     }
-    else{
-      if(this.state.users.length === 0)
-      {
-        StudentList = <tr><td></td><td>Chưa có học viên ghi danh</td></tr>
-      }
-      else{
-        StudentList = this.state.users.map((user, index) =>
-        <tr key={user._id}>
-          <th>                      
-            <div className="avatar">
-              <img src={user.photo} className="img-avatar" alt="" />
-            </div>
-          </th>
-          <td>{user.name}</td>
-          <td>{user.isPresent === true
-              ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
-              :<Badge className="mr-1" color="danger" pill>Vắng</Badge>
+
+    if(!isEmptyObj(this.state.users) && this.state.courseId !== '0' )
+    {
+      StudentList = 
+        <div className="animated fadeIn">
+          <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Mã số hoặc Họ Tên ..."  />
+          <br/>
+          <Table hover bordered striped responsive size="sm">
+            <thead>
+              <tr>
+                <th>Hình đại diện</th>
+                <th>Mã số</th>
+                <th>Họ và Tên</th>
+                <th>Trạng thái điểm danh</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                this.state.users.map((user, index) =>
+                  <tr key={user._id}>
+                    <th>                      
+                      <div className="avatar">
+                        <img src={user.photo} className="img-avatar" alt="" />
+                      </div>
+                    </th>
+                    <td>{user.userId}</td> 
+                    <td>{user.name}</td>
+                    <td>{user.isPresent === true
+                        ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
+                        :<Badge className="mr-1" color="danger" pill>Vắng</Badge>
+                        }
+                    </td>
+                  </tr>
+                )
               }
-          </td>
-        </tr>
-        )
-      }
+            </tbody>
+          </Table>
+        </div>
     }
+
 
     return (
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            {SelectDate}
-            <div className="card-header-actions">
-              <Input type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                <option value = '0'>Hãy chọn khóa học</option>
+            <Row >
+              <Col sm="3">
+                <strong>Xem lịch sử điểm danh</strong>
+              </Col>
+              <Col>
+                {SelectDate}
                 {SelectCourse}
-              </Input>
-            </div>
-
+              </Col>
+            </Row>
           </CardHeader>
           <CardBody>
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>Hình</th>
-                  <th>Họ Tên</th>
-                  <th>Trạng thái điểm danh</th>
-                </tr>
-              </thead>
-              <tbody>
-                {StudentList}
-              </tbody>
-            </Table>
+
+            {StudentList}
           </CardBody>
         </Card>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
