@@ -8,6 +8,7 @@ import isEmptyObj from '../validation/is-empty';
 import ReactLoading from 'react-loading';
 import Moment from 'react-moment'; 
 import PostComments from './PostComments';
+import SubmitExercise from './SubmitExercise';
 
 class PostList extends Component {
   constructor(props) {
@@ -91,6 +92,8 @@ class PostList extends Component {
                     </ListGroupItem>
                   )
                 }
+                <br/>
+                <SubmitExercise exerciseId={exercise._id}/>
               </CardBody>
               <CardFooter>
               <Form action={"/api/exercises/" + exercise._id + "/submit"} method="post">
