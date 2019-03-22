@@ -153,25 +153,49 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     if (err)
       return res.status(500).send(err);
   });
-  // const submission = {
-  //     attachFiles:{
-  //       name: uploadedFile.name,
-  //       url: '/file_upload/' + req.user.Id + '/' + req.params.exerciseId + uploadedFile.name,
-  //     }
-  //   }
-
-  // SubExercise.findByIdAndUpdate(
-  //   //condition query
-  //   {exerciseId: req.params.exerciseId},
-  //   //new Data
-  //   {
-  //     user: req.user.id,
-  //     "$push": {attachFiles: submission}
-  //   }, (err)=>{
-  //     console.log(err);
-  //   if(err) return res.status(500).send(err);
-  //   console.log('The raw response from Mongo was ', raw);
-  // });
+  const submission = {
+        name: uploadedFile.name,
+        url: './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name,
+    }
+  SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
+    if(data != null){
+      console.log(data.studentExercise[0].userId);
+      console.log(req.user._id);
+      console.log(data.studentExercise[0].userId == req.user._id );
+      // console.log(req.user._id);
+      // console.log(data.studenExercise);
+      // console.log(data.studentExercise.find(submission => submission.userId === req.user._id));
+      // if(!data.studenExercise.find(submission => submission.userId === req.user._id)){
+      //   SubExercise.updateOne({
+      //     exerciseId: req.params.exerciseId
+      //   },{
+      //     $push: { 
+      //       studenExercise: {
+      //         userId: req.user._id,
+      //         attachFile: submission,
+      //     }} 
+      //   }).then(()=>{
+      //     res.json("Đã nộp");
+      //   });
+      // }else{
+      //   res.json("Đã có bài tập, hãy xóa bài cũ");
+      // }
+      
+    }else{
+      const subExercise = new SubExercise({
+        exerciseId: req.params.exerciseId,
+        studenExercise:[
+          {
+            userId: req.user._id,
+            attachFile:submission
+          }
+        ]
+      });
+      subExercise.save().then(()=>{
+        res.json("Đã nộp");
+      })
+    }
+  })
 });
 
 // @route   POST api/exercises/:exerciseId/download

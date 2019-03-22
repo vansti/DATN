@@ -65,7 +65,6 @@ class SubmitExercise extends Component {
       file: this.state.attachFile,
       note: this.props.studentNote,
     }
-    console.log(data);
     this.props.addSubmission(data, this.props.exerciseId);
     // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
   }

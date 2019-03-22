@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 //Create schema
 const SubExerciseSchema = new Schema({
   exerciseId:{type: mongoose.Schema.ObjectId, ref: 'exercises'},
-  studenExercise:[
+  studentExercise:[
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
       attachFile: 
@@ -19,9 +19,6 @@ const SubExerciseSchema = new Schema({
             type: String
           }
         },
-      note:{
-        type: String,
-      },
       point:{ 
         type: Number,
       },
@@ -31,9 +28,6 @@ const SubExerciseSchema = new Schema({
       },
     }
   ],
-  date: {
-    type: Date
-  },
   isLate:{
     type: Boolean
   }
