@@ -159,27 +159,21 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     }
   SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
     if(data != null){
-      console.log(data.studentExercise[0].userId);
-      console.log(req.user._id);
-      console.log(data.studentExercise[0].userId == req.user._id );
-      // console.log(req.user._id);
-      // console.log(data.studenExercise);
-      // console.log(data.studentExercise.find(submission => submission.userId === req.user._id));
-      // if(!data.studenExercise.find(submission => submission.userId === req.user._id)){
-      //   SubExercise.updateOne({
-      //     exerciseId: req.params.exerciseId
-      //   },{
-      //     $push: { 
-      //       studenExercise: {
-      //         userId: req.user._id,
-      //         attachFile: submission,
-      //     }} 
-      //   }).then(()=>{
-      //     res.json("Đã nộp");
-      //   });
-      // }else{
-      //   res.json("Đã có bài tập, hãy xóa bài cũ");
-      // }
+      if(!data.studentExercise.find(submission => submission.userId.toString() === req.user._id)){
+        SubExercise.updateOne({
+          exerciseId: req.params.exerciseId
+        },{
+          $push: { 
+            studenExercise: {
+              userId: req.user._id,
+              attachFile: submission,
+          }} 
+        }).then(()=>{
+          res.json("Đã nộp");
+        });
+      }else{
+        res.json("Đã có bài tập, hãy xóa bài cũ");
+      }
       
     }else{
       const subExercise = new SubExercise({
