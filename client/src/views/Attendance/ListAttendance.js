@@ -8,6 +8,7 @@ import ReactLoading from 'react-loading';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import isEmptyObj from '../../validation/is-empty';
+import {Chart} from 'react-google-charts';
 
 class ListAttendance extends Component {
   constructor() {
@@ -18,7 +19,19 @@ class ListAttendance extends Component {
       courseId: '',
       isLoading: false,
       startDate: null,
-      highlightDates: []
+      highlightDates: [],
+      chartData:[
+        [
+          {
+            type: "date",
+            id: "Date"
+          },
+          {
+            type: "number",
+            id: "Absent"
+          }
+        ]
+      ]
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
   }
@@ -38,6 +51,35 @@ class ListAttendance extends Component {
   componentWillReceiveProps(nextProps) {
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
+
+      this.setState({
+        chartData: [
+          [
+            {
+              type: "date",
+              id: "Date"
+            },
+            {
+              type: "number",
+              id: "Absent"
+            }
+          ]
+        ]
+      })
+      nextProps.attendance.attendance.forEach(element => {
+        var tempList = [];
+        tempList.push(new Date(element.date))
+        var count = 0
+        element.students.forEach(student=>{
+          if(student.isPresent === false)
+            count++
+        })
+        tempList.push(count)
+        this.setState(prevState => ({
+          chartData: [...prevState.chartData, tempList]
+        }))
+      })
+
       this.setState({
         highlightDates: []
       })
@@ -87,6 +129,7 @@ class ListAttendance extends Component {
   }
 
   render() {
+    const superClass = this;
     const {currentcourses} = this.props.courses;
     const {attendance} = this.props.attendance;
 
@@ -112,6 +155,7 @@ class ListAttendance extends Component {
 
     var SelectDate = <div></div>;
     
+    var SelectDateChart = <div></div>;
 
     if(!isEmptyObj(attendance) && this.state.courseId !== '0')
     {
@@ -135,6 +179,29 @@ class ListAttendance extends Component {
               </div>
             </div>
           </div>
+
+      SelectDateChart =
+          <Chart
+            width={1000}
+            height={350}
+            chartType="Calendar"
+            loader={<div><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>}
+            data={this.state.chartData}
+            options={{
+              title: 'Thống kê số lượng sinh viên nghỉ'
+            }}
+            chartEvents={[
+              {
+                eventName: "select",
+                callback({ chartWrapper }) {
+                  superClass.setState({
+                    startDate : new Date(chartWrapper.getChart().getSelection()[0].date)
+                  })
+                }
+              }
+            ]}
+            rootProps={{ 'data-testid': '1' }}
+          />
     }
 
     if(this.state.courseId === '0'){
@@ -207,7 +274,7 @@ class ListAttendance extends Component {
             </Row>
           </CardHeader>
           <CardBody>
-
+            {SelectDateChart}
             {StudentList}
           </CardBody>
         </Card>
