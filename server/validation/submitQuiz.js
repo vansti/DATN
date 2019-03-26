@@ -6,6 +6,9 @@ module.exports = function validateSubmitQuizInput(data) {
   
   data.deadline = !isEmpty(data.deadline) ? data.deadline :'';
   data.isLate = !isEmpty(data.isLate) ? data.isLate :'';
+  data.point= !isEmpty(data.point) ? data.point:'';
+
+  
 
   if(Validator.data.deadline < Date.now){
     data.isLate = true;

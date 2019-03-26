@@ -42,6 +42,7 @@ const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
+//const CheckPoint = React.lazy(() => import('./views/Courses/Checkpoint.js'));
 
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -93,6 +94,7 @@ const routes = [
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
+ // { path: '/checkpoint/:id', exact: true, name:'Xem điểm',component: CheckPoint},
 ];
 
 export default routes;

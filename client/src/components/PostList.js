@@ -8,6 +8,7 @@ import isEmptyObj from '../validation/is-empty';
 import ReactLoading from 'react-loading';
 import Moment from 'react-moment'; 
 import PostComments from './PostComments';
+import PostPoint from './PostPoint.js';
 
 class PostList extends Component {
   constructor(props) {
@@ -84,6 +85,8 @@ class PostList extends Component {
                   })
                 }
                 <br/>
+                <PostPoint />
+                <br/>
                 {
                   exercise.attachFiles.map(file=>
                     <ListGroupItem key={file.id}>
@@ -95,7 +98,6 @@ class PostList extends Component {
               <CardFooter>
                 <PostComments exercise={exercise}/>
               </CardFooter>
-
             </Collapse>
           </Card>
         )

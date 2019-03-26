@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS} from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, CHECK_POINT} from './types';
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
@@ -78,6 +78,26 @@ export const getComments = (exerciseId) => dispatch => {
       })
     );
 };
+
+//check point
+export const checkPoints = (exerciseId) => dispatch => {
+  dispatch(clearSuccess());
+  axios
+  .get(`/api/exercises/checkpoint/${exerciseId}`)
+  .then(res => 
+    dispatch({
+      type: CHECK_POINT,
+      payload: res.data
+    })
+  )
+  .catch(err =>
+    dispatch({
+      type: CHECK_POINT,
+      payload: {}
+    })
+    );
+};
+
 
 export const clearSuccess = () => {
   return {
