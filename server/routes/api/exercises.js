@@ -5,6 +5,8 @@ const passport = require('passport');
 require('dotenv').config()
 const Validator = require('validator');
 
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
 
 
 // Load Input Validation
@@ -15,7 +17,11 @@ const validateAddExerciseInput = require('../../validation/addexercise');
 const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
+const SubExercise = require('../../models/SubExercise');
+
 router.use(cors());
+
+router.use(fileUpload());
 
 
 // @route   POST api/exercise/add-exercise
@@ -36,7 +42,8 @@ router.post(
       title: req.body.title,
       text: req.body.text,
       attachFiles: req.body.attachFiles,
-      deadline: req.body.deadline
+      deadline: req.body.deadline,
+      courseId: req.body.courseId
     });
 
     newExercise.save().then(exercise=>{
@@ -130,6 +137,84 @@ router.get('/exercise/:id', (req, res) => {
     // console.log(exercise)
   })
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+
+});
+// @route   POST api/exercises/:exerciseId/submit
+// @desc    submit a exercise
+// @access  Private
+router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
+  
+  let uploadedFile = req.files.file;
+  // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
+  //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
+  //   return res.send('.txt/.pdf/.docx/.doc extension only');
+  // }
+
+  if(uploadedFile.size > 5 * 1024 * 1024){
+    return res.send('File is too large!');
+  }
+
+  var dir = './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/'; 
+  
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, {recursive: true}, err=>{});
+  }
+  //Path /file_upload/:userId/:exerciseId
+  uploadedFile.mv('./file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name, function(err) {
+    if (err)
+      return res.status(500).send(err);
+  });
+  const submission = {
+        name: uploadedFile.name,
+        url: './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name,
+    }
+  SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
+    if(data != null){
+      if(!data.studentExercise.find(submission => submission.userId.toString() === req.user._id)){
+        SubExercise.updateOne({
+          exerciseId: req.params.exerciseId
+        },{
+          $push: { 
+            studenExercise: {
+              userId: req.user._id,
+              attachFile: submission,
+          }} 
+        }).then(()=>{
+          res.json("Đã nộp");
+        });
+      }else{
+        res.json("Đã có bài tập, hãy xóa bài cũ");
+      }
+      
+    }else{
+      const subExercise = new SubExercise({
+        exerciseId: req.params.exerciseId,
+        studenExercise:[
+          {
+            userId: req.user._id,
+            attachFile:submission
+          }
+        ]
+      });
+      subExercise.save().then(()=>{
+        res.json("Đã nộp");
+      })
+    }
+  })
+});
+
+// @route   POST api/exercises/:exerciseId/download
+// @desc    download a submission to exercise
+// @access  Private
+router.post('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let file = fs.readdirSync('./file_upload')[0];
+  //Path /file_upload/:userId/exerciseId/file
+  res.download(__dirname + './file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file, 
+    (err)=>{
+      if(err){
+        res.send("Can't download file");
+      }
+  });
 });
 
 module.exports = router;

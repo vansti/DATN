@@ -19,6 +19,11 @@ export default {
       url: '/courses',
       icon: 'icon-list',
     },
+    {
+      name: 'Quiz',
+      url: '/quiz',
+      icon: 'icon-list',
+    },
     // {
     //   title: true,
     //   name: 'Components',

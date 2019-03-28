@@ -93,6 +93,31 @@ export const getExercise = (id) => dispatch => {
       dispatch({
         type: GET_EXER,
         payload: {}
+      }
+    ))
+}
+
+// Add Submission
+export const addSubmission = (data, exerciseId) => dispatch => {
+  dispatch(clearSuccess());
+  let fd = new FormData();
+  fd.append('file',data.file)
+  axios({
+    method: "post",
+    url: `/api/exercises/${exerciseId}/submit`,
+    data: fd,
+    headers:{'Content-Type': 'multipart/form-data'},
+  }).then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: {data: 'Bài nộp của bạn đã được gửi'}
+      })
+      dispatch(getComments(exerciseId))
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
       })
     );
 };
