@@ -195,15 +195,10 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
 // @route   POST api/exercises/:exerciseId/download
 // @desc    download a submission to exercise
 // @access  Private
-router.post('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let file = fs.readdirSync('./file_upload')[0];
+router.get('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let file = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
   //Path /file_upload/:userId/exerciseId/file
-  res.download(__dirname + './file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file, 
-    (err)=>{
-      if(err){
-        res.send("Can't download file");
-      }
-  });
+  return res.download('./file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file);
 });
 
 // @route   POST api/exercises/:exerciseId/get-submission
@@ -211,7 +206,7 @@ router.post('/:exerciseId/download', passport.authenticate('jwt', { session: fal
 // @access  Private
 router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
-    let fileName = fs.readdirSync('./file_upload')[0];
+    let fileName = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
     res.json(fileName);
   }catch(e){
     res.json("")

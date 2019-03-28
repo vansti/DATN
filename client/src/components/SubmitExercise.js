@@ -1,7 +1,7 @@
 import React, { Component,Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { addSubmission, getSubmission } from '../actions/exerciseActions';
+import { addSubmission, getSubmission, download } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -11,7 +11,6 @@ class SubmitExercise extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      studentNote:'',
       attachFile: null,
       large: false,
       errors: {},
@@ -23,7 +22,6 @@ class SubmitExercise extends Component {
   }
 
   toggleLarge() {
-    this.props.getSubmission(this.props.exerciseId);
     this.setState({
       large: !this.state.large,
     });
@@ -41,6 +39,10 @@ class SubmitExercise extends Component {
         attachFile: null
       })
     }
+  }
+
+  componentDidMount = () => {
+    this.props.getSubmission(this.props.exerciseId);
   }
 
   onChange = e => {
@@ -64,12 +66,14 @@ class SubmitExercise extends Component {
     e.preventDefault();
     const data = {
       file: this.state.attachFile,
-      note: this.props.studentNote,
     }
     this.props.addSubmission(data, this.props.exerciseId);
     // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
   }
-
+  download = (e) => {
+    e.preventDefault();
+    this.props.download(this.props.exerciseId, this.props.submission.submission);
+  }
   render() {
     const { errors } = this.state;
     return (
@@ -80,19 +84,15 @@ class SubmitExercise extends Component {
           <ModalBody>
             <FormGroup row>
               <Col md="3">
-                <Label>Ghi chú</Label>
+                <Label>Bài đã nộp</Label>
               </Col>
               <Col xs="12" md="9">
-                <Input type="textarea" name="studentNote" value={this.state.studentNote} onChange={this.onChange} rows="5" placeholder="Nội dung..." />
-                {errors.studentNote && <Alert color="danger">{errors.studentNote}</Alert>}
+                <NavLink href="#" onClick={this.download}>{this.props.submission.submission}</NavLink>
               </Col>
             </FormGroup>
             <FormGroup row>
               <Col md="3">
-                <Label>Bài đã nộp</Label>
-              </Col>
-              <Col xs="12" md="9">
-                <NavLink href="#">something</NavLink>
+                <Button color="danger">Hủy bài nộp</Button>
               </Col>
             </FormGroup>
             <FormGroup row>
@@ -135,14 +135,15 @@ class SubmitExercise extends Component {
 
 SubmitExercise.propTypes = {
   addSubmission: PropTypes.func.isRequired,
-  getSubmission: PropTypes.func.isRequired,
+  submission: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   success: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
+  submission: state.submission,
   errors: state.errors,
   success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { addSubmission, getSubmission })(SubmitExercise)); 
+export default withRouter(connect(mapStateToProps, { addSubmission, getSubmission, download })(SubmitExercise)); 
