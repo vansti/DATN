@@ -47,7 +47,7 @@ export const clearAttendance = () => {
 // Get Attendance
 export const getAttendance = (courseId) => dispatch => {
   axios
-    .post('/api/attendance/get-attendance/' + courseId)
+    .get('/api/attendance/get-attendance/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_ATTENDANCE,

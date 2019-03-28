@@ -36,7 +36,23 @@ export default {
           icon: 'fa fa-history',
         },
       ]
-    }
+    },
+    {
+      name: 'Thời khóa biểu',
+      icon: 'fa fa-calendar',
+      children: [
+        {
+          name: 'Thêm thời khóa biểu',
+          url: '/add-schedule',
+          icon: 'icon-calendar',
+        },
+        {
+          name: 'Xem thời khóa biểu',
+          url: '/schedule',
+          icon: 'fa fa-calendar',
+        },
+      ]
+    },
     // {
     //   title: true,
     //   name: 'Components',

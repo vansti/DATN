@@ -11,4 +11,5 @@ export const GET_COMMENT = 'GET_COMMENT';
 export const GET_ATTENDANCE = 'GET_ATTENDANCE';
 export const CLEAR_ATTENDANCE = 'CLEAR_ATTENDANCE';
 export const CLEAR_USER = 'CLEAR_USER';
+export const GET_SCHEDULE = 'GET_SCHEDULE';
 

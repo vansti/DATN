@@ -37,11 +37,12 @@ router.post(
   }
 );
 
-// @route   POST api/attendance/get-attendance
-// @desc    add attendance
+// @route   GET api/attendance/get-attendance/:courseId
+// @desc    get attendance by courseId
 // @access  Private
-router.post(
+router.get(
   '/get-attendance/:courseId',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
     Attendance.aggregate([
