@@ -1,7 +1,7 @@
 import React, { Component,Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { addSubmission, getSubmission, download } from '../actions/exerciseActions';
+import { addSubmission, getSubmission, download, deleteSubmission } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -74,6 +74,12 @@ class SubmitExercise extends Component {
     e.preventDefault();
     this.props.download(this.props.exerciseId, this.props.submission.submission);
   }
+
+  deleteSubmission = (e) => {
+    e.preventDefault();
+    this.props.deleteSubmission(this.props.exerciseId);
+  }
+
   render() {
     const { errors } = this.state;
     return (
@@ -92,7 +98,7 @@ class SubmitExercise extends Component {
             </FormGroup>
             <FormGroup row>
               <Col md="3">
-                <Button color="danger">Hủy bài nộp</Button>
+                <Button color="danger" onClick={this.deleteSubmission}>Hủy bài nộp</Button>
               </Col>
             </FormGroup>
             <FormGroup row>
@@ -146,4 +152,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { addSubmission, getSubmission, download })(SubmitExercise)); 
+export default withRouter(connect(mapStateToProps, { addSubmission, getSubmission, download, deleteSubmission })(SubmitExercise)); 

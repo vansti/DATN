@@ -139,6 +139,16 @@ export const download = (exerciseId, submission) => dispatch => {
     );
 };
 
+export const deleteSubmission = (exerciseId, submission) => dispatch => {
+  axios
+    .delete(`/api/exercises/${exerciseId}/delete`)
+    .then(res =>{      
+    })
+    .catch(err =>{
+    }
+    );
+};
+
 export const clearSuccess = () => {
   return {
     type: CLEAR_SUCCESS

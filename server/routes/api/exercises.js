@@ -4,6 +4,7 @@ const cors = require('cors');
 const passport = require('passport');
 require('dotenv').config()
 const Validator = require('validator');
+const rimraf = require("rimraf");
 
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
@@ -212,6 +213,16 @@ router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session
     res.json("")
   }
   //Path /file_upload/:userId/exerciseId/file
+});
+
+router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
+  try{
+    rimraf.sync('./file_upload/' + req.user.id + '/' + req.params.exerciseId);
+    res.json("Đã xóa");
+  }catch(e){
+    console.log(e);
+    res.json("Không thể xóa");
+  }
 });
 
 module.exports = router;
