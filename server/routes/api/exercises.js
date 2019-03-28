@@ -4,6 +4,7 @@ const cors = require('cors');
 const passport = require('passport');
 require('dotenv').config()
 const Validator = require('validator');
+const rimraf = require("rimraf");
 
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
@@ -206,15 +207,33 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
 // @route   POST api/exercises/:exerciseId/download
 // @desc    download a submission to exercise
 // @access  Private
-router.post('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let file = fs.readdirSync('./file_upload')[0];
+router.get('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let file = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
   //Path /file_upload/:userId/exerciseId/file
-  res.download(__dirname + './file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file, 
-    (err)=>{
-      if(err){
-        res.send("Can't download file");
-      }
-  });
+  return res.download('./file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file);
+});
+
+// @route   POST api/exercises/:exerciseId/get-submission
+// @desc    get a submission
+// @access  Private
+router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
+  try{
+    let fileName = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
+    res.json(fileName);
+  }catch(e){
+    res.json("")
+  }
+  //Path /file_upload/:userId/exerciseId/file
+});
+
+router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
+  try{
+    rimraf.sync('./file_upload/' + req.user.id + '/' + req.params.exerciseId);
+    res.json("Đã xóa");
+  }catch(e){
+    console.log(e);
+    res.json("Không thể xóa");
+  }
 });
 
 module.exports = router;

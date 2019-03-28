@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_EXER} from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, GET_EXER} from './types';
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
@@ -119,6 +119,50 @@ export const addSubmission = (data, exerciseId) => dispatch => {
         type: GET_ERRORS,
         payload: err.response.data
       })
+    );
+};
+export const getSubmission = (exerciseId) => dispatch => {
+  axios
+    .get(`/api/exercises/${exerciseId}/get-submission`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUBMISSION,
+        payload: res.data
+      })
+    }
+    )
+    .catch(err =>{
+
+    }
+    );
+};
+
+export const download = (exerciseId, submission) => dispatch => {
+  axios
+    .get(`/api/exercises/${exerciseId}/download`,{
+      responseType: 'blob'
+    })
+    .then(res =>{
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', submission);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(err =>{
+
+    }
+    );
+};
+
+export const deleteSubmission = (exerciseId, submission) => dispatch => {
+  axios
+    .delete(`/api/exercises/${exerciseId}/delete`)
+    .then(res =>{      
+    })
+    .catch(err =>{
+    }
     );
 };
 

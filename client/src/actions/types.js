@@ -9,3 +9,4 @@ export const GET_USERS = 'GET_USERS';
 export const GET_EXERCISE_LIST = 'GET_EXERCISE_LIST';
 export const GET_COMMENT = 'GET_COMMENT';
 export const GET_EXER = 'GET_EXER';
+export const GET_SUBMISSION = 'GET_SUBMISSION';
