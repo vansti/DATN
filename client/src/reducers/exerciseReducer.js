@@ -1,9 +1,10 @@
 import {
-  GET_EXERCISE_LIST
+  GET_EXERCISE_LIST, GET_EXER
 } from '../actions/types';
 
 const initialState = {
-  exercises: null
+  exercises: null,
+  exercise: null,
 };
 
 export default function(state = initialState, action) {
@@ -12,6 +13,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         exercises: action.payload,
+      };
+    case GET_EXER:
+      return {
+        ...state,
+        exercise: action.payload,
       };
     default:
       return state;

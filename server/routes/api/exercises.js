@@ -51,7 +51,7 @@ router.post(
 // @route   GET api/exercises/:courseId
 // @desc    Return exercise list
 // @access  Private
-router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/:courseId', (req, res) => {
   Course.findById(req.params.courseId).then(course => {
     Exercise.find({
         '_id': { $in: course.exercises}
@@ -117,6 +117,17 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
 
     exercise.comments.push(newComment);
     exercise.save().then(exercise => res.json(exercise));
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+});
+
+// @route   Get api/exercises/exercise/:id
+// @desc    Get 1 exercise
+// @access  Private
+router.get('/exercise/:id', (req, res) => {
+  Exercise.findById(req.params.id, { title: 1 }).then(exercise => {
+    res.json(exercise)
+    // console.log(exercise)
   })
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
 });
