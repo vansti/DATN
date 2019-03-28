@@ -104,6 +104,23 @@ export const addSubmission = (data, exerciseId) => dispatch => {
       })
     );
 };
+export const getSubmission = (exerciseId) => dispatch => {
+  axios
+    .get(`/api/exercises/${exerciseId}/get-submission`)
+    .then(res =>
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: {}
+      })
+    );
+
+};
 
 export const clearSuccess = () => {
   return {

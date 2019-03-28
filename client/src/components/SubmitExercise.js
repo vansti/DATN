@@ -1,7 +1,7 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { addSubmission } from '../actions/exerciseActions';
+import { addSubmission, getSubmission } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -23,6 +23,7 @@ class SubmitExercise extends Component {
   }
 
   toggleLarge() {
+    this.props.getSubmission(this.props.exerciseId);
     this.setState({
       large: !this.state.large,
     });
@@ -71,7 +72,6 @@ class SubmitExercise extends Component {
 
   render() {
     const { errors } = this.state;
-
     return (
       <Fragment>
         <Button block color="primary" onClick={this.toggleLarge} >Nộp bài tập</Button>
@@ -87,7 +87,14 @@ class SubmitExercise extends Component {
                 {errors.studentNote && <Alert color="danger">{errors.studentNote}</Alert>}
               </Col>
             </FormGroup>
-
+            <FormGroup row>
+              <Col md="3">
+                <Label>Bài đã nộp</Label>
+              </Col>
+              <Col xs="12" md="9">
+                <NavLink href="#">something</NavLink>
+              </Col>
+            </FormGroup>
             <FormGroup row>
               <Col md="3">
                 <Label>Đính kèm tập tin</Label>
@@ -128,6 +135,7 @@ class SubmitExercise extends Component {
 
 SubmitExercise.propTypes = {
   addSubmission: PropTypes.func.isRequired,
+  getSubmission: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   success: PropTypes.object.isRequired
 };
@@ -137,4 +145,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { addSubmission })(SubmitExercise)); 
+export default withRouter(connect(mapStateToProps, { addSubmission, getSubmission })(SubmitExercise)); 

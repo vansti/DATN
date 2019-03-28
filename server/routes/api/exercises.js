@@ -206,4 +206,17 @@ router.post('/:exerciseId/download', passport.authenticate('jwt', { session: fal
   });
 });
 
+// @route   POST api/exercises/:exerciseId/get-submission
+// @desc    get a submission
+// @access  Private
+router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
+  try{
+    let fileName = fs.readdirSync('./file_upload')[0];
+    res.json(fileName);
+  }catch(e){
+    res.json("")
+  }
+  //Path /file_upload/:userId/exerciseId/file
+});
+
 module.exports = router;
