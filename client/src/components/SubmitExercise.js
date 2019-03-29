@@ -1,13 +1,12 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, 
-  Input, Col, FormGroup, Label, Alert } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import { addSubmission, getSubmission, download, deleteSubmission } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
-import SweetAlert from 'react-bootstrap-sweetalert';
 import { withRouter } from 'react-router-dom';
 import ReactDropzone from "react-dropzone";
+import isEmptyObj from '../validation/is-empty';
 
 class SubmitExercise extends Component {
   constructor(props) {
@@ -17,7 +16,6 @@ class SubmitExercise extends Component {
       large: false,
       errors: {},
       isLoading: false,
-      isShowSuccess: false
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
@@ -29,39 +27,27 @@ class SubmitExercise extends Component {
     });
   }
 
+  // lifecycle của component tự động gọi khi có props thay đổi
   componentWillReceiveProps(nextProps) {
 
-    this.setState({ errors: nextProps.errors});
+    if (!isEmptyObj(nextProps.errors)) {
+      console.log(nextProps.errors)
+      this.setState({ errors: nextProps.errors, isLoading: false});
+    }
 
-    if (nextProps.success.data === "Nộp bài tập thành công!") {
+    this.setState({ errors: nextProps.errors});
+    // khi nhận dc props success thì đóng cái loadding 
+    if (nextProps.success.data === "Bài nộp của bạn đã được gửi") {
       this.setState({
-        isShowSuccess: true,
         isLoading: false,
-        studentNote:'',
-        attachFile: null
+        attachFile: null,
+        fileName: ''
       })
     }
   }
 
   componentDidMount = () => {
     this.props.getSubmission(this.props.exerciseId);
-  }
-
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-
-  hideAlertSuccess(){
-    this.setState({
-      isShowSuccess: false
-
-    })
-  }
-
-  onChangeFile = e =>{
-    this.setState({
-      attachFile: e.target.files[0]
-    })
   }
 
   onDrop = (files) => {
@@ -79,7 +65,12 @@ class SubmitExercise extends Component {
       file: this.state.attachFile,
     }
     this.props.addSubmission(data, this.props.exerciseId);
+    // bấm submit thì cho hiện cái loading
+    this.setState({
+      isLoading: true,
+    })
   }
+
   download = (e) => {
     e.preventDefault();
     this.props.download(this.props.exerciseId, this.props.submission.submission);
@@ -90,45 +81,57 @@ class SubmitExercise extends Component {
     this.props.deleteSubmission(this.props.exerciseId);
   }
 
+  // cái này để nó biết lấy cái exerciseId nào
+  onOpenModal = e => {
+    e.preventDefault();
+    this.setState({
+      exerciseId: this.props.exerciseId
+    })
+    this.props.getSubmission(this.props.exerciseId);
+    this.setState({
+      large: !this.state.large,
+    });
+  }
+
   render() {
     const { errors } = this.state;
     return (
       <Fragment>
-        <Button block color="primary" onClick={this.toggleLarge} >Nộp bài tập</Button>
+        <Button block color="primary" onClick={this.onOpenModal} >Nộp bài tập</Button>
         <Modal isOpen={this.state.large} toggle={this.toggleLarge} className='modal-lg modal-primary'>
           <ModalHeader  toggle={this.toggleLarge}>Nộp bài tập</ModalHeader>
           <ModalBody>
             <FormGroup row> 
-            <ReactDropzone onDrop={this.onDrop} >
-                            Thả file vào đây!
-                          </ReactDropzone>
+              <Col md="4">
+                <ReactDropzone onDrop={this.onDrop} >
+                  Thả file vào đây!
+                </ReactDropzone>
+              </Col>
+              <Col xs="12" md="8">
+                <p>{this.state.fileName}</p>
+              </Col>
             </FormGroup>
             <FormGroup row>
-              <p>{this.state.fileName}</p>
-            </FormGroup>
-            <FormGroup row>
-              <Col md="3">
+              <Col md="4">
                 <Label>Bài đã nộp</Label>
               </Col>
-              <Col xs="12" md="9">
-                <NavLink href="#" onClick={this.download}>{this.props.submission.submission}</NavLink>
+              <Col xs="12" md="8"> 
+              {
+                this.props.submission.submission === '' || this.props.submission.submission === {}
+                ? <div>Chưa có bài nộp</div>
+                :<NavLink href="#" onClick={this.download}>{this.props.submission.submission}</NavLink>
+              }    
               </Col>
             </FormGroup>
             <FormGroup row>
-              <Col md="3">
+              <Col md="4">
                 <Button color="danger" onClick={this.deleteSubmission}>Hủy bài nộp</Button>
               </Col>
+              <Col xs="12" md="8">
+                {/* errors.file là thông tin từ server */}
+                {errors.file && <Alert color="danger">{errors.file}</Alert>}
+              </Col>
             </FormGroup>
-            {/* <FormGroup row>
-              <Col md="3">
-                <Label>Đính kèm tập tin</Label>
-              </Col>
-              <Col>
-                <Input type="file" onChange={this.onChangeFile}/>
-                {errors.attachFile && <Alert color="danger">{errors.attachFile}</Alert>}
-              </Col>
-            
-            </FormGroup> */}
           </ModalBody>
           <ModalFooter>
             <Button color="danger" onClick={this.onsubmit}>Nộp</Button>{' '}
@@ -136,15 +139,6 @@ class SubmitExercise extends Component {
           </ModalFooter>
         </Modal>
         {/* Phần thông báo nộp bài thành công */}
-        <SweetAlert
-          	success
-          	confirmBtnText="OK"
-          	confirmBtnBsStyle="success"
-          	title="Nộp bài tập thành công!"
-            show={this.state.isShowSuccess}
-            onConfirm={this.hideAlertSuccess.bind(this)}
-            onCancel={this.hideAlertSuccess.bind(this)}>
-        </SweetAlert>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
           <ModalBody className="text-center">
             <h3>Đang xử lý</h3>

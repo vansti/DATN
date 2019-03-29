@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION} from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS } from './types';
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
-  // dispatch(clearErrors());
-  // dispatch(clearSuccess());
   axios
     .post('/api/exercises/add-exercise', exerciseData)
     .then(res =>{
@@ -79,9 +77,9 @@ export const getComments = (exerciseId) => dispatch => {
     );
 };
 
-
 // Add Submission
 export const addSubmission = (data, exerciseId) => dispatch => {
+  dispatch(clearErrors());
   dispatch(clearSuccess());
   let fd = new FormData();
   fd.append('file',data.file)
@@ -95,7 +93,8 @@ export const addSubmission = (data, exerciseId) => dispatch => {
         type: GET_SUCCESS,
         payload: {data: 'Bài nộp của bạn đã được gửi'}
       })
-      dispatch(getComments(exerciseId))
+      //gọi cái này để cập nhật tên file vừa upload
+      dispatch(getSubmission(exerciseId))
     })
     .catch(err =>
       dispatch({
@@ -104,6 +103,7 @@ export const addSubmission = (data, exerciseId) => dispatch => {
       })
     );
 };
+
 export const getSubmission = (exerciseId) => dispatch => {
   axios
     .get(`/api/exercises/${exerciseId}/get-submission`)
@@ -116,8 +116,7 @@ export const getSubmission = (exerciseId) => dispatch => {
     )
     .catch(err =>{
 
-    }
-    );
+    });
 };
 
 export const download = (exerciseId, submission) => dispatch => {
@@ -142,15 +141,24 @@ export const download = (exerciseId, submission) => dispatch => {
 export const deleteSubmission = (exerciseId, submission) => dispatch => {
   axios
     .delete(`/api/exercises/${exerciseId}/delete`)
-    .then(res =>{      
-    })
+    .then(res =>
+      dispatch({
+        type: DEL_SUBMISSION
+      })
+    )
     .catch(err =>{
-    }
-    );
+    });
 };
 
 export const clearSuccess = () => {
   return {
     type: CLEAR_SUCCESS
+  };
+};
+
+// Clear errors
+export const clearErrors = () => {
+  return {
+    type: CLEAR_ERRORS
   };
 };

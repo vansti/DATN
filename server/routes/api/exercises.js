@@ -139,9 +139,11 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
   //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
   //   return res.send('.txt/.pdf/.docx/.doc extension only');
   // }
+  let errors = {};
 
   if(uploadedFile.size > 5 * 1024 * 1024){
-    return res.send('File is too large!');
+    errors.file = 'File quá lớn !'
+    return res.status(404).json(errors);
   }
 
   var dir = './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/'; 
