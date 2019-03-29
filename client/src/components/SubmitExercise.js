@@ -31,7 +31,7 @@ class SubmitExercise extends Component {
 
     this.setState({ errors: nextProps.errors});
 
-    if (nextProps.success.data === "Nộp bài tập thành công!") {
+    if (nextProps.success.data === "Bài nộp của bạn đã được gửi") {
       this.setState({
         isShowSuccess: true,
         isLoading: false,
@@ -68,6 +68,10 @@ class SubmitExercise extends Component {
       file: this.state.attachFile,
     }
     this.props.addSubmission(data, this.props.exerciseId);
+    this.setState({
+      isLoading: true
+
+    })
     // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
   }
   download = (e) => {
@@ -122,7 +126,7 @@ class SubmitExercise extends Component {
           	success
           	confirmBtnText="OK"
           	confirmBtnBsStyle="success"
-          	title="Nộp bài tập thành công!"
+          	title="Bài nộp của bạn đã được gửi"
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}
             onCancel={this.hideAlertSuccess.bind(this)}>

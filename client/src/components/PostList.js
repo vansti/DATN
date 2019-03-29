@@ -93,6 +93,7 @@ class PostList extends Component {
                   )
                 }
                 <br/>
+                <Button block color="success" onClick >Chấm điểm</Button>
                 <SubmitExercise exerciseId={exercise._id}/>
               </CardBody>
               <CardFooter>
