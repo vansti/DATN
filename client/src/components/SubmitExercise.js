@@ -1,11 +1,13 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, Input, Col, FormGroup, Label, Alert } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, NavLink, ModalFooter, Button, 
+  Input, Col, FormGroup, Label, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import { addSubmission, getSubmission, download, deleteSubmission } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { withRouter } from 'react-router-dom';
+import ReactDropzone from "react-dropzone";
 
 class SubmitExercise extends Component {
   constructor(props) {
@@ -62,13 +64,21 @@ class SubmitExercise extends Component {
     })
   }
 
+  onDrop = (files) => {
+    let file = files[0];
+   
+    this.setState({
+      attachFile: file,
+      fileName: file.name
+    });
+  }
+
   onsubmit = (e) => {
     e.preventDefault();
     const data = {
       file: this.state.attachFile,
     }
     this.props.addSubmission(data, this.props.exerciseId);
-    // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
   }
   download = (e) => {
     e.preventDefault();
@@ -88,6 +98,14 @@ class SubmitExercise extends Component {
         <Modal isOpen={this.state.large} toggle={this.toggleLarge} className='modal-lg modal-primary'>
           <ModalHeader  toggle={this.toggleLarge}>Nộp bài tập</ModalHeader>
           <ModalBody>
+            <FormGroup row> 
+            <ReactDropzone onDrop={this.onDrop} >
+                            Thả file vào đây!
+                          </ReactDropzone>
+            </FormGroup>
+            <FormGroup row>
+              <p>{this.state.fileName}</p>
+            </FormGroup>
             <FormGroup row>
               <Col md="3">
                 <Label>Bài đã nộp</Label>
@@ -101,7 +119,7 @@ class SubmitExercise extends Component {
                 <Button color="danger" onClick={this.deleteSubmission}>Hủy bài nộp</Button>
               </Col>
             </FormGroup>
-            <FormGroup row>
+            {/* <FormGroup row>
               <Col md="3">
                 <Label>Đính kèm tập tin</Label>
               </Col>
@@ -110,7 +128,7 @@ class SubmitExercise extends Component {
                 {errors.attachFile && <Alert color="danger">{errors.attachFile}</Alert>}
               </Col>
             
-            </FormGroup>
+            </FormGroup> */}
           </ModalBody>
           <ModalFooter>
             <Button color="danger" onClick={this.onsubmit}>Nộp</Button>{' '}
