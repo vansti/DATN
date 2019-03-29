@@ -46,9 +46,6 @@ class SubmitExercise extends Component {
     }
   }
 
-  componentDidMount = () => {
-    this.props.getSubmission(this.props.exerciseId);
-  }
 
   onDrop = (files) => {
     let file = files[0];
@@ -95,6 +92,8 @@ class SubmitExercise extends Component {
 
   render() {
     const { errors } = this.state;
+    const {submission} = this.props.submission;
+
     return (
       <Fragment>
         <Button block color="primary" onClick={this.onOpenModal} >Nộp bài tập</Button>
@@ -117,9 +116,9 @@ class SubmitExercise extends Component {
               </Col>
               <Col xs="12" md="8"> 
               {
-                this.props.submission.submission === '' || this.props.submission.submission === {}
+                submission === ''
                 ? <div>Chưa có bài nộp</div>
-                :<NavLink href="#" onClick={this.download}>{this.props.submission.submission}</NavLink>
+                :<NavLink href="#" onClick={this.download}>{submission}</NavLink>
               }    
               </Col>
             </FormGroup>
