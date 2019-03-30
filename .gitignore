@@ -7,6 +7,7 @@ package-lock.json
 /client/node_modules
 /client/package-lock.json
 
+/file_upload
 # testing
 /coverage
 
