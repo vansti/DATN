@@ -5,6 +5,7 @@ const passport = require('passport');
 var cloudinary = require('cloudinary');
 require('dotenv').config()
 const Validator = require('validator');
+const formData = require('express-form-data')
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -21,6 +22,7 @@ const validateAddCourseInput = require('../../validation/addcourse');
 const Course = require('../../models/Course');
 const User = require('../../models/User');
 router.use(cors());
+router.use(formData.parse())
 
 
 // @route   POST api/courses/add-course
@@ -51,34 +53,39 @@ router.post(
         User.findById(req.user.id).then(user=>{
           newCourse.mainteacher = user.name;
           newCourse.teachers.push(req.user.id)
-          if (req.body.coursePhoto === '') 
-          {
-            newCourse
-            .save()
-            .then(course => {
-              user.courses.push(course.id)
-              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-              .catch(err => console.log(err));
-            })
+          newCourse
+          .save()
+          .then(course => {
+            user.courses.push(course.id)
+            User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
             .catch(err => console.log(err));
-          }else{
-            cloudinary.v2.uploader.upload(req.body.coursePhoto)
-              .then(result => {
-                newCourse.coursePhoto = result.secure_url
-                
-                newCourse
-                .save()
-                .then(course => {
-                  user.courses.push(course.id)
-                  User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-                  .catch(err => console.log(err));
-                })
-                .catch(err => console.log(err));
-              })
-          }
+          })
+          .catch(err => console.log(err));
         })
       }
     })
+  }
+);
+
+// @route   post api/courses/add-course-avatar/:courseCode
+// @desc    add course avatar
+// @access  Private
+router.post(
+  '/add-course-avatar/:courseCode',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    var fileGettingUploaded = req.files.image.path;
+    cloudinary.uploader.upload(fileGettingUploaded, function(result) {
+      Course.updateOne(
+        { courseCode: req.params.courseCode },
+        { $set:
+          {
+            coursePhoto: result.secure_url,
+          }
+        }
+      )
+     .then(course => res.json(course));
+    });
   }
 );
 

@@ -1,18 +1,33 @@
 import axios from 'axios';
 
-import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS,GET_CURRENT_COURSES } from './types';
+import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS, GET_CURRENT_COURSES } from './types';
 
 // Add Course
-export const addCourse = (courseData, history) => dispatch => {
-  dispatch(clearErrors());
-  dispatch(clearSuccess());
+export const addCourse = (courseData, fileData) => dispatch => {
   axios
     .post('/api/courses/add-course', courseData)
     .then(res =>{
-      dispatch({
-        type: GET_SUCCESS,
-        payload: {data: 'Thêm khóa học thành công'}
-      })
+
+      if(fileData !== null)
+      {
+        let fd = new FormData();
+        fd.append('image', fileData, fileData.name)
+        axios.post('/api/courses/add-course-avatar/' + courseData.courseCode, fd)
+        .then(data  => {
+          dispatch({
+            type: GET_SUCCESS,
+            payload: {data: 'Thêm khóa học thành công'}
+          })
+        });
+      }
+      else
+      {
+        dispatch({
+          type: GET_SUCCESS,
+          payload: {data: 'Thêm khóa học thành công'}
+        })
+      }
+
     })
     .catch(err =>
       dispatch({
