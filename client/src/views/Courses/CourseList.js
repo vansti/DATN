@@ -6,7 +6,6 @@ import { getCurentCourse } from '../../actions/courseActions';
 import ModalEnroll from '../../components/ModalEnroll';
 import Moment from 'react-moment'; 
 import ReactLoading from 'react-loading';
-import { Link } from 'react-router-dom';
 
 const styles = {
   bigAvatar: {
