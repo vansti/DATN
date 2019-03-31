@@ -25,12 +25,16 @@ class CourseList extends Component {
     this.state = {
 
     };
+    this.jumpcourse = this.jumpcourse.bind(this);
   }
 
   componentDidMount = () => {
     this.props.getCurentCourse();
   }
 
+  jumpcourse(courseId){
+    this.props.history.push('/courses/' + courseId)
+  }
 
   render() {
     var list = '';
@@ -45,14 +49,14 @@ class CourseList extends Component {
       }
       else{
         list = this.props.courses.currentcourses.map(course=>
-                        <tr key={course._id}>
-                          <td className="text-center">
+                        <tr key={course._id} onClick={this.jumpcourse.bind(this, course._id)} className="changeCursor">
+                          <td className="text-center" >
                             <div>
                               <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
                             </div>
                           </td>
                           <td>
-                            <Link to={`/courses/${course._id}`}>{course.title}</Link>
+                            {course.title}
                           </td>
                           <td>
                             <div>{course.mainteacher}</div>
