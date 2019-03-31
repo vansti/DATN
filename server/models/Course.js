@@ -19,7 +19,7 @@ const CourseSchema = new Schema({
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   students: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   exercises: [{type: mongoose.Schema.ObjectId, ref: 'exercises'}],
-  quizzes: [{type: mongoose.Schema.ObjectId, ref: 'quizzes'}],
+  testQuiz: [{type: mongoose.Schema.ObjectId, ref: 'testquizzes'}],
   created: {
     type: Date,
     default: Date.now
