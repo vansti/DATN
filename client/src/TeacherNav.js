@@ -54,17 +54,17 @@ export default {
       ]
     },
     {
-      name: 'Câu hỏi',
+      name: 'Kiểm tra câu hỏi',
       icon: 'fa fa-question-circle',
       children: [
         {
-          name: 'Danh sách Câu hỏi',
-          url: '/quiz',
+          name: 'Danh sách',
+          url: '/test/quiz',
           icon: 'icon-list',
         },
         {
-          name: 'Thêm Câu hỏi',
-          url: '/add-quiz',
+          name: 'Thêm bài kiểm tra',
+          url: '/test/add-quiz',
           icon: 'icon-plus',
         },
       ]
