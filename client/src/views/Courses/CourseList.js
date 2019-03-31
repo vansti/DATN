@@ -48,9 +48,7 @@ class CourseList extends Component {
                         <tr key={course._id}>
                           <td className="text-center">
                             <div>
-                              <Link to={`/courses/${course._id}`}>
                               <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                              </Link>
                             </div>
                           </td>
                           <td>
@@ -64,7 +62,6 @@ class CourseList extends Component {
                               {course.created}
                             </Moment>
                           </td>
-
                         </tr>
                       )
       }

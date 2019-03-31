@@ -64,7 +64,6 @@ class AddCourse extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false});
     }

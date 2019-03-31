@@ -7,6 +7,7 @@ import { getCurentCourse } from '../../actions/courseActions';
 import { getUsers } from '../../actions/userActions';
 import PeopleInCourse from '../../components/PeopleInCourse';
 import PostInCourse from '../../components/PostInCourse';
+import QuizInCourse from '../../components/Quiz/QuizInCourse';
 
 class CourseDetail extends Component {
   constructor(props) {
@@ -63,6 +64,14 @@ class CourseDetail extends Component {
                   Mọi người
                 </NavLink>
               </NavItem>
+              <NavItem>
+                <NavLink
+                  className={classnames({ active: this.state.activeTab === '3' })}
+                  onClick={() => { this.toggle('3');}}
+                >
+                  Câu hỏi
+                </NavLink>
+              </NavItem>
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
               <TabPane tabId="1">
@@ -70,6 +79,9 @@ class CourseDetail extends Component {
               </TabPane>
               <TabPane tabId="2">
                 <PeopleInCourse />
+              </TabPane>
+              <TabPane tabId="3">
+                <QuizInCourse />
               </TabPane>
             </TabContent>
           </CardBody>

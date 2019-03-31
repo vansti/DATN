@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './QuizList.css';
+import './Detail.css';
 
-class QuizList extends Component {
+class Detail extends Component {
   // constructor(props){
     // super(props);
     // this.state = {};
@@ -23,4 +23,4 @@ class QuizList extends Component {
   }
 }
 
-export default QuizList;
+export default Detail;

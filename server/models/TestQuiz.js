@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const QuizSchema = new Schema({
+const TestQuizSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -10,24 +10,33 @@ const QuizSchema = new Schema({
     type: String,
     required: true
   },
-  courseId: {
+  courseId: [{
     type: mongoose.Schema.ObjectId, 
     ref: 'courses'
-  },
+  }],
   listQuiz: [
     {      
       question: {
         type: String
       },
-      answers: [{}],
-      correctAnswer: [{}],
       questionType: {
+        type: String
+      },
+      answers: [{
+        required: true,
+        type: String
+      }],
+      correctAnswer: [{
+        required: true,
+        type: String
+      }],
+      explanation: {
         type: String
       }
     }
   ],
   time: {
-    type: Date,
+    type: String,
     required: true
   },
   deadline:{
@@ -40,5 +49,5 @@ const QuizSchema = new Schema({
   }
 })
 
-module.exports = Quiz = mongoose.model('quiz', QuizSchema)
+module.exports = TestQuiz = mongoose.model('testquizzes', TestQuizSchema)
 

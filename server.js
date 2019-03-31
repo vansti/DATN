@@ -12,7 +12,7 @@ const courses = require('./server/routes/api/courses');
 
 const exercises = require('./server/routes/api/exercises');
 
-const quiz = require('./server/routes/api/quiz');
+const test = require('./server/routes/api/test');
 
 const app = express();
 
@@ -53,7 +53,7 @@ app.use('/api/courses', courses)
 app.use('/api/exercises', exercises)
 
 // exercises Route
-app.use('/api/quiz', quiz);
+app.use('/api/test', test);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

@@ -40,9 +40,9 @@ const EditProfile = React.lazy(() => import('./views/EditProfile/EditProfile'));
 const AddCourse = React.lazy(() => import('./views/Courses/AddCourse'));
 const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
-const AddQuiz = React.lazy(() => import('./views/Quiz/AddQuiz/AddQuiz'));
-const QuizList = React.lazy(() => import('./views/Quiz/QuizList/QuizList'));
-const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail'));
+const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
+const QuizList = React.lazy(() => import('./components/Quiz/List/index'));
+const QuizDetail = React.lazy(() => import('./components/Quiz/Detail/index'));
 const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -92,9 +92,9 @@ const routes = [
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
   { path: '/courses', exact: true, name: 'Danh sách khóa học', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
-  { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
-  { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },
-  { path: '/quiz/:id', exact: true, name: 'Nội dung khóa học', component: QuizDetail },
+  { path: '/quiz', exact: true, name: 'Danh sách câu hỏi', component: QuizList },
+  { path: '/quiz/:id', exact: true, name: 'Nội dung câu hỏi', component: QuizDetail },
+  { path: '/add-quiz', exact: true, name: 'Thêm câu hỏi', component: QuizAdd },
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
 ];
 

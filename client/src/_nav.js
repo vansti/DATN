@@ -24,8 +24,13 @@ export default {
       icon: 'icon-plus',
     },
     {
-      name: 'Danh sách khóa học',
-      url: '/course-list',
+      name: 'Thêm Câu hỏi',
+      url: '/add-quiz',
+      icon: 'icon-plus',
+    },
+    {
+      name: 'Danh sách câu hỏi',
+      url: '/quiz',
       icon: 'icon-list',
     },
     {

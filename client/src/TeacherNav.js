@@ -22,6 +22,22 @@ export default {
       ]
     },
     {
+      name: 'Câu hỏi',
+      icon: 'fa fa-question-circle',
+      children: [
+        {
+          name: 'Danh sách Câu hỏi',
+          url: '/quiz',
+          icon: 'icon-list',
+        },
+        {
+          name: 'Thêm Câu hỏi',
+          url: '/add-quiz',
+          icon: 'icon-plus',
+        },
+      ]
+    },
+    {
       name: 'Example',
       icon: 'fa fa-question-circle',
       children: [
@@ -30,29 +46,8 @@ export default {
           url: '/example/react-form',
           icon: 'icon-plus',
         },
-        {
-          name: 'Danh sách quiz',
-          url: '/quiz',
-          icon: 'icon-list',
-        }
       ]
     },
-    {
-      name: 'Quiz',
-      icon: 'fa fa-question-circle',
-      children: [
-        {
-          name: 'Thêm quiz',
-          url: '/add-quiz',
-          icon: 'icon-plus',
-        },
-        {
-          name: 'Danh sách quiz',
-          url: '/quiz',
-          icon: 'icon-list',
-        }
-      ]
-    }
     // {
     //   title: true,
     //   name: 'Components',
