@@ -1,21 +1,16 @@
 import {
-  GET_USERS, CLEAR_USER
+  GET_SCHEDULE
 } from '../actions/types';
 
 const initialState = {
-  users: null
+  schedule: null
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_USERS:
+    case GET_SCHEDULE:
       return {
-        ...state,
-        users: action.payload
-      };
-    case CLEAR_USER:
-      return {
-        users: null
+        schedule: action.payload,
       };
     default:
       return state;

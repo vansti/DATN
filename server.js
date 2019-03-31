@@ -14,6 +14,10 @@ const exercises = require('./server/routes/api/exercises');
 
 const test = require('./server/routes/api/test');
 
+const attendance = require('./server/routes/api/attendance');
+
+const schedule = require('./server/routes/api/schedule');
+
 const app = express();
 
 //Bodyparser Middleware
@@ -51,6 +55,12 @@ app.use('/api/courses', courses)
 
 // exercises Route
 app.use('/api/exercises', exercises)
+
+// attendance Route
+app.use('/api/attendance', attendance)
+
+// schedule Route
+app.use('/api/schedule', schedule)
 
 // exercises Route
 app.use('/api/test', test);

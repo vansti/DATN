@@ -14,7 +14,7 @@ const styles = {
     width: 200,
     height: 200,
     margin: 'auto',
-    borderRadius:50
+    borderRadius: 100
   },
   input: {
     fontSize: 10
@@ -27,6 +27,7 @@ class EditProfile extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.state = {
+      file: null,
       name:'',
       email:'',
       photo: '',
@@ -38,7 +39,8 @@ class EditProfile extends Component {
       errors:{},
       file_avatar: null,
       imagePreviewUrl: '',
-      isLoading: false
+      isLoading: false,
+      invalidImg: false
     };
   }
 
@@ -85,11 +87,10 @@ class EditProfile extends Component {
     const profileData = {
       name: this.state.name,
       email: this.state.email,
-      phone: this.state.phone,
-      photo: this.state.photo,
+      phone: this.state.phone
     };
 
-    this.props.editProfile(profileData, this.props.history);
+    this.props.editProfile(profileData, this.state.file);
     document.getElementById("editform").reset();
     this.setState({isLoading: true})
   }
@@ -101,14 +102,25 @@ class EditProfile extends Component {
   }
 
   onDrop = (files) => {
-    let file = files[0]
-    let reader = new FileReader();
-    reader.onloadend = () => {
+    if(files[0] === undefined)
+    {
       this.setState({
-        photo: reader.result
-      });
+        invalidImg: true
+      })
+    }else{
+      let file = files[0]
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        this.setState({
+          photo: reader.result,
+          invalidImg: false
+        });
+      }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file)
+    this.setState({
+      file: files[0]
+    })
   }
 
   render() {
@@ -181,6 +193,15 @@ class EditProfile extends Component {
                           </ReactDropzone>
                         </Col>
                       </Row>
+                      {
+                        this.state.invalidImg === true
+                        ?
+                          <div>
+                            <br/>
+                            <Alert color="danger">Hình ảnh không hợp lệ</Alert>
+                          </div> 
+                        : null
+                      }
                     </Form>
                     <div >
                       <ModalChangePasword />
@@ -228,4 +249,4 @@ const mapStateToProps = state => ({
   errors: state.errors,
   success: state.success
 });
-export default connect(mapStateToProps, { editProfile,getCurrentProfile})(EditProfile); 
+export default connect(mapStateToProps, { editProfile, getCurrentProfile})(EditProfile); 

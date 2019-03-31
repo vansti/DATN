@@ -1,21 +1,20 @@
 import {
-  GET_USERS, CLEAR_USER
+  GET_ATTENDANCE, CLEAR_ATTENDANCE
 } from '../actions/types';
 
 const initialState = {
-  users: null
+  attendance: null
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_USERS:
+    case GET_ATTENDANCE:
       return {
-        ...state,
-        users: action.payload
+        attendance: action.payload,
       };
-    case CLEAR_USER:
+    case CLEAR_ATTENDANCE:
       return {
-        users: null
+        attendance: null
       };
     default:
       return state;

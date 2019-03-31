@@ -7,6 +7,7 @@ const keys = require('../../config/keys');
 const passport = require('passport');
 require('dotenv').config()
 
+const formData = require('express-form-data')
 var cloudinary = require('cloudinary');
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -25,6 +26,7 @@ const User = require('../../models/User');
 const Course = require('../../models/Course');
 
 router.use(cors());
+router.use(formData.parse())
 
 // @route   POST api/users/register
 // @desc    Register User
@@ -148,14 +150,8 @@ router.post(
     if (req.body.email) profileFields.email = req.body.email;
     if (req.body.name) profileFields.name = req.body.name;
     if (req.body.phone) profileFields.phone = req.body.phone;
-    
 
-    cloudinary.v2.uploader.upload(req.body.photo)
-      .then(result => {
-        if (req.body.photo) profileFields.photo = result.secure_url
-        User.findByIdAndUpdate(req.user.id, profileFields, {new: true}).then(profile => res.json(profile));
-      })
-
+    User.findByIdAndUpdate(req.user.id, profileFields, {new: true}).then(profile => res.json(profile));
   }
 );
 
@@ -220,6 +216,28 @@ router.get(
     })
 
     
+  }
+);
+
+// @route   post api/users/edit-avatar
+// @desc    edit avatar
+// @access  Private
+router.post(
+  '/edit-avatar',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    var fileGettingUploaded = req.files.image.path;
+    cloudinary.uploader.upload(fileGettingUploaded, function(result) {
+      User.updateOne(
+        { _id: req.user.id },
+        { $set:
+           {
+             photo: result.secure_url,
+           }
+        }
+      )
+     .then(profile => res.json(profile));
+    });
   }
 );
 module.exports = router;

@@ -3,7 +3,7 @@ import {Modal, ModalBody, Alert, Card, CardBody, CardFooter, CardHeader, Col, Ro
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { addCourse } from '../../actions/courseActions';
+import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
@@ -27,6 +27,7 @@ class AddCourse extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.state = {
+      file: null,
       title:'',
       courseCode:'',
       coursePhoto: '',
@@ -35,7 +36,8 @@ class AddCourse extends Component {
       timeout: 300,
       isShowSuccess: false,
       errors:{},
-      isLoading: false
+      isLoading: false,
+      invalidImg: false
     };
   }
 
@@ -53,14 +55,25 @@ class AddCourse extends Component {
   }
 
   onDrop = (files) => {
-    let file = files[0]
-    let reader = new FileReader();
-    reader.onloadend = () => {
+    if(files[0] === undefined)
+    {
       this.setState({
-        coursePhoto: reader.result
-      });
+        invalidImg: true
+      })
+    }else{
+      let file = files[0]
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        this.setState({
+          coursePhoto: reader.result,
+          invalidImg: false
+        });
+      }
+      reader.readAsDataURL(file)
+      this.setState({
+        file: files[0]
+      })
     }
-    reader.readAsDataURL(file)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,10 +93,9 @@ class AddCourse extends Component {
     e.preventDefault();
     const courseData = {
       title: this.state.title,
-      courseCode: this.state.courseCode,
-      coursePhoto: this.state.coursePhoto,
+      courseCode: this.state.courseCode
     };
-    this.props.addCourse(courseData, this.props.history);
+    this.props.addCourse(courseData, this.state.file);
     document.getElementById("add-course-form").reset();
     this.setState({isLoading: true});
   }
@@ -95,6 +107,8 @@ class AddCourse extends Component {
       courseCode:'',
       coursePhoto: '',
     })
+    this.props.clearSuccess();
+    this.props.clearErrors();
   }
 
   render() {
@@ -161,7 +175,15 @@ class AddCourse extends Component {
                           </ReactDropzone>
                         </Col>
                       </Row>
-
+                      {
+                        this.state.invalidImg === true
+                        ?
+                          <div>
+                            <br/>
+                            <Alert color="danger">Hình ảnh không hợp lệ</Alert>
+                          </div> 
+                        : null
+                      }
                     </Form>
                   </CardBody>
                   <CardFooter>
@@ -201,4 +223,4 @@ const mapStateToProps = state => ({
   errors: state.errors,
   success: state.success
 });
-export default connect(mapStateToProps, { addCourse })(AddCourse); 
+export default connect(mapStateToProps, { addCourse, clearErrors, clearSuccess })(AddCourse); 

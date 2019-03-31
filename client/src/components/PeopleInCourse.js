@@ -6,18 +6,17 @@ import ReactLoading from 'react-loading';
 
 class PeopleInCourse extends Component {
   render() {
-    var StudentList = '';
-    if(this.props.users.users === null)
+    const {users} = this.props.users;
+
+    var StudentList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>;
+    if(users !== null)
     {
-      StudentList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
-    }
-    else{
-      if(this.props.users.users.students.length === 0)
+      if(users.students.length === 0)
       {
         StudentList = <tr><td></td><td>Chưa có học viên ghi danh</td></tr>
       }
       else{
-        StudentList = this.props.users.users.students.map((user, index) =>
+        StudentList = users.students.map((user, index) =>
         <tr key={user._id}>
           <th>                      
             <div className="avatar">
@@ -37,20 +36,22 @@ class PeopleInCourse extends Component {
             <h3>Giáo viên</h3>
             <Table responsive hover>
               <tbody>
-                {this.props.users.users === null
-                ?
-                <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
-                :
-                  this.props.users.users.teachers.map((user, index) =>
-                  <tr key={user._id}>
-                    <th>                      
-                      <div className="avatar">
-                        <img src={user.photo} className="img-avatar" alt="" />
-                      </div>
-                    </th>
-                    <td>{user.name}</td>
-                  </tr>
-                )}
+                {
+                  users === null
+                  ?
+                  <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
+                  :
+                  users.teachers.map((user, index) =>
+                    <tr key={user._id}>
+                      <th>                      
+                        <div className="avatar">
+                          <img src={user.photo} className="img-avatar" alt="" />
+                        </div>
+                      </th>
+                      <td>{user.name}</td>
+                    </tr>
+                  )
+                }
               </tbody>
             </Table>
             <br/>
@@ -69,7 +70,7 @@ class PeopleInCourse extends Component {
 }
 
 PeopleInCourse.propTypes = {
-  users: PropTypes.object.isRequired,
+  users: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

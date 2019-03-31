@@ -8,6 +8,7 @@ import isEmptyObj from '../validation/is-empty';
 import ReactLoading from 'react-loading';
 import Moment from 'react-moment'; 
 import PostComments from './PostComments';
+import SubmitExercise from './SubmitExercise';
 
 class PostList extends Component {
   constructor(props) {
@@ -42,12 +43,11 @@ class PostList extends Component {
   }
 
   render() {
-    const exercises = this.props.exercises.exercises;
-    var ExerciseCard = '';
-    if(exercises === null)
+    const {exercises} = this.props.exercises;
+
+    var ExerciseCard = <ReactLoading type='bars' color='#05386B' height={100} width={50} />;
+    if(exercises !== null)
     {
-      ExerciseCard = <ReactLoading type='bars' color='#05386B' height={100} width={50} />
-    }else{
       if(exercises.length === 0)
       {
         ExerciseCard = <h4>Hiện không có bài tập nào!</h4>
@@ -91,9 +91,12 @@ class PostList extends Component {
                     </ListGroupItem>
                   )
                 }
+                <br/>
+                <SubmitExercise exerciseId={exercise._id}/>
               </CardBody>
               <CardFooter>
                 <PostComments exercise={exercise}/>
+                
               </CardFooter>
 
             </Collapse>

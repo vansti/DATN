@@ -44,6 +44,10 @@ const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
 const QuizList = React.lazy(() => import('./components/Quiz/List/index'));
 const QuizDetail = React.lazy(() => import('./components/Quiz/Detail/index'));
 const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
+const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
+const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
+const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
+const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -96,6 +100,10 @@ const routes = [
   { path: '/quiz/:id', exact: true, name: 'Nội dung câu hỏi', component: QuizDetail },
   { path: '/add-quiz', exact: true, name: 'Thêm câu hỏi', component: QuizAdd },
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
+  { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
+  { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
+  { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
+  { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
 ];
 
 export default routes;

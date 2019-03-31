@@ -4,14 +4,11 @@ const Schema = mongoose.Schema;
 //Create schema
 const SubExerciseSchema = new Schema({
   exerciseId:{type: mongoose.Schema.ObjectId, ref: 'exercises'},
-  studenExercise:[
+  studentExercise:[
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
-      attachFiles: [
-        {      
-          id: {
-              type: String
-            },
+      attachFile: 
+        {
           name: {
               type: String
             },
@@ -21,19 +18,16 @@ const SubExerciseSchema = new Schema({
           thumbnail: {
             type: String
           }
-        }
-      ],
-      note:{
-        type: String,
-      },
+        },
       point:{ 
-        type: Double,
+        type: Number,
+      },
+      created: {
+        type: Date,
+        default: Date.now
       },
     }
   ],
-  date: {
-    type: Date
-  },
   isLate:{
     type: Boolean
   }

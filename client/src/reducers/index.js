@@ -8,6 +8,9 @@ import courseReducer from './courseReducer';
 import usersReducer from './usersReducer';
 import exerciseReducer from './exerciseReducer';
 import commentReducer from './commentReducer';
+import attendanceReducer from './attendanceReducer';
+import scheduleReducer from './scheduleReducer';
+import submissionReducer from './submissionReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -18,6 +21,9 @@ export default combineReducers({
   users: usersReducer,
   exercises: exerciseReducer,
   comments: commentReducer,
-  form: formReducer
+  form: formReducer,
+  attendance: attendanceReducer,
+  schedule: scheduleReducer,
+  submission: submissionReducer
 });
 
