@@ -93,7 +93,7 @@ const routes = [
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
   { path: '/courses', exact: true, name: 'Danh sách khóa học', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
-  { path: '/score/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
+  { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
 
   { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
   { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },

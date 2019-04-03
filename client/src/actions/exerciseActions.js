@@ -136,6 +136,20 @@ export const getSubmission = (exerciseId) => dispatch => {
 
     });
 };
+// export const getSubmissionExer = (exerciseId) => dispatch => {
+//   axios
+//     .get(`/api/exercises/${exerciseId}/get-submissioN`)
+//     .then(res =>{
+//       dispatch({
+//         type: GET_SUBMISSION2,
+//         payload: res.data
+//       })
+//     }
+//     )
+//     .catch(err =>{
+
+//     });
+// };
 
 export const download = (exerciseId, submission) => dispatch => {
   axios

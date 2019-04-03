@@ -17,6 +17,7 @@ class PostList extends Component {
     this.state = {
       accordion: [],
     };
+    this.score = this.score.bind(this);
   }
 
   componentDidMount = () => {
@@ -40,6 +41,10 @@ class PostList extends Component {
     this.setState({
       accordion: state,
     });
+  }
+
+  score(exerciseId){
+    this.props.history.push(`/score/${this.props.match.params.id}/${exerciseId}`)
   }
 
   render() {
@@ -93,7 +98,7 @@ class PostList extends Component {
                   )
                 }
                 <br/>
-                <Button block color="success" onClick >Chấm điểm</Button>
+                <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
                 <SubmitExercise exerciseId={exercise._id}/>
               </CardBody>
               <CardFooter>

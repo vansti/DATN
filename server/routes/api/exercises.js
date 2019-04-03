@@ -157,19 +157,19 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     return res.status(404).json(errors);
   }
 
-  var dir = './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/'; 
+  var dir = './file_upload/' + req.params.exerciseId + '/' + req.user._id + '/'; 
   
   if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, {recursive: true}, err=>{});
   }
   //Path /file_upload/:userId/:exerciseId
-  uploadedFile.mv('./file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name, function(err) {
+  uploadedFile.mv(dir + uploadedFile.name, function(err) {
     if (err)
       return res.status(500).send(err);
   });
   const submission = {
         name: uploadedFile.name,
-        url: './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name,
+        url: dir + uploadedFile.name,
     }
   SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
     if(data != null){
@@ -210,9 +210,9 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
 // @desc    download a submission to exercise
 // @access  Private
 router.get('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let file = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
+  let file = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/' + req.user.id )[0];
   //Path /file_upload/:userId/exerciseId/file
-  return res.download('./file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file);
+  return res.download('./file_upload/' + req.params.exerciseId + '/' + req.user.id + '/' + file);
 });
 
 // @route   POST api/exercises/:exerciseId/get-submission
@@ -220,7 +220,8 @@ router.get('/:exerciseId/download', passport.authenticate('jwt', { session: fals
 // @access  Private
 router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
-    let fileName = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
+    
+    let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/' + req.user.id)[0];
     res.json(fileName);
   }catch(e){
     res.json("")
@@ -228,9 +229,22 @@ router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session
   //Path /file_upload/:userId/exerciseId/file
 });
 
+// @route   POST api/exercises/:exerciseId/get-submission
+// @desc    get a submission
+// @access  Private
+// router.get('/:exerciseId/get-submissioN', (req, res) => {
+//   try{
+//     let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/')[0];
+//     res.json(fileName);
+//   }catch(e){
+//     res.json("")
+//   }
+//   //Path /file_upload/:userId/exerciseId/file
+// });
+
 router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
-    rimraf.sync('./file_upload/' + req.user.id + '/' + req.params.exerciseId);
+    rimraf.sync('./file_upload/' + req.params.exerciseId + '/' + req.user.id);
     res.json("Đã xóa");
   }catch(e){
     console.log(e);

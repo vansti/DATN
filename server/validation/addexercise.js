@@ -21,7 +21,7 @@ module.exports = function validateAddCourseInput(data) {
   }
 
   return {
-    errors,
+    errors, 
     isValid: isEmpty(errors)
   };
 };

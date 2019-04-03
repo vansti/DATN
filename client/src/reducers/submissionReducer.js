@@ -11,6 +11,10 @@ import {
         return {
           submission: action.payload,
         };
+        // case GET_SUBMISSION2:
+        // return {
+        //   submission: action.payload,
+        // };
       // xóa thì set lại là rỗng
       case DEL_SUBMISSION:
         return {
