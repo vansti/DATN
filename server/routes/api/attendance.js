@@ -113,13 +113,13 @@ router.get(
         return Schedule.find(
           {
             'courseId': req.params.courseId, 
-            "events.date": moment(new Date(element.date)).format('YYYY-MM-DD').toString().slice(0, 10)
+            "events.date": element.date
           },
           { 
             _id: 0,
             events: { 
               $elemMatch: {
-                'date': moment(new Date(element.date)).format('YYYY-MM-DD').toString().slice(0, 10)
+                'date': element.date
               }
             }
           })

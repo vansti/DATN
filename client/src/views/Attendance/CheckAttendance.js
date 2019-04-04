@@ -52,12 +52,10 @@ class CheckAttendance extends Component {
     }
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var today = new Date();
+      var today = (new Date()).toISOString().substring(0, 10);
 
       nextProps.attendance.attendance.forEach(element => {
-        if(new Date(element.date).getFullYear() === today.getFullYear()
-        && new Date(element.date).getMonth() === today.getMonth()
-        && new Date(element.date).getDate() === today.getDate())
+        if(element.date === today)
         {
           this.setState({
             userAttendance: element.students,
@@ -91,9 +89,7 @@ class CheckAttendance extends Component {
 
 
   submit = () => {
-    // var today = (new Date()).toISOString().substring(0, 10);
-    // console.log(new Date(today))
-    var today = new Date();
+    var today = (new Date()).toISOString().substring(0, 10);
 
     var newAttendance = {
       courseId: this.state.courseId,

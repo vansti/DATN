@@ -51,7 +51,6 @@ class StudentIfo extends Component {
     const {studentcourses} = this.props.courses
     const {student_absent_list} = this.props.attendance
 
-    console.log(student_absent_list)
     var CourseListTable = <ReactLoading type='bars' color='#05386B' height={100} width={50}/>
 
     if(studentcourses !== null){

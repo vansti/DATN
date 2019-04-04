@@ -107,9 +107,7 @@ class ListAttendance extends Component {
       })
       var userList = [];
       this.props.attendance.attendance.forEach(element => {
-        if(this.state.startDate.getFullYear() === new Date(element.date).getFullYear()
-          && this.state.startDate.getMonth() === new Date(element.date).getMonth()
-          && this.state.startDate.getDate() === new Date(element.date).getDate())
+        if(this.state.startDate.toISOString().substring(0, 10) === element.date)
           userList = element.students
       })
       this.setState({
