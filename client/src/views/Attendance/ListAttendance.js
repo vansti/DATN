@@ -229,7 +229,7 @@ class ListAttendance extends Component {
             <thead>
               <tr>
                 <th>Hình đại diện</th>
-                <th>Mã số</th>
+                <th>Email</th>
                 <th>Họ và Tên</th>
                 <th>Trạng thái điểm danh</th>
               </tr>
@@ -243,7 +243,7 @@ class ListAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.userId}</td> 
+                    <td>{user.email}</td> 
                     <td>{user.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>

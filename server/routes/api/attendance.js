@@ -3,15 +3,13 @@ const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
 require('dotenv').config()
-
-
-
-
+const moment = require('moment');
 
 // Course Model
 const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Attendance = require('../../models/Attendance');
+const Schedule = require('../../models/Schedule');
 
 router.use(cors());
 
@@ -63,6 +61,7 @@ router.get(
         element.students.map((student)=>{
           const temp = element.attendance_users.filter(user => user._id.toString() === student.userId.toString());
           student.name = temp[0].name
+          student.email = temp[0].email
           student.photo = temp[0].photo
         })
         delete element.attendance_users
@@ -90,4 +89,55 @@ router.post(
   }
 );
 
+// @route   GET api/attendance/get-student-absent/:courseId/:studentId
+// @desc    get a student absent list in a course by courseId and that studentId
+// @access  Private
+router.get(
+  '/get-student-absent/:courseId/:studentId',
+  //passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    Attendance.find({
+      'courseId': req.params.courseId,
+      students: { $elemMatch: { 'userId': req.params.studentId, isPresent: false } } 
+    },{date: 1}, function(err, absentlist){
+      Attendance.countDocuments({ 
+        'courseId': req.params.courseId, 
+        'students.userId': req.params.studentId
+      },function(err, count) {
+        const data = {};
+        data.attendanceNumber = count
+        data.absentlist = []
+        
+        return Promise.all(absentlist.map(element=>{
+        return Schedule.find(
+          {
+            'courseId': req.params.courseId, 
+            "events.date": moment(new Date(element.date)).format('YYYY-MM-DD').toString().slice(0, 10)
+          },
+          { 
+            _id: 0,
+            events: { 
+              $elemMatch: {
+                'date': moment(new Date(element.date)).format('YYYY-MM-DD').toString().slice(0, 10)
+              }
+            }
+          })
+          .then(schedule => {
+            var temp = {};
+            if(schedule[0] != null )
+              if(schedule[0].events.length !== 0)
+                temp.event = schedule[0].events[0]
+
+            temp._id = element._id
+            temp.date = element.date
+            data.absentlist.push(temp)
+          })
+        }))
+        .then(()=>res.json(data))
+      })
+    });
+
+  }
+);
 module.exports = router;

@@ -21,6 +21,9 @@ const ScheduleSchema = new Schema({
       },
       text: {
         type: String
+      },
+      date:{
+        type: String
       }
     }
   ],

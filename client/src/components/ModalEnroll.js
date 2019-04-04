@@ -67,7 +67,7 @@ class ModalEnroll extends Component {
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
-        <Button onClick={this.toggle} color="primary">Ghi danh</Button>
+        <Button onClick={this.toggle} color="danger">Ghi danh</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>Ghi danh vào khóa học</ModalHeader>
           <ModalBody>

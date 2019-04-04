@@ -1,1 +1,9 @@
+td.changeCursor:hover { 
+  cursor: pointer;
+  background-color: #3e8e41;
+  color: aliceblue
+}
 
+tr.changeCursor:hover { 
+  cursor: pointer;
+}

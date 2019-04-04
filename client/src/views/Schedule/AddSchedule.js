@@ -107,9 +107,14 @@ class AddSchedule extends Component {
   }
 
   submit=()=>{
+    var elist = this.calendar.events.list;
+    elist.map(element => {
+      return element.date = element.start.toString().slice(0, 10)
+    });
+
     var newSchedule = {
       courseId: this.state.courseId,
-      events: this.calendar.events.list
+      events: elist
     };
     this.props.addSchedule(newSchedule)
     this.setState({isLoading: true})

@@ -47,6 +47,7 @@ const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
 const AddQuiz = React.lazy(() => import('./views/Quiz/AddQuiz/AddQuiz'));
 const QuizList = React.lazy(() => import('./views/Quiz/QuizList/QuizList'));
 const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail'));
+const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -102,6 +103,7 @@ const routes = [
   { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
   { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },
   { path: '/quiz/:id', exact: true, name: 'Nội dung khóa học', component: QuizDetail },
+  { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
 ];
 
 export default routes;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS, GET_CURRENT_COURSES } from './types';
+import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS, GET_CURRENT_COURSES, GET_STUDENT_COURSES } from './types';
 
 // Add Course
 export const addCourse = (courseData, fileData) => dispatch => {
@@ -71,6 +71,24 @@ export const getCurentCourse = () => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_CURRENT_COURSES,
+        payload: {}
+      })
+    );
+};
+
+// get student courses by student id
+export const getStudentCourse = (studentId) => dispatch => {
+  axios
+    .get('/api/courses/' + studentId)
+    .then(res =>
+      dispatch({
+        type: GET_STUDENT_COURSES,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_STUDENT_COURSES,
         payload: {}
       })
     );

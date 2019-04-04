@@ -64,7 +64,7 @@ class DefaultHeader extends Component {
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center"><strong>Tài khoản</strong></DropdownItem>
-              <DropdownItem onClick={this.toEditProfile}><i className="fa fa-wrench"></i> Thay đổi thông tin </DropdownItem>
+              <DropdownItem onClick={this.toEditProfile}><i className="fa fa-user"></i> Thay đổi thông tin </DropdownItem>
               <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i> Đăng Xuất</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>

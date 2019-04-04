@@ -98,7 +98,7 @@ router.post('/login', (req, res) => {
         jwt.sign(
           payload,
           keys.secretOrKey,
-          { expiresIn: 3600 },
+          //{ expiresIn: 3600 },
           (err, token) => {
             res.json({
               success: true,
@@ -240,4 +240,12 @@ router.post(
     });
   }
 );
+
+// @route   GET api/users/:studentId
+// @desc    Return student by id
+// @access  Private
+router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.params.studentId)
+ .then(student => res.json(student));
+});
 module.exports = router;
