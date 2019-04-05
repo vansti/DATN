@@ -232,15 +232,28 @@ router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session
 // @route   POST api/exercises/:exerciseId/get-submission
 // @desc    get a submission
 // @access  Private
-// router.get('/:exerciseId/get-submissioN', (req, res) => {
-//   try{
-//     let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/')[0];
-//     res.json(fileName);
-//   }catch(e){
-//     res.json("")
-//   }
-//   //Path /file_upload/:userId/exerciseId/file
-// });
+router.get('/:exerciseId/get-submissionTai', passport.authenticate('jwt', { session: false }),(req, res) => {
+  //console.log('abc');
+  try{
+    let userName = fs.readdirSync('./file_upload/' + req.params.exerciseId);
+    var a =[];
+    var name_array = [1,31,2];
+    for (var i = 0; i < userName.length; i++){
+    let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId+'/'+userName[i]);
+    a.push(fileName);
+    }
+    for (var i = 0; i < a.length; i++){
+      console.log(a[i]);
+      }
+
+    
+    res.json(a);
+  }catch(e){
+    res.json("")
+  }
+  //console.log('abc');
+  //Path /file_upload/:userId/exerciseId/file
+});
 
 router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{

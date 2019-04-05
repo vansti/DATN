@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS,GET_EXER } from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST,GET_SUBMISSION2, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS,GET_EXER } from './types';
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
@@ -136,20 +136,21 @@ export const getSubmission = (exerciseId) => dispatch => {
 
     });
 };
-// export const getSubmissionExer = (exerciseId) => dispatch => {
-//   axios
-//     .get(`/api/exercises/${exerciseId}/get-submissioN`)
-//     .then(res =>{
-//       dispatch({
-//         type: GET_SUBMISSION2,
-//         payload: res.data
-//       })
-//     }
-//     )
-//     .catch(err =>{
+export const getSubmissionExer = (exerciseId) => dispatch => {
+  
+  axios
+    .get(`/api/exercises/${exerciseId}/get-submissionTai`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUBMISSION2,
+        payload: res.data
+      })
+    }
+    )
+    .catch(err =>{
 
-//     });
-// };
+    });
+};
 
 export const download = (exerciseId, submission) => dispatch => {
   axios

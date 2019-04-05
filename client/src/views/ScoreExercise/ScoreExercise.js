@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table,InputGroupAddon,  InputGroup, InputGroupText, Input, FormGroup, Label,Button } from 'reactstrap';
-import { getExercise, getSubmission, download } from '../../actions/exerciseActions';
+import { getExercise, getSubmission,getSubmissionExer, download } from '../../actions/exerciseActions';
 import {getUsers} from '../../actions/userActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,20 +11,21 @@ class ScoreExercise extends Component {
         super(props);
         this.state = {
           title:'',
-          students:''
+          students:'',
+          submission:''
         };
     }
 
     componentDidMount(){
         this.props.getExercise(this.props.match.params.exerciseId);
         this.props.getUsers(this.props.match.params.courseId);
-        this.props.getSubmission(this.props.match.params.exerciseId);
-        
+        //this.props.getSubmission(this.props.match.params.exerciseId);
+        this.props.getSubmissionExer(this.props.match.params.exerciseId)
 
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
+        // console.log(nextProps);
         if (nextProps.exercises) {
             this.setState({
                 title: nextProps.exercises.exercise.title,
@@ -36,12 +37,20 @@ class ScoreExercise extends Component {
             })
 
         }
+        if (nextProps.submission.submission) {
+            this.setState({
+                submission: nextProps.submission.submission
+            })
+
+        }
+        console.log(this.state.submission);
     }
 
     render() {
         //console.log(this.props.match.params.courseId)
         var StudentList = '';
-        const {submission} = this.props.submission.submission;
+        var ListSubmission='';
+        //const {submission} = this.props.submission.submission;
         //console.log(this.props.submission.submission);
         if(this.props.users.users === null)
         {
@@ -71,22 +80,30 @@ class ScoreExercise extends Component {
                         </div>
             </FormGroup>
             </td>
-            <td>
-                <Label htmlFor="prependedInput">File bài nộp</Label>
-                <div></div>
-                {this.props.submission.submission}
-
-            </td>
+            
+            
             </tr>
         )
         }
-        
+        if(this.state.submission === '')
+        {
+            ListSubmission = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
+        }
+        else{
+        ListSubmission = this.state.submission.map((submission, index) =>
+            
+             <tr><td>{submission}</td></tr>
+             
+             
+        )
+        }
         return (
         <div className="animated fadeIn">
             {this.state.title}
         <Table responsive hover>
             <tbody>
             {StudentList}
+            {ListSubmission}
             
             </tbody>
         </Table>
@@ -102,18 +119,16 @@ ScoreExercise.propTypes = {
     getExercise: PropTypes.func.isRequired,
     exercises: PropTypes.object.isRequired,
     users: PropTypes.object.isRequired,
-    submission: PropTypes.object.isRequired,
-    // Submission: PropTypes.object.isRequired
+    submission: PropTypes.object.isRequired
 
 };
 
 const mapStateToProps = state => ({
     exercises: state.exercises,
     users: state.users,
-    submission: state.submission,
-    // Submission: state.Submission
+    submission: state.submission
 
 
 });
 
-export default connect(mapStateToProps, {getExercise,getUsers, getSubmission, download})(ScoreExercise); 
+export default connect(mapStateToProps, {getExercise,getUsers, getSubmission,getSubmissionExer, download})(ScoreExercise); 
