@@ -50,17 +50,32 @@ router.post(
           courseCode: req.body.courseCode
         });
         
-        User.findById(req.user.id).then(user=>{
-          newCourse.teachers.push(req.user.id)
-          newCourse
-          .save()
-          .then(course => {
-            user.courses.push(course.id)
-            User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+        if(req.user.role === 'teacher')
+        {
+          User.findById(req.user.id).then(user=>{
+            newCourse.teachers.push(req.user.id)
+            newCourse
+            .save()
+            .then(course => {
+              user.courses.push(course.id)
+              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+              .catch(err => console.log(err));
+            })
             .catch(err => console.log(err));
           })
-          .catch(err => console.log(err));
-        })
+        }else{
+          User.findById(req.user.id).then(user=>{
+            newCourse
+            .save()
+            .then(course => {
+              user.courses.push(course.id)
+              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+              .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+          })
+        }
+
       }
     })
   }
@@ -92,17 +107,15 @@ router.post(
 // @desc    Return current user courses
 // @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Course.find({
-        '_id': { $in: req.user.courses}
-    }, function(err, courses){
-      courses.sort(function(a, b) {
-        a = new Date(a.created);
-        b = new Date(b.created);
-        return a>b ? -1 : a<b ? 1 : 0;
-      });
-      res.json(courses)
-    });
 
+    // var page = 1
+    // var limit = 2
+    // var skip = (page*limit)-limit;
+
+    Course.find({ '_id': { $in: req.user.courses} })
+          .sort({created: -1})
+          // .skip(skip).limit(limit)
+          .then(courses => res.json(courses));
 });
 
 // @route   GET api/courses/:studentId
@@ -111,16 +124,9 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
 router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req, res) => {
   User.findById(req.params.studentId)
   .then(student =>{
-    Course.find({
-      '_id': { $in: student.courses}
-    }, function(err, courses){
-      courses.sort(function(a, b) {
-        a = new Date(a.created);
-        b = new Date(b.created);
-        return a>b ? -1 : a<b ? 1 : 0;
-      });
-      res.json(courses)
-    });
+    Course.find({'_id': { $in: student.courses}})
+          .sort({created: -1})
+          .then(courses => res.json(courses));
   });
 });
 
@@ -173,6 +179,11 @@ router.post(
                 User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
                 .catch(err => console.log(err));
               })
+            }else{
+              const user = req.user;
+              user.courses.push(course._id)
+              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
+              .catch(err => console.log(err));
             }
         }
 
@@ -184,4 +195,25 @@ router.post(
   }
 );
 
+// @route   POST api/courses/unenroll-course/:courseId
+// @desc    unenroll course
+// @access  Private
+router.post(
+  '/unenroll-course/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    User.updateOne( { _id: req.user.id }, { $pull: { courses: req.params.courseId } } )
+    .then(()=>{
+      if(req.user.role === 'student') {
+        Course.updateOne( { _id: req.params.courseId }, { $pull: { students: req.user.id } } )
+      }else if(req.user.role === 'teacher')
+      {
+        Course.updateOne( { _id: req.params.courseId }, { $pull: { teachers: req.user.id } } )
+      }
+    })
+    .then(result => res.json(result))
+    .catch(err => res.status(400).json(err))
+  }
+);
 module.exports = router;

@@ -58,6 +58,25 @@ export const enrollCourse = (courseData) => dispatch => {
     );
 };
 
+// Unenroll Course
+export const unenrollCourse = (courseId) => dispatch => {
+  axios
+    .post('/api/courses/unenroll-course/' + courseId)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: {data: 'Đã rút tên ra khỏi khóa học'}
+      })
+      dispatch(getCurentCourse())
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 // get curent user courses
 export const getCurentCourse = () => dispatch => {
   axios
@@ -100,15 +119,6 @@ export const clearErrors = () => {
     type: CLEAR_ERRORS
   };
 };
-
-
-export const getSuccess = () => dispatch => {
-  dispatch({
-    type: GET_SUCCESS,
-    payload: {data: 'Thay đổi thành công'}
-  })
-};
-
 
 export const clearSuccess = () => {
   return {

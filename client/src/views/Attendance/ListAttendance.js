@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import isEmptyObj from '../../validation/is-empty';
 import {Chart} from 'react-google-charts';
+var moment = require('moment');
 
 class ListAttendance extends Component {
   constructor() {
@@ -34,8 +35,13 @@ class ListAttendance extends Component {
       ]
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
+    this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
   }
 
+  handleToSudentInfo(studentId){
+    this.props.history.push('/student-info/' + studentId)
+  }
+  
   handleChangeDate(date) {
     this.setState({
       startDate: date
@@ -51,7 +57,6 @@ class ListAttendance extends Component {
   componentWillReceiveProps(nextProps) {
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-
       this.setState({
         chartData: [
           [
@@ -107,7 +112,7 @@ class ListAttendance extends Component {
       })
       var userList = [];
       this.props.attendance.attendance.forEach(element => {
-        if(this.state.startDate.toISOString().substring(0, 10) === element.date)
+        if(moment(this.state.startDate).format('YYYY-MM-DD') === element.date)
           userList = element.students
       })
       this.setState({
@@ -120,7 +125,7 @@ class ListAttendance extends Component {
   onchange = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialUsers));
     updatedList = updatedList.filter((user)=>
-      user.userId.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      user.email.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
       user.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
     );
     this.setState({users: updatedList});
@@ -180,8 +185,6 @@ class ListAttendance extends Component {
 
       SelectDateChart =
           <Chart
-            width={1000}
-            height={350}
             chartType="Calendar"
             loader={<div><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>}
             data={this.state.chartData}
@@ -211,7 +214,7 @@ class ListAttendance extends Component {
     if(!isEmptyObj(this.state.intialUsers) && isEmptyObj(this.state.users) && this.state.courseId !== '0')
     {
       StudentList = <div className="animated fadeIn">
-                      <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Mã số hoặc Họ Tên ..."  />
+                      <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
                       <br/>
                       <h4>Không tìm thấy kết quả</h4>
                     </div>
@@ -221,7 +224,7 @@ class ListAttendance extends Component {
     {
       StudentList = 
         <div className="animated fadeIn">
-          <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Mã số hoặc Họ Tên ..."  />
+          <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
           <br/>
           <Table hover bordered striped responsive size="sm">
             <thead>
@@ -235,7 +238,7 @@ class ListAttendance extends Component {
             <tbody>
               {
                 this.state.users.map((user, index) =>
-                  <tr key={user._id}>
+                  <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user.userId)} className="changeCursor">
                     <th>                      
                       <div className="avatar">
                         <img src={user.photo} className="img-avatar" alt="" />

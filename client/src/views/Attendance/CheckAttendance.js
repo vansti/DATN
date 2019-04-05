@@ -10,6 +10,7 @@ import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
+var moment = require('moment');
 
 class CheckAttendance extends Component {
   constructor() {
@@ -52,7 +53,7 @@ class CheckAttendance extends Component {
     }
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var today = (new Date()).toISOString().substring(0, 10);
+      var today = moment().format('YYYY-MM-DD');
 
       nextProps.attendance.attendance.forEach(element => {
         if(element.date === today)
@@ -89,7 +90,7 @@ class CheckAttendance extends Component {
 
 
   submit = () => {
-    var today = (new Date()).toISOString().substring(0, 10);
+    var today = moment().format('YYYY-MM-DD');
 
     var newAttendance = {
       courseId: this.state.courseId,
