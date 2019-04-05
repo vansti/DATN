@@ -9,7 +9,8 @@ export const addAttendance= (newAttendance) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Điểm danh thành công'}
+        payload: {data: 'Điểm danh thành công',
+      messages: ''}
       })
     })
     .catch(err =>

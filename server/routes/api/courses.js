@@ -157,7 +157,6 @@ router.post(
               })
             }
         }
-
       } else {
         errors.courseCode = 'Mã khóa học không tồn tại';
         return res.status(400).json(errors);

@@ -41,8 +41,8 @@ const AddCourse = React.lazy(() => import('./views/Courses/AddCourse'));
 const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
 const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
-const QuizList = React.lazy(() => import('./components/Quiz/List/index'));
-const QuizDetail = React.lazy(() => import('./components/Quiz/Detail/index'));
+const QuizList = React.lazy(() => import('./views/Quiz/QuizList'));
+const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail'));
 const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
@@ -96,9 +96,9 @@ const routes = [
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
   { path: '/courses', exact: true, name: 'Danh sách khóa học', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
-  { path: '/test/quiz', exact: true, name: 'Danh sách bài kiểm tra câu hỏi', component: QuizList },
-  { path: '/test/quiz/:id', exact: true, name: 'Nội dung bài kiểm tra câu hỏi', component: QuizDetail },
-  { path: '/test/add-quiz', exact: true, name: 'Thêm bài kiểm tra câu hỏi', component: QuizAdd },
+  { path: '/test/quiz', exact: true, name: 'Danh sách bài kiểm tra trắc nghiệm', component: QuizList },
+  { path: '/test/quiz/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail },
+  { path: '/test/add-quiz', exact: true, name: 'Thêm bài kiểm tra trắc nghiệm', component: QuizAdd },
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },

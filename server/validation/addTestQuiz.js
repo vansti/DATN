@@ -6,6 +6,7 @@ module.exports = function validateAddTestQuizInput(data) {
   data.testTitle = !isEmpty(data.testTitle) ? data.testTitle : '';
   data.testSynopsis = !isEmpty(data.testSynopsis) ? data.testSynopsis : '';
   data.courseId = !isEmpty(data.courseId) ? data.courseId : '';
+  data.courseId = !isEmpty(data.courseId) ? data.courseId : '';
 
   if (Validator.isEmpty(data.testTitle)) {
     errors.testTitle = 'Hãy điền tiêu đề bài tập';
@@ -18,11 +19,18 @@ module.exports = function validateAddTestQuizInput(data) {
   if (Validator.isEmpty(data.courseId)) {
     errors.courseId = 'Hãy điền nội dung bài tập';
   }
+
+  console.log(data);
+
+  // if (!isEmpty(data.quizzes)) {
+  //   errors.quizzes = 'Hãy điền nội dung bài tập';
+  // }
+
   // data.quizzes.forEach(quiz => {
   //   quiz.question =  !isEmpty(data.courseId) ? quiz.question : '';
   //   if (Validator.isEmpty(data.question)) {
   //     errors.deadline = 'Hãy điền câu hỏi';
-  //   }
+  //   } 
   // });
 
   return {

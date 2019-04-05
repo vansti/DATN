@@ -68,7 +68,6 @@ class TestQuizForm extends Component {
   
    renderTextAnswers = ({ fields, question, meta: { touched, error } }) => (
     <div>
-      <Button type="button" onClick={() => fields.push()}>Thêm câu trả lời</Button>
       {fields.map((answer, index) => (
         <FormGroup row key={index}>
           <Label for="" sm={2}>{`Câu trả lời ${index + 1}`}: </Label>
@@ -83,18 +82,19 @@ class TestQuizForm extends Component {
           </Col>
         </FormGroup>
       ))}
-          <FormGroup>
-           <Field
-            name={`${question}.correctAnswer`}
-            component={this.renderSelectField}
-            label="Câu trả lời đúng"
-          >
-            <option value="">Please select correct answer</option>
-             {fields.map((answer, index) => (
-               <option key={index+1} value={index+1}>{`Answer #${index + 1}`}</option>
-             ))}
-          </Field>
-          </FormGroup>
+      <Button type="button" onClick={() => fields.push()}>Thêm câu trả lời</Button>
+        <FormGroup>
+          <Field
+          name={`${question}.correctAnswer`}
+          component={this.renderSelectField}
+          label="Câu trả lời đúng"
+        >
+          <option value="">Please select correct answer</option>
+            {fields.map((answer, index) => (
+              <option key={index+1} value={index+1}>{`Answer #${index + 1}`}</option>
+            ))}
+        </Field>
+        </FormGroup>
     
       {error && <li className="error">{error}</li>}
     </div>
@@ -102,7 +102,6 @@ class TestQuizForm extends Component {
   
   renderQuizzes = ({ fields, meta: { touched, error, submitFailed } }) => (
     <FormGroup>
-        <Button color="success" type="button" onClick={() => fields.push({})}>Thêm câu hỏi</Button>
         {(touched || submitFailed) && error && <span>{error}</span>}
       {fields.map((quiz, index) => (
         <div key={index}>
@@ -122,7 +121,6 @@ class TestQuizForm extends Component {
             <option value="text">Văn bản</option>
             <option value="photo">Hình ảnh</option>
           </Field>
-          
           <FieldArray name={`${quiz}.answers`} component={this.renderTextAnswers} question={quiz} />
           <Field
             name={`${quiz}.explanation`}
@@ -130,9 +128,12 @@ class TestQuizForm extends Component {
             component={this.renderInputFieldInline}
             label="Explanation"
           />
-          <Button color="danger" onClick={() => fields.remove(index)}>Xóa Câu hỏi</Button>
+          <FormGroup>
+            <Button color="danger" onClick={() => fields.remove(index)}>Xóa Câu hỏi</Button>
+          </FormGroup>
         </div>
       ))}
+      <Button color="success" type="button" onClick={() => fields.push({})}>Thêm câu hỏi</Button>
     </FormGroup>
   );
   render() {

@@ -36,7 +36,6 @@ class QuizAddPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false});
     }
@@ -50,7 +49,6 @@ class QuizAddPage extends React.Component {
   
   submit = values => {
     // print the form values to the console
-    console.log(JSON.stringify(values));
     this.props.addTestQuiz(values, this.props.history);
     this.setState({isLoading: true});
   }

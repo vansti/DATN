@@ -11,6 +11,7 @@ import commentReducer from './commentReducer';
 import attendanceReducer from './attendanceReducer';
 import scheduleReducer from './scheduleReducer';
 import submissionReducer from './submissionReducer';
+import testQuizReducer from './testQuizReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -24,6 +25,7 @@ export default combineReducers({
   form: formReducer,
   attendance: attendanceReducer,
   schedule: scheduleReducer,
+  testQuiz: testQuizReducer,
   submission: submissionReducer
 });
 

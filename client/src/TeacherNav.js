@@ -54,7 +54,7 @@ export default {
       ]
     },
     {
-      name: 'Kiểm tra câu hỏi',
+      name: 'Kiểm tra trắc nghiệm',
       icon: 'fa fa-question-circle',
       children: [
         {

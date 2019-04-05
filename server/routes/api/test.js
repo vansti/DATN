@@ -15,8 +15,8 @@ const Quiz = require('../../models/TestQuiz');
 router.use(cors());
 
 
-// @route   POST api/quiz/submit-quiz
-// @desc    students submit quiz
+// @route   POST api/test/add-quiz
+// @desc    teachcer create test quiz
 // @access  Private
 router.post(
     '/add-quiz', passport.authenticate('jwt', {
@@ -37,7 +37,6 @@ router.post(
             time: '1600',
             deadline: '2019-06-01',
         });
-        
         newTestQuiz.save().then(testQuiz => {
             Course.findById(req.body.courseId).then(course => {
                 course.testQuiz.unshift(testQuiz._id);
@@ -51,27 +50,25 @@ router.post(
     }
 );
 
-// @route   POST api/quiz/get-quiz
+// @route   POST api/test/quiz
 // @desc    get all quizes
 // @access  Private
 router.get(
-    '/get-quiz',
+    '/quiz',
     passport.authenticate('jwt', { session: false }),
     (req, res) => {
         Quiz.find((err, quizes) => {
-          res.json(quizes);
+            res.json(quizes);
         });
     }
 );
 
-// @route   POST api/quiz/get-quiz
+// @route   POST api/test/quiz-detail
 // @desc    get one quiz
 // @access  Private
-router.get(
-    '/get-quiz/detail/:id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        res.json({"message": "function under construction"});
-    }
-);
+router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Quiz.findById(req.params.idTestQuiz).then(quiz => {
+        res.json(quiz);
+    }).catch(err => console.log(err));
+});
 module.exports = router;

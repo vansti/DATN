@@ -1,5 +1,7 @@
 import axios from 'axios';
-
+import moment from 'moment';
+import { format_date } from '../constants/format';
+import isEmpty from '../validation/is-empty';
 import {
   GET_ERRORS,
   CLEAR_ERRORS,
@@ -29,6 +31,46 @@ export const addTestQuiz = (testQuizData, history) => dispatch => {
     );
 };
 
+// Get list test quizzed
+export const getListQuiz = () => dispatch => {
+  axios
+    .get('/api/test/quiz')
+    .then(res => {
+      let data = formatDataListQuizTest(res.data);
+      dispatch({
+        type: GET_CURRENT_TESTQUIZ,
+        payload: {
+          data: data,
+          message: 'Đã nhận data thành công'
+        }
+      })
+    }).catch(err =>{
+      dispatch({
+        type: GET_ERRORS,
+        payload: {}
+      })}
+    );
+}
+// Get detail test quiz by id
+export const getDetailQuiz = (testQuizId) => dispatch => {
+  axios
+    .get(`/api/test/quiz/${testQuizId}`)
+    .then(res => {
+      let data = formatDataListQuizTest(res.data);
+      dispatch({
+        type: GET_CURRENT_TESTQUIZ,
+        payload: {
+          data: data,
+          message: 'Đã nhận data thành công'
+        }
+      })
+    }).catch(err =>{
+      dispatch({
+        type: GET_ERRORS,
+        payload: {}
+      })}
+    );
+}
 // Clear errors
 export const clearErrors = () => {
   return {
@@ -41,3 +83,13 @@ export const clearSuccess = () => {
     type: CLEAR_SUCCESS
   };
 };
+
+export const formatDataListQuizTest = data => {
+  let formatDate = format_date.default;
+  if(isEmpty(data)){
+    return data;
+  }
+  
+  // data.deadline = moment(data.deadline, formatDate);
+  return data;
+}

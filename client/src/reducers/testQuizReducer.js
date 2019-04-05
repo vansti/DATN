@@ -3,7 +3,7 @@ import {
 } from '../actions/types';
 
 const initialState = {
-  currentcourses: null
+  listTestQuiz: null
 };
 
 export default function(state = initialState, action) {
