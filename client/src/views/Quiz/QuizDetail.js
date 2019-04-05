@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 //action
 import { getListQuiz } from '../../actions/testQuizAction';
 //component
-import Quiz from 'react-quiz-component';
+import Quiz from '../../components/Quiz/Quiz';
 import ReactLoading from 'react-loading';
 class QuizDetailPage extends React.Component {
   constructor (props) {
@@ -27,8 +27,9 @@ class QuizDetailPage extends React.Component {
     if(this.props.testQuiz.listTestQuiz != null)
     {
       testQuiz= this.props.testQuiz.listTestQuiz.find(test => test._id.toString() === this.props.match.params.id);
+      console.log(testQuiz);
       var formatData = {
-        "quizTitle": testQuiz.quizTitle,
+        "quizTitle": testQuiz.title,
         "quizSynopsis": testQuiz.description,
         "questions": testQuiz.listQuiz,
       }

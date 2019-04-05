@@ -37,7 +37,6 @@ class CourseDetail extends Component {
     if(this.props.courses.currentcourses != null)
     {
       course = this.props.courses.currentcourses.find(course => course._id.toString() === this.props.match.params.id);
-
     }
 
     return (
