@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const moment = require('moment');
 
 //Create Schema
 const ScheduleSchema = new Schema({
@@ -20,6 +19,9 @@ const ScheduleSchema = new Schema({
         type: String
       },
       text: {
+        type: String
+      },
+      date:{
         type: String
       }
     }

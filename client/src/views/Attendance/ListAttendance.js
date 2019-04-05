@@ -107,9 +107,7 @@ class ListAttendance extends Component {
       })
       var userList = [];
       this.props.attendance.attendance.forEach(element => {
-        if(this.state.startDate.getFullYear() === new Date(element.date).getFullYear()
-          && this.state.startDate.getMonth() === new Date(element.date).getMonth()
-          && this.state.startDate.getDate() === new Date(element.date).getDate())
+        if(this.state.startDate.toISOString().substring(0, 10) === element.date)
           userList = element.students
       })
       this.setState({
@@ -229,7 +227,7 @@ class ListAttendance extends Component {
             <thead>
               <tr>
                 <th>Hình đại diện</th>
-                <th>Mã số</th>
+                <th>Email</th>
                 <th>Họ và Tên</th>
                 <th>Trạng thái điểm danh</th>
               </tr>
@@ -243,7 +241,7 @@ class ListAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.userId}</td> 
+                    <td>{user.email}</td> 
                     <td>{user.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>

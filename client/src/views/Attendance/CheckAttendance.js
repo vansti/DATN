@@ -52,12 +52,10 @@ class CheckAttendance extends Component {
     }
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var today = new Date();
+      var today = (new Date()).toISOString().substring(0, 10);
 
       nextProps.attendance.attendance.forEach(element => {
-        if(new Date(element.date).getFullYear() === today.getFullYear()
-        && new Date(element.date).getMonth() === today.getMonth()
-        && new Date(element.date).getDate() === today.getDate())
+        if(element.date === today)
         {
           this.setState({
             userAttendance: element.students,
@@ -91,7 +89,7 @@ class CheckAttendance extends Component {
 
 
   submit = () => {
-    var today = new Date();
+    var today = (new Date()).toISOString().substring(0, 10);
 
     var newAttendance = {
       courseId: this.state.courseId,
@@ -172,7 +170,7 @@ class CheckAttendance extends Component {
               <thead>
                 <tr>
                   <th>Hình đại diện</th>
-                  <th>Mã số</th>
+                  <th>Email</th>
                   <th>Họ và Tên</th>
                   <th>Trạng thái</th>
                   <th>Điểm danh</th>
@@ -187,7 +185,7 @@ class CheckAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user._id}</td>
+                    <td>{user.email}</td>
                     <td>{user.name}</td>
                     <td> <Badge className="mr-1" color="dark" pill>Chưa điểm danh</Badge> </td>
                     <td><AppSwitch onChange={this.onChangeSwitch.bind(this, user._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
@@ -210,7 +208,7 @@ class CheckAttendance extends Component {
               <thead>
                 <tr>
                   <th>Hình đại diện</th>
-                  <th>Mã số</th>
+                  <th>Email</th>
                   <th>Họ và Tên</th>
                   <th>Trạng thái</th>
                   <th>Điểm danh</th>
@@ -225,7 +223,7 @@ class CheckAttendance extends Component {
                         <img src={user.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user._id}</td>
+                    <td>{user.email}</td>
                     <td>{user.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>

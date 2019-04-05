@@ -15,7 +15,6 @@ const CourseSchema = new Schema({
     type: String,
     default: process.env.COURSE_PHOTO_DEFAULT
   },
-  mainteacher: { type: String },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   students: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   exercises: [{type: mongoose.Schema.ObjectId, ref: 'exercises'}],

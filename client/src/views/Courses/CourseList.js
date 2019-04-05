@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Card, Table, CardBody,  CardHeader, CardFooter} from 'reactstrap';
+import {Card, Table, CardBody,  CardHeader} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCurentCourse } from '../../actions/courseActions';
@@ -36,37 +36,48 @@ class CourseList extends Component {
   }
 
   render() {
-    var list = '';
-    if(this.props.courses.currentcourses === null)
-    {
-      list = <tr><td></td><td></td><td ><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td><td></td></tr>
-    }
-    else{
-      if(this.props.courses.currentcourses.length === 0)
+    const {currentcourses} = this.props.courses
+
+    var CourseListTable = <ReactLoading type='bars' color='#05386B' height={100} width={50}/>
+
+    if(currentcourses !== null){
+
+      if(currentcourses.length === 0)
       {
-        list = <tr><td></td><td></td><td >Bạn hiện không có khóa học nào</td><td></td></tr>
+        CourseListTable = <h3>Bạn hiện không có khóa học nào</h3>
       }
       else{
-        list = this.props.courses.currentcourses.map(course=>
-                        <tr key={course._id} onClick={this.jumpcourse.bind(this, course._id)} className="changeCursor">
-                          <td className="text-center" >
-                            <div>
-                              <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                            </div>
-                          </td>
-                          <td>
-                            {course.title}
-                          </td>
-                          <td>
-                            <div>{course.mainteacher}</div>
-                          </td>
-                          <td>
-                            <Moment format="DD/MM/YYYY">
-                              {course.created}
-                            </Moment>
-                          </td>
-                        </tr>
-                      )
+        CourseListTable=
+        <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
+          <thead className="thead-light">
+            <tr>
+              <th className="text-center">Hình khóa học</th>
+              <th>Tên khóa học</th>
+              <th>Ngày tạo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              currentcourses.map(course=>
+              <tr key={course._id} onClick={this.jumpcourse.bind(this, course._id)} className="changeCursor">
+                <td>
+                  <div className="text-center">
+                    <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                  </div>
+                </td>
+                <td>
+                  {course.title}
+                </td>
+                <td>
+                  <Moment format="DD/MM/YYYY">
+                    {course.created}
+                  </Moment>
+                </td>
+              </tr>
+              )
+            }
+          </tbody>
+        </Table>
       }
     }
 
@@ -74,26 +85,13 @@ class CourseList extends Component {
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            Danh sách khóa học
+            <i className="fa fa-book"></i>Danh sách khóa học
           </CardHeader>
           <CardBody>
-            <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
-              <thead className="thead-light">
-                <tr>
-                  <th className="text-center"><i className="fa fa-book"></i></th>
-                  <th>Tên khóa học</th>
-                  <th>Giáo viên chính</th>
-                  <th>Ngày tạo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {list}
-              </tbody>
-            </Table>
+            <ModalEnroll/>
+            <br/>
+            {CourseListTable}
           </CardBody>
-          <CardFooter>
-           <ModalEnroll/>
-          </CardFooter>
         </Card>
       </div>
     )

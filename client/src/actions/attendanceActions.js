@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_ATTENDANCE, CLEAR_ATTENDANCE} from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_ATTENDANCE, CLEAR_ATTENDANCE, GET_STUDENT_ABSENT_LIST} from './types';
 
 // Add Attendance
 export const addAttendance= (newAttendance) => dispatch => {
@@ -58,6 +58,24 @@ export const getAttendance = (courseId) => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_ATTENDANCE,
+        payload: {}
+      })
+    );
+};
+
+// get a student absent list in a course by courseId and that studentId
+export const getStudentAbsent = (courseId, studentId) => dispatch => {
+  axios
+    .get(`/api/attendance/get-student-absent/${courseId}/${studentId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_STUDENT_ABSENT_LIST,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_STUDENT_ABSENT_LIST,
         payload: {}
       })
     );

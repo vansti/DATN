@@ -51,7 +51,6 @@ router.post(
         });
         
         User.findById(req.user.id).then(user=>{
-          newCourse.mainteacher = user.name;
           newCourse.teachers.push(req.user.id)
           newCourse
           .save()
@@ -104,6 +103,25 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
       res.json(courses)
     });
 
+});
+
+// @route   GET api/courses/:studentId
+// @desc    Return current user courses
+// @access  Private
+router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.params.studentId)
+  .then(student =>{
+    Course.find({
+      '_id': { $in: student.courses}
+    }, function(err, courses){
+      courses.sort(function(a, b) {
+        a = new Date(a.created);
+        b = new Date(b.created);
+        return a>b ? -1 : a<b ? 1 : 0;
+      });
+      res.json(courses)
+    });
+  });
 });
 
 // @route   POST api/courses/enroll-course

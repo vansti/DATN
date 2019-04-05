@@ -98,6 +98,7 @@ router.post('/login', (req, res) => {
         jwt.sign(
           payload,
           keys.secretOrKey,
+          //{ expiresIn: 3600 },
           (err, token) => {
             res.json({
               success: true,
@@ -205,9 +206,9 @@ router.get(
     };
 
     Course.findById(req.params.courseid).then(course=>{
-      User.find({'_id': { $in: course.teachers}}, { name: 1, photo: 1 },function(err, teachers){
+      User.find({'_id': { $in: course.teachers}}, { name: 1, email: 1, photo: 1 },function(err, teachers){
         users.teachers = teachers;
-        User.find({'_id': { $in: course.students}}, { name: 1, photo: 1 }, function(err, students){
+        User.find({'_id': { $in: course.students}}, { name: 1, email: 1, photo: 1 }, function(err, students){
           users.students = students;
           res.json(users)
         });
@@ -239,4 +240,12 @@ router.post(
     });
   }
 );
+
+// @route   GET api/users/:studentId
+// @desc    Return student by id
+// @access  Private
+router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  User.findById(req.params.studentId)
+ .then(student => res.json(student));
+});
 module.exports = router;

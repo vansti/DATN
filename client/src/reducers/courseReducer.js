@@ -1,9 +1,10 @@
 import {
-  GET_CURRENT_COURSES
+  GET_CURRENT_COURSES, GET_STUDENT_COURSES
 } from '../actions/types';
 
 const initialState = {
-  currentcourses: null
+  currentcourses: null,
+  studentcourses: null
 };
 
 export default function(state = initialState, action) {
@@ -12,6 +13,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         currentcourses: action.payload,
+      };
+    case GET_STUDENT_COURSES:
+      return {
+        ...state,
+        studentcourses: action.payload,
       };
     default:
       return state;

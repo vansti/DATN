@@ -1,8 +1,9 @@
 import {
-  GET_USERS, CLEAR_USER
+  GET_USERS, CLEAR_USER, GET_STUDENT
 } from '../actions/types';
 
 const initialState = {
+  student: null,
   users: null
 };
 
@@ -12,6 +13,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         users: action.payload
+      };
+    case GET_STUDENT:
+      return {
+        ...state,
+        student: action.payload
       };
     case CLEAR_USER:
       return {

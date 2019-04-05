@@ -48,6 +48,7 @@ const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttenda
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
 const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
 const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
+const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -104,6 +105,7 @@ const routes = [
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
   { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
+  { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
 ];
 
 export default routes;
