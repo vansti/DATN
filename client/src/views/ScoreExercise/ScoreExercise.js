@@ -1,10 +1,22 @@
 import React, { Component } from 'react';
-import { Table,InputGroupAddon,  InputGroup, InputGroupText, Input, FormGroup, Label,Button } from 'reactstrap';
+import { Modal, ModalBody,Table,InputGroupAddon,NavLink,  InputGroup, InputGroupText, Input, FormGroup, Label,Button } from 'reactstrap';
 import { getExercise, getSubmission,getSubmissionExer, download } from '../../actions/exerciseActions';
 import {getUsers} from '../../actions/userActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
+import SweetAlert from 'react-bootstrap-sweetalert';
+const styles = {
+    styleSub: {
+        flexDirection: 'row' ,
+        justifyContent: 'flex-end',
+        width:50
+
+    },
+    styleInfo:{
+        width: 50,
+    }
+  }
 
 class ScoreExercise extends Component {
     constructor(props) {
@@ -12,10 +24,16 @@ class ScoreExercise extends Component {
         this.state = {
           title:'',
           students:'',
-          submission:''
+          submission:'',
+          isShowSuccess: false,
+            isLoading: false
         };
     }
-
+    toggle() {
+        this.setState({
+          modal: !this.state.modal,
+        });
+      }
     componentDidMount(){
         this.props.getExercise(this.props.match.params.exerciseId);
         this.props.getUsers(this.props.match.params.courseId);
@@ -25,7 +43,7 @@ class ScoreExercise extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log(nextProps);
+        console.log(nextProps);
         if (nextProps.exercises) {
             this.setState({
                 title: nextProps.exercises.exercise.title,
@@ -43,9 +61,25 @@ class ScoreExercise extends Component {
             })
 
         }
-        console.log(this.state.submission);
+        
+        //console.log(this.state.submission);
     }
+    download = (e) => {
+        e.preventDefault();
+        this.props.download(this.props.match.params.exerciseId, this.props.submission.submission);
+      }
+    onSubmit = e => {
+        e.preventDefault();
 
+        this.setState({isLoading: true});
+        this.setState({isShowSuccess: true});
+      }
+    hideAlertSuccess(){
+        this.setState({
+          isShowSuccess: false,
+          modal: false,
+        })
+      }
     render() {
         //console.log(this.props.match.params.courseId)
         var StudentList = '';
@@ -60,13 +94,14 @@ class ScoreExercise extends Component {
             //console.log(this.state.students);
             StudentList = this.state.students.map((user, index) =>
             <tr key={user._id}>
-            <th>                      
+            
+            <td style={styles.styleInfo}>                      
                 <div className="avatar">
                 <img src={user.photo} className="img-avatar" alt="" />
                 </div>
-            </th>
-            <td>{user.name}</td>
-            <td>
+            </td>
+            <td style={styles.styleInfo}>{user.name}</td>
+            <td style={styles.styleInfo}>
             <FormGroup>
                         <Label htmlFor="prependedInput">Điểm bài tập</Label>
                         <div className="controls">
@@ -92,7 +127,16 @@ class ScoreExercise extends Component {
         else{
         ListSubmission = this.state.submission.map((submission, index) =>
             
-             <tr><td>{submission}</td></tr>
+             <tr style={styles.styleSub} >
+             <td>
+             {
+                submission === ''
+                ? <div>Chưa có bài nộp</div>
+                :<NavLink href="#" onClick={this.download}>{submission}</NavLink>
+              }    
+             </td>
+             
+             </tr>
              
              
         )
@@ -100,14 +144,24 @@ class ScoreExercise extends Component {
         return (
         <div className="animated fadeIn">
             {this.state.title}
-        <Table responsive hover>
-            <tbody>
+        <Table >
+            <tbody >
             {StudentList}
             {ListSubmission}
             
             </tbody>
         </Table>
-        <Button type="submit" color="primary" onClick={this.onSubmit}>Lưu thay đổi</Button>
+        <Button color="primary" onClick={this.onSubmit}>Thay đổi</Button>{' '}
+        <SweetAlert
+          	success
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="success"
+          	title="Chấm điểm thành công!"
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}
+            onCancel={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
+        
         </div>
         
         )
