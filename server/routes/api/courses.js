@@ -20,6 +20,7 @@ const validateAddCourseInput = require('../../validation/addcourse');
 
 // Course Model
 const Course = require('../../models/Course');
+const CourseDetail = require('../../models/CourseDetail');
 const User = require('../../models/User');
 router.use(cors());
 router.use(formData.parse())
@@ -39,59 +40,45 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    Course.findOne({ courseCode: req.body.courseCode }).then(course => {
-      if (course) {
-        errors.courseCode = 'Mã khóa học đã tồn tại';
-        return res.status(400).json(errors);
-      } else {
-        
-        const newCourse = new Course({
-          title: req.body.title,
-          courseCode: req.body.courseCode
-        });
-        
-        if(req.user.role === 'teacher')
-        {
-          User.findById(req.user.id).then(user=>{
-            newCourse.teachers.push(req.user.id)
-            newCourse
-            .save()
-            .then(course => {
-              user.courses.push(course.id)
-              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-              .catch(err => console.log(err));
-            })
-            .catch(err => console.log(err));
-          })
-        }else{
-          User.findById(req.user.id).then(user=>{
-            newCourse
-            .save()
-            .then(course => {
-              user.courses.push(course.id)
-              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-              .catch(err => console.log(err));
-            })
-            .catch(err => console.log(err));
-          })
-        }
+    const newCourse = new Course({
+      title: req.body.title,
+      enrollDeadline: req.body.enrollDeadline,
+      intro: req.body.intro
+    });
 
+    const newCourseDetail = new CourseDetail({
+      studyTime: req.body.studyTime,
+      openingDay: req.body.openingDay,
+      fee: req.body.fee,
+      info: req.body.info
+    });
+
+    async function run() {
+      try {
+        const course = await newCourse.save()
+        newCourseDetail.courseId = course._id
+        const coursedetail = await newCourseDetail.save()
+        res.json(coursedetail)
+      } catch (err) {
+        console.log(err)
       }
-    })
+    }
+
+    run();
   }
 );
 
-// @route   post api/courses/add-course-avatar/:courseCode
+// @route   post api/courses/add-course-avatar/:courseId
 // @desc    add course avatar
 // @access  Private
 router.post(
-  '/add-course-avatar/:courseCode',
+  '/add-course-avatar/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     var fileGettingUploaded = req.files.image.path;
     cloudinary.uploader.upload(fileGettingUploaded, function(result) {
       Course.updateOne(
-        { courseCode: req.params.courseCode },
+        { _id: req.params.courseId },
         { $set:
           {
             coursePhoto: result.secure_url,
@@ -100,6 +87,71 @@ router.post(
       )
      .then(course => res.json(course));
     });
+  }
+);
+
+// @route   GET api/courses/all-course
+// @desc    lấy hết khóa học chưa hết hạn ghi danh
+// @access  Private
+router.get(
+  '/all-course',
+  //passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Course.find(
+      { 'enrollDeadline' : {$gte : new Date()}},
+      {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}
+    )
+    .then(courses => res.json(courses))
+    .catch(err => console.log(err));
+  }
+);
+
+// @route   GET api/courses/course-info/:courseId
+// @desc    lấy thông tin chi tiết của khóa học
+// @access  Private
+router.get(
+  '/course-info/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+
+        var course = await 
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}).lean()
+
+        var course_detail = await  
+        CourseDetail.findOne(
+          { 'courseId' : req.params.courseId },
+          { studyTime: 1, openingDay: 1, fee: 1, info: 1, 
+            enrollStudent:  
+            {
+              $elemMatch: {
+                'studentId': req.user.id
+              }
+            }
+          }
+        ).lean()
+
+        const result = {
+          course: course,
+          course_detail: course_detail
+        }
+
+        if(result.course_detail.enrollStudent === undefined)
+          result.isEnroll = false
+        else{   
+          result.isEnroll = true
+          delete result.course_detail.enrollStudent
+        } 
+
+        res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
   }
 );
 
@@ -118,6 +170,21 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
           .then(courses => res.json(courses));
 });
 
+// @route   GET api/courses/admin-courses
+// @desc    lấy hết khóa học để admin chỉnh sữa
+// @access  Private
+router.get(
+  '/admin-courses',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Course.find({},{coursePhoto: 1, title: 1})
+    .then(courses => {
+      res.json(courses)
+    })
+    .catch(err => console.log(err));
+  }
+);
+
 // @route   GET api/courses/:studentId
 // @desc    Return current user courses
 // @access  Private
@@ -130,68 +197,26 @@ router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req
   });
 });
 
-// @route   POST api/courses/enroll-course
+// @route   POST api/courses/enroll-course/:courseId
 // @desc    enroll course
 // @access  Private
 router.post(
-  '/enroll-course',
+  '/enroll-course/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
-    let errors = {};
-
-    if (Validator.isEmpty(req.body.courseCode)) {
-      errors.courseCode = 'Hãy điền mã khóa học';
-      return res.status(400).json(errors);
-    }
-
-    var isEnroll = false;
-
-    Course.findOne({ courseCode: req.body.courseCode }).then(course => {
-      if (course) {
-        req.user.courses.map(courseid => {
-          if(courseid.toString() == course._id.toString())
-          {
-            isEnroll = true;
-            errors.courseCode = 'Đã ghi danh vào khóa học này';
-            return res.status(400).json(errors);
+    CourseDetail.findOneAndUpdate(
+      { 'courseId' : req.params.courseId },
+      { 
+        $push: {
+          enrollStudent: {
+            studentId: req.user.id
           }
-        })
-
-        if(isEnroll == false)
-        {
-            if(req.user.role === 'student') {
-              const user = req.user;
-              course.students.push(req.user.id)
-              Course.findByIdAndUpdate(course._id, course, {new: true})
-              .then(course2 => {
-                user.courses.push(course2._id)
-                User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-                .catch(err => console.log(err));
-              })
-            }
-            else if(req.user.role === 'teacher') {
-              const user = req.user;
-              course.teachers.push(req.user.id)
-              Course.findByIdAndUpdate(course._id, course, {new: true})
-              .then(course2 => {
-                user.courses.push(course2._id)
-                User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-                .catch(err => console.log(err));
-              })
-            }else{
-              const user = req.user;
-              user.courses.push(course._id)
-              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile))
-              .catch(err => console.log(err));
-            }
         }
-
-      } else {
-        errors.courseCode = 'Mã khóa học không tồn tại';
-        return res.status(400).json(errors);
       }
-    })
+    )
+    .then(coursedetail => res.json(coursedetail))
+    .catch(err => console.log(err));
   }
 );
 
@@ -203,17 +228,88 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
-    User.updateOne( { _id: req.user.id }, { $pull: { courses: req.params.courseId } } )
-    .then(()=>{
-      if(req.user.role === 'student') {
-        Course.updateOne( { _id: req.params.courseId }, { $pull: { students: req.user.id } } )
-      }else if(req.user.role === 'teacher')
-      {
-        Course.updateOne( { _id: req.params.courseId }, { $pull: { teachers: req.user.id } } )
+    CourseDetail.findOneAndUpdate(
+      { 'courseId' : req.params.courseId },
+      { 
+        $pull: {
+          enrollStudent: {
+            studentId: req.user.id
+          }
+        }
       }
-    })
-    .then(result => res.json(result))
-    .catch(err => res.status(400).json(err))
+    )
+    .then(coursedetail => res.json(coursedetail))
+    .catch(err => console.log(err));
+  }
+);
+
+// @route   GET api/courses/aprove-list/:courseId
+// @desc    enroll course
+// @access  Private
+router.get(
+  '/aprove-list/:courseId',
+  //passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const course = await     
+          Course.findById(
+            req.params.courseId ,
+            { students: 1 }
+          )
+          // Course.aggregate([
+          //   {
+          //     $match:{ '_id': req.params.courseId}
+          //   },
+          //   {
+          //     $lookup:
+          //     {
+          //       from: "users",
+          //       localField: "students",
+          //       foreignField : "_id",
+          //       as: "attendance_users"
+          //     }
+          //   }
+          // ])
+        const coursedetail = await 
+          // CourseDetail.findOne(
+          //   { 'courseId' : req.params.courseId },
+          //   { enrollStudent: 1 }
+          // )
+          CourseDetail.aggregate([
+            {
+              $match:{ 'courseId': req.params.courseId}
+            },
+            {
+              $lookup:
+              {
+                from: "users",
+                localField: "enrollStudent.studentId",
+                foreignField : "_id",
+                as: "students"
+              }
+            }
+          ])
+
+          coursedetail[0].enrollStudent.map((student)=>{
+            const temp = coursedetail[0].students.filter(user => user._id.toString() === student.studentId.toString());
+            student.name = temp[0].name
+            student.email = temp[0].email
+            student.photo = temp[0].photo
+          })
+        
+        const result = {
+          students: course.students,
+          enrollStudent: coursedetail[0].enrollStudent
+        }
+        res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
   }
 );
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal, ModalBody, Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
+import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, Form, FormGroup, Label, Input, InputGroup, InputGroupText, InputGroupAddon} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -7,16 +7,18 @@ import { addCourse, clearErrors, clearSuccess } from '../../actions/courseAction
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
+import CKEditor from 'ckeditor4-react';
+import DateTimePicker from 'react-datetime-picker';
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 const styles = {
   bigAvatar: {
     height: 200,
+    width: 200,
     margin: 'auto',
     border: '1px solid #ddd',
     borderRadius: 5
-  },
-  input: {
-    fontSize: 10
   }
 }
 
@@ -24,29 +26,22 @@ class AddCourse extends Component {
   constructor(props) {
     super(props);
 
-    this.toggle = this.toggle.bind(this);
-    this.toggleFade = this.toggleFade.bind(this);
     this.state = {
-      file: null,
       title:'',
-      courseCode:'',
+      intro: '',
       coursePhoto: '',
-      collapse: true,
-      fadeIn: true,
-      timeout: 300,
+      enrollDeadline: null,
+      studyTime: '',
+      openingDay: null,
+      fee: '',
+      info: '',
+      file: null,
       isShowSuccess: false,
       errors:{},
       isLoading: false,
-      invalidImg: false
+      invalidImg: false,
     };
-  }
-
-  toggle() {
-    this.setState({ collapse: !this.state.collapse });
-  }
-
-  toggleFade() {
-    this.setState((prevState) => { return { fadeIn: !prevState }});
+    this.onEditorChange = this.onEditorChange.bind( this );
   }
 
   handleChange = name => event => {
@@ -94,107 +89,138 @@ class AddCourse extends Component {
     e.preventDefault();
     const courseData = {
       title: this.state.title,
-      courseCode: this.state.courseCode
+      intro: this.state.intro,
+      enrollDeadline: this.state.enrollDeadline,
+      studyTime: this.state.studyTime,
+      openingDay: this.state.openingDay,
+      fee: this.state.fee,
+      info: this.state.info
     };
     this.props.addCourse(courseData, this.state.file);
-    document.getElementById("add-course-form").reset();
     this.setState({isLoading: true});
   }
 
   hideAlertSuccess(){
     this.setState({
-      isShowSuccess: false,
       title:'',
-      courseCode:'',
+      intro: '',
       coursePhoto: '',
+      enrollDeadline: null,
+      studyTime: '',
+      openingDay: null,
+      fee: '',
+      info: '',
+      file: null,
+      isShowSuccess: false,
+      errors:{},
+      isLoading: false,
+      invalidImg: false,
     })
     this.props.clearSuccess();
     this.props.clearErrors();
   }
 
+  onEditorChange( evt ) {
+    this.setState( {
+      info: evt.editor.getData()
+    });
+  }
+
+  onChangeDeadline = enrollDeadline => this.setState({ enrollDeadline })
+
+  onChangeOpeningDay = openingDay => this.setState({ openingDay })
+
   render() {
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
-        <Row>
-          <Col xs="12">
-            <Fade timeout={this.state.timeout} in={this.state.fadeIn}>
-              <Card>
-                <CardHeader>
-                  <i className="fa fa-edit"></i>Thêm khóa học mới
-                  <div className="card-header-actions">
-                    <Button color="link" className="card-header-action btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></Button>
-                    <Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>
-                  </div>
-                </CardHeader>
-                <Collapse isOpen={this.state.collapse} id="collapseExample">
-                  <CardBody>
-                    <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Tên khóa học</Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="fa fa-book"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.title} onChange={this.handleChange('title')}/>
-                          </InputGroup>
-                          {errors.title && <Alert color="danger">{errors.title}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Mã khóa học </Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="fa fa-barcode"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.courseCode} onChange={this.handleChange('courseCode')}/>
-                          </InputGroup>
-                          {errors.courseCode && <Alert color="danger">{errors.courseCode}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <hr/>
-                      <Label htmlFor="prependedInput">Hình đại diện khóa học</Label>
-                      <br/>
-
-                      <Row>
-                        <Col xs="4">
-                          <div className="preview-image">
-                          {
-                            this.state.coursePhoto === ''
-                            ?
-                            <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
-                            :
-                            <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
-                          }
-                          </div>
-                        </Col>
-                        <Col>
-                          <ReactDropzone accept="image/*" onDrop={this.onDrop} >
-                            Thả hình vào đây!
-                          </ReactDropzone>
-                        </Col>
-                      </Row>
+        <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
+          <Card>
+            <CardHeader>
+              <i className="fa fa-list-alt" aria-hidden="true"></i>Tóm tắt khóa học
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                <Label>Tên khóa học</Label>
+                <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>
+                {errors.title && <Alert color="danger">{errors.title}</Alert>}
+              </FormGroup>
+              <FormGroup>
+                <Label>Giới thiệu ngắn về khóa học</Label>
+                <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
+                {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
+              </FormGroup>
+              <FormGroup>
+                <Label>Hình đại diện khóa học</Label>
+                <Row>
+                  <Col xs="4">
+                    <div className="preview-image">
                       {
-                        this.state.invalidImg === true
+                        this.state.coursePhoto === ''
                         ?
-                          <div>
-                            <br/>
-                            <Alert color="danger">Hình ảnh không hợp lệ</Alert>
-                          </div> 
-                        : null
+                        <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
+                        :
+                        <img src={this.state.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                       }
-                    </Form>
-                  </CardBody>
-                  <CardFooter>
-                    <Button type="submit" color="primary" onClick={this.onSubmit}>Thêm</Button>
-                  </CardFooter>
-                </Collapse>
-              </Card>
-            </Fade>
-          </Col>
-        </Row>
+                    </div>
+                  </Col>
+                  <Col>
+                    <ReactDropzone accept="image/*" onDrop={this.onDrop} >
+                      Thả hình vào đây!
+                    </ReactDropzone>
+                  </Col>
+                </Row>
+                {
+                  this.state.invalidImg === true
+                  ? <div> <br/> <Alert color="danger">Hình ảnh không hợp lệ</Alert> </div> 
+                  : null
+                }
+              </FormGroup>
+              <FormGroup>
+                <Label>Hạn chót ghi danh</Label> <br/>
+                <DateTimePicker value={this.state.enrollDeadline} onChange={this.onChangeDeadline} />
+                {errors.enrollDeadline && <Alert color="danger">{errors.intro}</Alert>}
+              </FormGroup>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <i className="fa fa-info-circle" aria-hidden="true"></i>Chi tiết khóa học
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                <Label>Thời gian học</Label>
+                <Input type="text" value={this.state.studyTime} onChange={this.handleChange('studyTime')}/>
+                {errors.studyTime && <Alert color="danger">{errors.studyTime}</Alert>}
+              </FormGroup>
+              <FormGroup>
+                <Label>Ngày khai giảng</Label> <br/>
+                <DatePicker
+                  selected={this.state.openingDay}
+                  onChange={this.onChangeOpeningDay}
+                  isClearable={true}
+                  dateFormat="dd/MM/yyyy"
+                  customInput={<Input />}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Học phí</Label>
+                <InputGroup>
+                  <Input type="number" value={this.state.fee} onChange={this.handleChange('fee')}/>
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>VND</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                {errors.fee && <Alert color="danger">{errors.fee}</Alert>}
+              </FormGroup>
+              <Label>Giới thiệu nội dung khóa học</Label>
+              <CKEditor data={this.state.info} onChange={this.onEditorChange} />
+            </CardBody>
+          </Card>
+        </Form>
+
+        <Button type="submit" style={{marginBottom:20}} color="primary" onClick={this.onSubmit}>Thêm</Button>
         <SweetAlert
           	success
           	confirmBtnText="OK"

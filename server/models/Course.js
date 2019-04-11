@@ -7,9 +7,11 @@ const CourseSchema = new Schema({
     type: String,
     required: true
   },
-  courseCode: {
-    type: String,
-    required: true
+  enrollDeadline:{
+    type: Date
+  },
+  intro: {
+    type: String
   },
   coursePhoto: {
     type: String,
@@ -22,7 +24,7 @@ const CourseSchema = new Schema({
   created: {
     type: Date,
     default: Date.now
-  },
+  }
 })
 
 module.exports = Course = mongoose.model('courses', CourseSchema)
