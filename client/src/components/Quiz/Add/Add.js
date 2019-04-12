@@ -192,6 +192,4 @@ TestQuizForm = connect(
   }
 )(TestQuizForm)
 
-
-
 export default TestQuizForm;

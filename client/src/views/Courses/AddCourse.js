@@ -3,6 +3,7 @@ import {Modal, ModalBody, Alert, Card, CardBody, CardFooter, CardHeader, Col, Ro
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import PointColumnsForm from '../../components/PointsColumn/Add/index'
 import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
@@ -91,13 +92,13 @@ class AddCourse extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const courseData = {
-      title: this.state.title,
-      courseCode: this.state.courseCode
-    };
-    this.props.addCourse(courseData, this.state.file);
-    document.getElementById("add-course-form").reset();
-    this.setState({isLoading: true});
+    // const courseData = {
+    //   title: this.state.title,
+    //   courseCode: this.state.courseCode
+    // };
+    // this.props.addCourse(courseData, this.state.file);
+    // document.getElementById("add-course-form").reset();
+    // this.setState({isLoading: true});
   }
 
   hideAlertSuccess(){
@@ -112,6 +113,7 @@ class AddCourse extends Component {
   }
 
   render() {
+    let form = (<PointColumnsForm onSubmit={this.submit}/>);
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
@@ -152,6 +154,9 @@ class AddCourse extends Component {
                           </InputGroup>
                           {errors.courseCode && <Alert color="danger">{errors.courseCode}</Alert>}
                         </div>
+                      </FormGroup>
+                      <FormGroup>
+                        {form}
                       </FormGroup>
                       <hr/>
                       <Label htmlFor="prependedInput">Hình đại diện khóa học</Label>
