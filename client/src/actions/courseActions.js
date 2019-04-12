@@ -167,6 +167,24 @@ export const getStudentCourse = (studentId) => dispatch => {
     );
 };
 
+// join course
+export const joinCourse = (courseId) => dispatch => {
+  axios
+    .post('/api/courses/join-course/' + courseId)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 // Clear errors
 export const clearErrors = () => {
   return {

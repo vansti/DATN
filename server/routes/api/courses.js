@@ -95,12 +95,13 @@ router.post(
 // @access  Private
 router.get(
   '/all-course',
-  //passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Course.find(
       { 'enrollDeadline' : {$gte : new Date()}},
       {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}
     )
+    .sort({created: -1})
     .then(courses => res.json(courses))
     .catch(err => console.log(err));
   }
@@ -124,10 +125,10 @@ router.get(
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
           { studyTime: 1, openingDay: 1, fee: 1, info: 1, 
-            enrollStudent:  
+            enrollStudents:  
             {
               $elemMatch: {
-                'studentId': req.user.id
+                'student': req.user.id
               }
             }
           }
@@ -138,11 +139,11 @@ router.get(
           course_detail: course_detail
         }
 
-        if(result.course_detail.enrollStudent === undefined)
+        if(result.course_detail.enrollStudents === undefined)
           result.isEnroll = false
         else{   
           result.isEnroll = true
-          delete result.course_detail.enrollStudent
+          delete result.course_detail.enrollStudents
         } 
 
         res.json(result)
@@ -159,15 +160,9 @@ router.get(
 // @desc    Return current user courses
 // @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-
-    // var page = 1
-    // var limit = 2
-    // var skip = (page*limit)-limit;
-
-    Course.find({ '_id': { $in: req.user.courses} })
-          .sort({created: -1})
-          // .skip(skip).limit(limit)
-          .then(courses => res.json(courses));
+  Course.find({ '_id': { $in: req.user.courses} })
+        .sort({created: -1})
+        .then(courses => res.json(courses));
 });
 
 // @route   GET api/courses/admin-courses
@@ -209,8 +204,8 @@ router.post(
       { 'courseId' : req.params.courseId },
       { 
         $push: {
-          enrollStudent: {
-            studentId: req.user.id
+          enrollStudents: {
+            student: req.user.id
           }
         }
       }
@@ -232,8 +227,8 @@ router.post(
       { 'courseId' : req.params.courseId },
       { 
         $pull: {
-          enrollStudent: {
-            studentId: req.user.id
+          enrollStudents: {
+            student: req.user.id
           }
         }
       }
@@ -243,68 +238,51 @@ router.post(
   }
 );
 
-// @route   GET api/courses/aprove-list/:courseId
-// @desc    enroll course
+// @route   POST api/courses/approve/:courseId/:studentId
+// @desc    approve student
 // @access  Private
-router.get(
-  '/aprove-list/:courseId',
-  //passport.authenticate('jwt', { session: false }),
+router.post(
+  '/approve/:courseId/:studentId',
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
     async function run() {
       try {
-        const course = await     
-          Course.findById(
-            req.params.courseId ,
-            { students: 1 }
-          )
-          // Course.aggregate([
-          //   {
-          //     $match:{ '_id': req.params.courseId}
-          //   },
-          //   {
-          //     $lookup:
-          //     {
-          //       from: "users",
-          //       localField: "students",
-          //       foreignField : "_id",
-          //       as: "attendance_users"
-          //     }
-          //   }
-          // ])
-        const coursedetail = await 
-          // CourseDetail.findOne(
-          //   { 'courseId' : req.params.courseId },
-          //   { enrollStudent: 1 }
-          // )
-          CourseDetail.aggregate([
-            {
-              $match:{ 'courseId': req.params.courseId}
-            },
-            {
-              $lookup:
-              {
-                from: "users",
-                localField: "enrollStudent.studentId",
-                foreignField : "_id",
-                as: "students"
+
+        await 
+        CourseDetail.findOneAndUpdate(
+          { 'courseId' : req.params.courseId },
+          { 
+            $pull: {
+              enrollStudents: {
+                student: req.params.studentId
               }
             }
-          ])
+          }
+        )
 
-          coursedetail[0].enrollStudent.map((student)=>{
-            const temp = coursedetail[0].students.filter(user => user._id.toString() === student.studentId.toString());
-            student.name = temp[0].name
-            student.email = temp[0].email
-            student.photo = temp[0].photo
-          })
+        await 
+        Course.findByIdAndUpdate(
+          req.params.courseId ,
+          { 
+            $push: {
+              students: req.params.studentId
+            }
+          }
+        )
         
-        const result = {
-          students: course.students,
-          enrollStudent: coursedetail[0].enrollStudent
-        }
-        res.json(result)
-      } catch (err) {
+        await
+        User.findByIdAndUpdate(
+          req.params.studentId ,
+          { 
+            $push: {
+              courses: req.params.courseId
+            }
+          }
+        )
+
+        res.json("Duyệt thành công")
+      }catch (err) {
         console.log(err)
       }
     }
@@ -312,4 +290,57 @@ router.get(
     run();
   }
 );
+
+// @route   POST api/courses/join-course/:courseId
+// @desc    join course
+// @access  Private
+router.post(
+  '/join-course/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+
+        const isJoin = await User.find({'_id': req.user.id, 'courses': req.params.courseId})
+
+        if(isJoin.length === 0)
+        {
+          if(req.user.role === 'teacher')
+          {
+            await 
+            Course.findByIdAndUpdate(
+              req.params.courseId ,
+              { 
+                $push: {
+                  teachers: req.user.id
+                }
+              }
+            )
+          }
+  
+          await
+          User.findByIdAndUpdate(
+            req.user.id ,
+            { 
+              $push: {
+                courses: req.params.courseId
+              }
+            }
+          )
+  
+          res.json("Tham gia khóa học thành công")
+        }else{
+
+          res.json("Đã tham gia vào khóa học này")
+        }
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
 module.exports = router;

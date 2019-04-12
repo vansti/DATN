@@ -7,12 +7,15 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Button
+  Button,
+  Modal,
+  ModalBody
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAdminCourses } from '../../actions/courseActions'; 
-//import ReactLoading from 'react-loading';
+import { getAdminCourses, joinCourse, clearSuccess } from '../../actions/courseActions'; 
+import ReactLoading from 'react-loading';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 const styles = {
   bigAvatar: {
@@ -34,12 +37,16 @@ class AdminCourses extends Component {
       courses: [],
       currentPage: 1,
       coursesPerPage: 5,
+      isShowSuccess: false,
+      isLoading: false,
+      titleSuccess: ''
     };
 
     this.handleClick = this.handleClick.bind(this);
     this.handleLastClick = this.handleLastClick.bind(this);
     this.handleFirstClick = this.handleFirstClick.bind(this);
     this.handleClickApprove = this.handleClickApprove.bind(this);
+    this.handleJoinCourse = this.handleJoinCourse.bind(this);
   }
 
   componentDidMount=()=>{
@@ -49,6 +56,16 @@ class AdminCourses extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.courses) {
       this.setState({ courses: nextProps.courses.admincourses});
+    }
+
+    if (nextProps.success === "Tham gia khóa học thành công" || nextProps.success === "Đã tham gia vào khóa học này") {
+
+      this.setState({
+        isShowSuccess: true, 
+        isLoading: false,
+        titleSuccess: nextProps.success
+      })
+
     }
   }
   
@@ -76,6 +93,20 @@ class AdminCourses extends Component {
   handleClickApprove(courseId){
     this.props.history.push('/admin-courses/approve/' + courseId)
   } 
+
+  handleJoinCourse(courseId){
+    this.props.joinCourse(courseId);
+    this.setState({isLoading: true});
+  } 
+
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false,
+      isLoading: false,
+      titleSuccess: ''
+    })
+    this.props.clearSuccess();
+  }
 
   render() {
     let { courses, currentPage, coursesPerPage } = this.state;
@@ -121,6 +152,11 @@ class AdminCourses extends Component {
                       <td>
                         <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
                           Phê duyệt
+                        </Button>
+                      </td>
+                      <td>
+                        <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                          Tham gia
                         </Button>
                       </td>
                       <td>
@@ -179,6 +215,19 @@ class AdminCourses extends Component {
             </nav>
           </CardBody>
         </Card>
+        <SweetAlert
+          	confirmBtnText="OK"
+          	title={this.state.titleSuccess}
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang xử lý</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }
@@ -187,9 +236,13 @@ class AdminCourses extends Component {
 AdminCourses.propTypes = {
   courses: PropTypes.object.isRequired,
   getAdminCourses: PropTypes.func.isRequired,
+  joinCourse: PropTypes.func.isRequired,
+  clearSuccess: PropTypes.func.isRequired,
+  success: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  courses: state.courses
+  courses: state.courses,
+  success: state.success
 });
-export default connect(mapStateToProps, { getAdminCourses })(AdminCourses); 
+export default connect(mapStateToProps, { getAdminCourses, joinCourse, clearSuccess })(AdminCourses); 

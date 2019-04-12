@@ -27,7 +27,7 @@ class PeopleInCourse extends Component {
     {
       if(users.students.length === 0)
       {
-        StudentList = <tr><td></td><td>Chưa có học viên ghi danh</td></tr>
+        StudentList = <tr><td></td><td>Chưa có học viên</td></tr>
       }
       else{
         StudentList = users.students.map((user, index) =>
@@ -48,7 +48,7 @@ class PeopleInCourse extends Component {
     {
       if(users.teachers.length === 0)
       {
-        TeacherList = <tr><td></td><td>Chưa có giáo viên ghi danh</td></tr>
+        TeacherList = <tr><td></td><td>Chưa có giáo viên tham gia</td></tr>
       }
       else{
         TeacherList = users.teachers.map((user, index) =>

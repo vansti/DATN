@@ -17,21 +17,15 @@ const CourseDetailSchema = new Schema({
   fee:{
     type: String
   },
-  enrollStudent:[
-    {
-      studentId: {
-        type: mongoose.Schema.ObjectId, ref: 'users'
-      },
-      enrollDate: {
-        type: Date,
-        default: Date.now
-      }
+  enrollStudents:[{
+    student: {
+      type: mongoose.Schema.ObjectId, ref: 'users'
+    },
+    enrollDate: {
+      type: Date,
+      default: Date.now
     }
-  ],
-  created: {
-    type: Date,
-    default: Date.now
-  }
+  }]
 })
 
 module.exports = CourseDetail = mongoose.model('coursedetail', CourseDetailSchema)
