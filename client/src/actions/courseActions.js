@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS,
          GET_CURRENT_COURSES, GET_STUDENT_COURSES , GET_ALL_COURSES,
-         GET_COURSE_INFO, GET_ADMIN_COURSES } from './types';
+         GET_COURSE_INFO, GET_MANAGE_COURSES } from './types';
 
 // Add Course
 export const addCourse = (courseData, fileData) => dispatch => {
@@ -132,18 +132,18 @@ export const getCourseInfo = (courseId) => dispatch => {
 };
 
 // lấy tất cả các khóa học
-export const getAdminCourses = () => dispatch => {
+export const getManageCourses = () => dispatch => {
   axios
-    .get(`/api/courses/admin-courses`)
+    .get(`/api/courses/manage-courses`)
     .then(res =>
       dispatch({
-        type: GET_ADMIN_COURSES,
+        type: GET_MANAGE_COURSES,
         payload: res.data
       })
     )
     .catch(err =>
       dispatch({
-        type: GET_ADMIN_COURSES,
+        type: GET_MANAGE_COURSES,
         payload: {}
       })
     );

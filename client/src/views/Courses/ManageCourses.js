@@ -13,7 +13,7 @@ import {
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAdminCourses, joinCourse, clearSuccess } from '../../actions/courseActions'; 
+import { getManageCourses, joinCourse, clearSuccess } from '../../actions/courseActions'; 
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
@@ -30,7 +30,7 @@ const styles = {
 let prev  = 0;
 let last  = 0;
 
-class AdminCourses extends Component {
+class ManageCourses extends Component {
   constructor() {
     super();
     this.state = {
@@ -50,12 +50,12 @@ class AdminCourses extends Component {
   }
 
   componentDidMount=()=>{
-    this.props.getAdminCourses();
+    this.props.getManageCourses();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.courses) {
-      this.setState({ courses: nextProps.courses.admincourses});
+      this.setState({ courses: nextProps.courses.managecourses});
     }
 
     if (nextProps.success === "Tham gia khóa học thành công" || nextProps.success === "Đã tham gia vào khóa học này") {
@@ -91,7 +91,7 @@ class AdminCourses extends Component {
   }
 
   handleClickApprove(courseId){
-    this.props.history.push('/admin-courses/approve/' + courseId)
+    this.props.history.push('/manage-courses/approve/' + courseId)
   } 
 
   handleJoinCourse(courseId){
@@ -233,9 +233,9 @@ class AdminCourses extends Component {
   }
 }
 
-AdminCourses.propTypes = {
+ManageCourses.propTypes = {
   courses: PropTypes.object.isRequired,
-  getAdminCourses: PropTypes.func.isRequired,
+  getManageCourses: PropTypes.func.isRequired,
   joinCourse: PropTypes.func.isRequired,
   clearSuccess: PropTypes.func.isRequired,
   success: PropTypes.object.isRequired
@@ -245,4 +245,4 @@ const mapStateToProps = state => ({
   courses: state.courses,
   success: state.success
 });
-export default connect(mapStateToProps, { getAdminCourses, joinCourse, clearSuccess })(AdminCourses); 
+export default connect(mapStateToProps, { getManageCourses, joinCourse, clearSuccess })(ManageCourses); 

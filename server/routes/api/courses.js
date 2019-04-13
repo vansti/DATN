@@ -165,11 +165,11 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
         .then(courses => res.json(courses));
 });
 
-// @route   GET api/courses/admin-courses
+// @route   GET api/courses/manage-courses
 // @desc    lấy hết khóa học để admin chỉnh sữa
 // @access  Private
 router.get(
-  '/admin-courses',
+  '/manage-courses',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Course.find({},{coursePhoto: 1, title: 1})

@@ -21,7 +21,7 @@ export default {
         },
         {
           name: 'Quản lý khóa học',
-          url: '/admin-courses',
+          url: '/manage-courses',
           icon: 'fa fa-wrench',
         }
       ]

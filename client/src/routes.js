@@ -50,7 +50,7 @@ const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail')
 const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
 const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
-const AdminCourses = React.lazy(() => import('./views/Courses/AdminCourses'));
+const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -110,8 +110,8 @@ const routes = [
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
   { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
-  { path: '/admin-courses', exact: true, name: 'Quản lý khóa học', component: AdminCourses },
-  { path: '/admin-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
+  { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
+  { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
 
 ];
 

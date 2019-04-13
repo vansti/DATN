@@ -3,7 +3,7 @@ import {
   GET_STUDENT_COURSES, 
   GET_ALL_COURSES, 
   GET_COURSE_INFO,
-  GET_ADMIN_COURSES
+  GET_MANAGE_COURSES
 } from '../actions/types';
 
 const initialState = {
@@ -14,7 +14,7 @@ const initialState = {
   allcourses: [],
   currentcourses: null,
   studentcourses: null,
-  admincourses: null
+  managecourses: null
 };
 
 export default function(state = initialState, action) {
@@ -39,10 +39,10 @@ export default function(state = initialState, action) {
         ...state,
         courseinfo: action.payload,
       };
-    case GET_ADMIN_COURSES:
+    case GET_MANAGE_COURSES:
       return {
         ...state,
-        admincourses: action.payload,
+        managecourses: action.payload,
       };
     default:
       return state;
