@@ -177,11 +177,6 @@ class ManageCourses extends Component {
                               Tham gia
                             </Button>
                           </td>
-                          <td>
-                            <Button className="btn-pill" color="secondary">
-                              Xóa
-                            </Button>
-                          </td>
                         </Fragment>
                       }
 
