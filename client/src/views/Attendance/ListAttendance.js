@@ -141,19 +141,28 @@ class ListAttendance extends Component {
                 <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
               </div>
 
-    if(!isEmptyObj(currentcourses))
+    if(currentcourses !== null)
     {
-      SelectCourse = 
-              <div className="card-header-actions">
-                <Input type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                  <option value = '0'>Hãy chọn khóa học</option>
-                  {
-                    this.props.courses.currentcourses.map(course=>
-                      <option key={course._id} value={course._id}>{course.title}</option>
-                    )
-                  }
-                </Input>
-              </div>
+      if(currentcourses.length === 0)
+        SelectCourse = 
+                  <div className="card-header-actions" style={{marginRight:10}} >
+                      <Input  type="select">
+                        <option value="0">Chưa tham gia khóa học</option>
+                      </Input>
+                  </div>
+      else{
+        SelectCourse = 
+        <div className="card-header-actions" style={{marginRight:10}}>
+          <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+            <option value="0">Hãy chọn khóa học</option>
+              { 
+                currentcourses.map(course=>
+                  <option key={course._id} value={course._id}>{course.title}</option>
+                )
+              }
+          </Input>
+        </div>
+      }
     }
 
     var SelectDate = <div></div>;

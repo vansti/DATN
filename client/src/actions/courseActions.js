@@ -39,6 +39,43 @@ export const addCourse = (courseData, fileData) => dispatch => {
     );
 };
 
+// Edit Course
+export const editCourse = (courseId, courseData, fileData) => dispatch => {
+  axios
+    .post(`/api/courses/edit-course/${courseId}`, courseData)
+    .then(res =>{
+
+      if(fileData !== null)
+      {
+        let fd = new FormData();
+        fd.append('image', fileData, fileData.name)
+        axios.post(`/api/courses/add-course-avatar/${courseId}`, fd)
+        .then(data  => {
+          dispatch({
+            type: GET_SUCCESS,
+            payload: {data: 'Chỉnh sửa khóa học thành công'}
+          })
+          dispatch(getCourseInfo(courseId))
+        });
+      }
+      else
+      {
+        dispatch({
+          type: GET_SUCCESS,
+          payload: {data: 'Chỉnh sửa khóa học thành công'}
+        })
+        dispatch(getCourseInfo(courseId))
+      }
+
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 // Enroll Course
 export const enrollCourse = (courseId) => dispatch => {
   axios

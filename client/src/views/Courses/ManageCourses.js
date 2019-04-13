@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {    
   Pagination,
   PaginationItem,
@@ -47,6 +47,7 @@ class ManageCourses extends Component {
     this.handleFirstClick = this.handleFirstClick.bind(this);
     this.handleClickApprove = this.handleClickApprove.bind(this);
     this.handleJoinCourse = this.handleJoinCourse.bind(this);
+    this.handleEditCourse = this.handleEditCourse.bind(this);
   }
 
   componentDidMount=()=>{
@@ -90,6 +91,10 @@ class ManageCourses extends Component {
     });
   }
 
+  handleEditCourse(courseId){
+    this.props.history.push('/manage-courses/edit-course/' + courseId)
+  } 
+
   handleClickApprove(courseId){
     this.props.history.push('/manage-courses/approve/' + courseId)
   } 
@@ -97,7 +102,7 @@ class ManageCourses extends Component {
   handleJoinCourse(courseId){
     this.props.joinCourse(courseId);
     this.setState({isLoading: true});
-  } 
+  }
 
   hideAlertSuccess(){
     this.setState({
@@ -110,6 +115,7 @@ class ManageCourses extends Component {
 
   render() {
     let { courses, currentPage, coursesPerPage } = this.state;
+    const {role} = this.props.auth.user
 
     // Logic for displaying current courses
     let indexOfLastTodo = currentPage * coursesPerPage;
@@ -128,7 +134,7 @@ class ManageCourses extends Component {
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <i className="fa fa-list"></i><b>Danh sách khóa học</b>
+            <i className="fa fa-wrench"></i><b>Quản lý khóa học</b>
           </CardHeader>
           <CardBody>
             <Table responsive className="mb-0 d-none d-sm-table">
@@ -144,26 +150,41 @@ class ManageCourses extends Component {
                       <td>
                         {course.title}
                       </td>
-                      <td>
-                        <Button className="btn-pill" color="secondary">
-                          Chỉnh sửa
-                        </Button>
-                      </td>
-                      <td>
-                        <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                          Phê duyệt
-                        </Button>
-                      </td>
-                      <td>
-                        <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                          Tham gia
-                        </Button>
-                      </td>
-                      <td>
-                        <Button className="btn-pill" color="secondary">
-                          Xóa
-                        </Button>
-                      </td>
+                      {
+                        role === 'teacher'
+                        ?
+                        <Fragment>
+                          <td>
+                            <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                              Tham gia
+                            </Button>
+                          </td>
+                        </Fragment>
+                        :
+                        <Fragment>
+                         <td>
+                            <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                              Chỉnh sửa
+                            </Button>
+                          </td>
+                          <td>
+                            <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                              Phê duyệt
+                            </Button>
+                          </td>
+                          <td>
+                            <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                              Tham gia
+                            </Button>
+                          </td>
+                          <td>
+                            <Button className="btn-pill" color="secondary">
+                              Xóa
+                            </Button>
+                          </td>
+                        </Fragment>
+                      }
+
                     </tr>
                   )
                 }
@@ -237,12 +258,12 @@ ManageCourses.propTypes = {
   courses: PropTypes.object.isRequired,
   getManageCourses: PropTypes.func.isRequired,
   joinCourse: PropTypes.func.isRequired,
-  clearSuccess: PropTypes.func.isRequired,
-  success: PropTypes.object.isRequired
+  clearSuccess: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   courses: state.courses,
-  success: state.success
+  success: state.success,
+  auth: state.auth
 });
 export default connect(mapStateToProps, { getManageCourses, joinCourse, clearSuccess })(ManageCourses); 

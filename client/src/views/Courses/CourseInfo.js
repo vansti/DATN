@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CardBody, CardHeader, Card, Jumbotron, Media, Row, Col, Button, Modal, ModalBody } from 'reactstrap';
@@ -62,6 +62,8 @@ class CourseInfo extends Component {
 
   render() {
     const {courseinfo} = this.props.courses
+    const {role} = this.props.auth.user
+
     return (
       <div className="animated fadeIn">
         <Card>
@@ -96,16 +98,26 @@ class CourseInfo extends Component {
                 </Col>
                 <Col>
                   {
-                    courseinfo.isEnroll === false
+                    role === 'student'
                     ?
-                    <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
-                      <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
-                    </Button>
+                    <Fragment>
+                      {
+                        courseinfo.isEnroll === false
+                        ?
+                        <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
+                          <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
+                        </Button>
+                        :
+                        <Button color="danger" onClick={this.handleUnEnroll} className="btn-pill" size="lg" block>
+                          <i className="fa fa-times"></i>&nbsp;Hủy ghi danh
+                        </Button>
+                      }
+                    </Fragment>
                     :
-                    <Button color="danger" onClick={this.handleUnEnroll} className="btn-pill" size="lg" block>
-                      <i className="fa fa-times"></i>&nbsp;Hủy ghi danh
-                    </Button>
+                    <Fragment>
+                    </Fragment>
                   }
+
                 </Col>
               </Row>
 
@@ -145,6 +157,7 @@ CourseInfo.propTypes = {
 
 const mapStateToProps = state => ({
   courses: state.courses,  
-  success: state.success
+  success: state.success,
+  auth: state.auth
 });
 export default connect(mapStateToProps, { getCourseInfo, enrollCourse, unenrollCourse, clearSuccess })(CourseInfo); 

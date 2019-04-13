@@ -57,22 +57,6 @@ export default {
           icon: 'fa fa-calendar',
         },
       ]
-    },
-    {
-      name: 'Quiz',
-      icon: 'fa fa-question-circle',
-      children: [
-        {
-          name: 'Thêm quiz',
-          url: '/add-quiz',
-          icon: 'icon-plus',
-        },
-        {
-          name: 'Danh sách quiz',
-          url: '/quiz',
-          icon: 'icon-list',
-        }
-      ]
     }
   ],
 };

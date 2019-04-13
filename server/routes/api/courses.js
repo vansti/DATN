@@ -68,6 +68,59 @@ router.post(
   }
 );
 
+// @route   POST api/courses/edit-course/:courseId
+// @desc    edit course
+// @access  Private
+router.post(
+  '/edit-course/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateAddCourseInput(req.body);
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    async function run() {
+      try {
+        await 
+        Course.findByIdAndUpdate(
+          req.params.courseId,
+          {
+            $set: 
+            {
+              title: req.body.title,
+              enrollDeadline: req.body.enrollDeadline,
+              intro: req.body.intro
+            }
+          }
+        )
+
+        await 
+        CourseDetail.findOneAndUpdate(
+          { 'courseId' : req.params.courseId },
+          {
+            $set: 
+            {
+              studyTime: req.body.studyTime,
+              openingDay: req.body.openingDay,
+              fee: req.body.fee,
+              info: req.body.info
+            }
+          }
+        )
+
+        res.json("Chỉnh sửa khóa học thành công")
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
 // @route   post api/courses/add-course-avatar/:courseId
 // @desc    add course avatar
 // @access  Private

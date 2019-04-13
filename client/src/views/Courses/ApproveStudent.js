@@ -34,7 +34,6 @@ class ApproveStudent extends Component {
 
   render() {
     const {approve_list} = this.props.users;
-    console.log(approve_list)
     return (
       <div className="animated fadeIn">
         <Card>

@@ -52,6 +52,7 @@ const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
 const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
+const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -112,6 +113,7 @@ const routes = [
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
+  { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
 
 ];
 
