@@ -1,10 +1,11 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST
 } from '../actions/types';
 
 const initialState = {
   student: null,
-  users: null
+  users: null,
+  approve_list: null
 };
 
 export default function(state = initialState, action) {
@@ -18,6 +19,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         student: action.payload
+      };
+    case GET_APPROVE_LIST:
+      return {
+        ...state,
+        approve_list: action.payload
       };
     case CLEAR_USER:
       return {

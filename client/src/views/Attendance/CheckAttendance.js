@@ -10,6 +10,7 @@ import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
+var moment = require('moment');
 
 class CheckAttendance extends Component {
   constructor() {
@@ -52,7 +53,7 @@ class CheckAttendance extends Component {
     }
 
     if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var today = (new Date()).toISOString().substring(0, 10);
+      var today = moment().format('YYYY-MM-DD');
 
       nextProps.attendance.attendance.forEach(element => {
         if(element.date === today)
@@ -89,7 +90,7 @@ class CheckAttendance extends Component {
 
 
   submit = () => {
-    var today = (new Date()).toISOString().substring(0, 10);
+    var today = moment().format('YYYY-MM-DD');
 
     var newAttendance = {
       courseId: this.state.courseId,
@@ -139,18 +140,28 @@ class CheckAttendance extends Component {
                   <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
                 </div>
 
-    if(!isEmptyObj(currentcourses)){
-      SelectCourse = 
-              <div className="card-header-actions" style={{marginRight:10}}>
-                <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                  <option value="0">Hãy chọn khóa học</option>
-                    { 
-                      currentcourses.map(course=>
-                        <option key={course._id} value={course._id}>{course.title}</option>
-                      )
-                    }
-                </Input>
-              </div>
+    if(currentcourses !== null)
+    {
+      if(currentcourses.length === 0)
+        SelectCourse = 
+                  <div className="card-header-actions" style={{marginRight:10}} >
+                      <Input  type="select">
+                        <option value="0">Chưa tham gia khóa học</option>
+                      </Input>
+                  </div>
+      else{
+        SelectCourse = 
+        <div className="card-header-actions" style={{marginRight:10}}>
+          <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+            <option value="0">Hãy chọn khóa học</option>
+              { 
+                currentcourses.map(course=>
+                  <option key={course._id} value={course._id}>{course.title}</option>
+                )
+              }
+          </Input>
+        </div>
+      }
     }
 
     var StudentList = <h2>Hãy chọn khóa học</h2>;

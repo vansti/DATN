@@ -1,17 +1,28 @@
 import React, { Component } from 'react';
-import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, Form, FormGroup, Label, Input, InputGroup, InputGroupText, InputGroupAddon} from 'reactstrap';
+import {
+  Modal, 
+  ModalBody, 
+  Alert, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Col, 
+  Row, 
+  Button, 
+  Form, 
+  FormGroup, 
+  Label, Input, InputGroup, InputGroupText, InputGroupAddon} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SweetAlert from 'react-bootstrap-sweetalert';
-import PointColumnsForm from '../../components/PointsColumn/Add/index'
-import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
-import ReactLoading from 'react-loading';
+import { getCourseInfo, editCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
 import CKEditor from 'ckeditor4-react';
 import DateTimePicker from 'react-datetime-picker';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import ReactLoading from 'react-loading';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 const styles = {
   bigAvatar: {
@@ -23,12 +34,12 @@ const styles = {
   }
 }
 
-class AddCourse extends Component {
+class EditCourse extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      title:'',
+      title: '',
       intro: '',
       coursePhoto: '',
       enrollDeadline: null,
@@ -38,11 +49,44 @@ class AddCourse extends Component {
       info: '',
       file: null,
       isShowSuccess: false,
-      errors:{},
+      errors: {},
       isLoading: false,
       invalidImg: false,
     };
     this.onEditorChange = this.onEditorChange.bind( this );
+  }
+
+  componentWillReceiveProps(nextProps) {
+
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false});
+    }
+
+    this.setState({ errors: nextProps.errors});
+
+
+    if (nextProps.success.data === 'Chỉnh sửa khóa học thành công') {
+      this.setState({isShowSuccess: true, isLoading: false})
+    }
+
+    if (!isEmptyObj(nextProps.courses))
+    {
+      let {courseinfo} = nextProps.courses
+      this.setState({ 
+        title: courseinfo.course.title,
+        intro: courseinfo.course.intro,
+        coursePhoto: courseinfo.course.coursePhoto,
+        enrollDeadline: new Date(courseinfo.course.enrollDeadline),
+        studyTime: courseinfo.course_detail.studyTime,
+        openingDay: new Date(courseinfo.course_detail.openingDay),
+        fee: courseinfo.course_detail.fee,
+        info: courseinfo.course_detail.info
+      });
+    }
+  }
+
+  componentDidMount = () => {
+    this.props.getCourseInfo(this.props.match.params.courseId);
   }
 
   handleChange = name => event => {
@@ -72,19 +116,6 @@ class AddCourse extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!isEmptyObj(nextProps.errors)) {
-      this.setState({ errors: nextProps.errors, isLoading: false});
-    }
-
-    this.setState({ errors: nextProps.errors});
-
-
-    if (nextProps.success.data === "Thêm khóa học thành công") {
-      this.setState({isShowSuccess: true, isLoading: false})
-    }
-  }
-
   onSubmit = e => {
     e.preventDefault();
     const courseData = {
@@ -97,23 +128,14 @@ class AddCourse extends Component {
       info: this.state.info
     };
     this.props.clearErrors();
-    this.props.addCourse(courseData, this.state.file);
+    this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
     this.setState({isLoading: true});
   }
 
   hideAlertSuccess(){
     this.setState({
-      title:'',
-      intro: '',
-      coursePhoto: '',
-      enrollDeadline: null,
-      studyTime: '',
-      openingDay: null,
-      fee: '',
-      info: '',
-      file: null,
       isShowSuccess: false,
-      errors:{},
+      errors: {},
       isLoading: false,
       invalidImg: false,
     })
@@ -122,7 +144,7 @@ class AddCourse extends Component {
   }
 
   onEditorChange( evt ) {
-    this.setState( {
+    this.setState({
       info: evt.editor.getData()
     });
   }
@@ -132,7 +154,6 @@ class AddCourse extends Component {
   onChangeOpeningDay = openingDay => this.setState({ openingDay })
 
   render() {
-    let form = (<PointColumnsForm onSubmit={this.submit}/>);
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
@@ -222,19 +243,18 @@ class AddCourse extends Component {
           </Card>
         </Form>
 
-        <Button type="submit" style={{marginBottom:20}} color="primary" onClick={this.onSubmit}>Thêm</Button>
+        <Button type="submit" style={{marginBottom:20}} color="primary" onClick={this.onSubmit}>Chỉnh sửa</Button>
         <SweetAlert
           	success
           	confirmBtnText="OK"
           	confirmBtnBsStyle="success"
-          	title="Thêm khóa học thành công!"
+          	title="Chỉnh sửa khóa học thành công!"
             show={this.state.isShowSuccess}
-            onConfirm={this.hideAlertSuccess.bind(this)}
-            onCancel={this.hideAlertSuccess.bind(this)}>
+            onConfirm={this.hideAlertSuccess.bind(this)}>
         </SweetAlert>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
           <ModalBody className="text-center">
-            <h3>Đang thêm khóa học</h3>
+            <h3>Đang lưu thay đổi</h3>
             <br/>
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
@@ -244,12 +264,15 @@ class AddCourse extends Component {
   }
 }
 
-AddCourse.propTypes = {
-  addCourse: PropTypes.func.isRequired
+EditCourse.propTypes = {
+  getCourseInfo: PropTypes.func.isRequired, 
+  editCourse: PropTypes.func.isRequired, 
+  courses: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  errors: state.errors,
-  success: state.success
+  courses: state.courses,
+  success: state.success,
+  errors: state.errors
 });
-export default connect(mapStateToProps, { addCourse, clearErrors, clearSuccess })(AddCourse); 
+export default connect(mapStateToProps, { getCourseInfo, editCourse, clearErrors, clearSuccess })(EditCourse); 

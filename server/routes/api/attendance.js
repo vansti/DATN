@@ -2,12 +2,8 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
-require('dotenv').config()
-const moment = require('moment');
 
 // Course Model
-const Course = require('../../models/Course');
-const User = require('../../models/User');
 const Attendance = require('../../models/Attendance');
 const Schedule = require('../../models/Schedule');
 
@@ -94,7 +90,7 @@ router.post(
 // @access  Private
 router.get(
   '/get-student-absent/:courseId/:studentId',
-  //passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
     Attendance.find({

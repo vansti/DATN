@@ -49,6 +49,11 @@ const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendanc
 const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
 const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
 const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
+const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
+const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
+const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
+const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
+const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -95,7 +100,7 @@ const routes = [
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/edit-profile', exact: true, name: 'Thay đổi thông tin', component: EditProfile },
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
-  { path: '/courses', exact: true, name: 'Danh sách khóa học', component: CourseList },
+  { path: '/courses', exact: true, name: 'Khóa học của tôi', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
   { path: '/test/quiz', exact: true, name: 'Danh sách bài kiểm tra trắc nghiệm', component: QuizList },
   { path: '/test/quiz/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail },
@@ -106,6 +111,12 @@ const routes = [
   { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
+  { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
+  { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
+  { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
+  { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
+  { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
+
 ];
 
 export default routes;

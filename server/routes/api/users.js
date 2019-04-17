@@ -24,6 +24,7 @@ const validateChangePasswordInput = require('../../validation/password');
 // User Model
 const User = require('../../models/User');
 const Course = require('../../models/Course');
+const CourseDetail = require('../../models/CourseDetail');
 
 router.use(cors());
 router.use(formData.parse())
@@ -248,4 +249,42 @@ router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req
   User.findById(req.params.studentId)
  .then(student => res.json(student));
 });
+
+// @route   GET api/users/aprove-list/:courseId
+// @desc    lấy danh sách học viên ghi danh và danh sách học viên dc duyệt của 1 khóa học
+// @access  Private
+router.get(
+  '/approve-list/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const course = await     
+          Course.findById(
+            req.params.courseId ,
+            { students: 1 }
+          )
+          .populate('students', '_id name email photo')
+
+        const coursedetail = await 
+          CourseDetail.findOne(
+            { 'courseId' : req.params.courseId } ,
+            { enrollStudents: 1 }
+          )
+          .populate('enrollStudents.student', '_id name email photo')
+
+        const result = {
+          students: course.students,
+          enrollStudents: coursedetail.enrollStudents
+        }
+        res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
 module.exports = router;
