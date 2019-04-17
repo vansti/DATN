@@ -108,7 +108,7 @@ router.post('/login', (req, res) => {
           }
         );
       } else {
-        errors.password = 'Password sai';
+        errors.password = 'Mật khẩu sai';
         return res.status(400).json(errors);
       }
     });
