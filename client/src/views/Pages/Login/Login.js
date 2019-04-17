@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser } from '../../../actions/authActions';
+import { loginUser, clearErrors } from '../../../actions/authActions';
 import icon from '../../../assets/img/e-icon.png'
 
 class Login extends Component {
@@ -38,6 +38,7 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
+    this.props.clearErrors();
     this.props.loginUser(userData);
   }
 
@@ -121,4 +122,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser })(Login);
+export default connect(mapStateToProps, { loginUser, clearErrors })(Login);
