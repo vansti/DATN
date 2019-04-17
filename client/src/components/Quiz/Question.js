@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 class Question extends Component {
   constructor(props){
     super(props);
@@ -8,6 +7,8 @@ class Question extends Component {
       incorrectAnswer: false,
       correctAnswer: false,
       showNextQuestionButton: false,
+      disibaleNextQuestionButton: false,
+      disibalePreQuestionButton: true,
       endQuiz: false,
       currentQuestionIndex: 0,
       buttons: {},
@@ -15,41 +16,40 @@ class Question extends Component {
       correct: [],
       incorrect: [],
       filteredValue: 'all',
-      showDefaultResult: this.props.showDefaultResult != undefined ? this.props.showDefaultResult : true,
-      onComplete: this.props.onComplete != undefined ? this.props.onComplete : null,
-      customResultPage: this.props.customResultPage != undefined ? this.props.customResultPage : null,
+      showDefaultResult: this.props.showDefaultResult !== undefined ? this.props.showDefaultResult : true,
+      onComplete: this.props.onComplete !== undefined ? this.props.onComplete : null,
+      customResultPage: this.props.customResultPage !== undefined ? this.props.customResultPage : null,
     };
   }
 
   checkAnswer = (index, correctAnswer) => {
     const { correct, incorrect, currentQuestionIndex } = this.state;
-    if(index == correctAnswer) {
+    if(index == correctAnswer[0]) {
       if( incorrect.indexOf(currentQuestionIndex) < 0 && correct.indexOf(currentQuestionIndex) < 0) {
         correct.push(currentQuestionIndex)
       }
-
       this.setState({
-        correctAnswer: true,
-        incorrectAnswer: false,
-        showNextQuestionButton: true,
+        // correctAnswer: true,
+        // incorrectAnswer: false,
+        // showNextQuestionButton: true,
         correct: correct
       })
 
-      let disabledAll = {
-        0: {disabled: true},
-        1: {disabled: true},
-        2: {disabled: true},
-        3: {disabled: true}
-      }
+      // let disabledAll = {
+      //   0: {disabled: true},
+      //   1: {disabled: true},
+      //   2: {disabled: true},
+      //   3: {disabled: true}
+      // }
 
       this.setState((prevState) => {
         const buttons = Object.assign(
           {},
           prevState.buttons,
           {
-            ...disabledAll,
+            // ...disabledAll,
             [index-1]: {
-              className: (index == correctAnswer)? "correct" : ""
+              className: (index === correctAnswer)? "correct" : ""
             },
           }
         );
@@ -78,19 +78,17 @@ class Question extends Component {
         return { buttons };
       });
     }
+    this.nextQuestion(currentQuestionIndex);
   }
 
   nextQuestion = (currentQuestionIndex) => {
     const { questions } = this.props;
 
     var initState = {
-      incorrectAnswer: false,
-      correctAnswer: false,
-      showNextQuestionButton: false,
       buttons: {},
     }
 
-    if(currentQuestionIndex + 1 == questions.length) {
+    if(currentQuestionIndex + 1 === questions.length) {
       this.setState({
         ...initState,
         endQuiz: true
@@ -99,6 +97,18 @@ class Question extends Component {
       this.setState({
         ...initState,
         currentQuestionIndex: currentQuestionIndex + 1,
+        disibalePreQuestionButton: false
+      })
+    }
+  }
+  preQuestion = (currentQuestionIndex) => {
+    if(currentQuestionIndex === 0) {
+      this.setState({
+        disibalePreQuestionButton: true
+      })
+    } else {
+      this.setState({
+        currentQuestionIndex: currentQuestionIndex - 1,
       })
     }
   }
@@ -155,15 +165,15 @@ class Question extends Component {
     const { filteredValue } = this.state;
     let questions = this.props.questions;
 
-    if(filteredValue != 'all') {
+    if(filteredValue !== 'all') {
       questions = questions.filter( (question, index) => {
-        return this.state[filteredValue].indexOf(index) != -1
+        return this.state[filteredValue].indexOf(index) !== -1
       })
     }
 
     return questions.map((question, questionIdx) => {
       return (
-        <div class="result-answer-wrapper" key={questionIdx+1}>
+        <div className="result-answer-wrapper" key={questionIdx+1}>
         <h3>
           Q{questionIdx+1}: {question.question}
         </h3>
@@ -172,9 +182,9 @@ class Question extends Component {
               question.answers.map( (answer, index) => {
                 return(
                   <div>
-                     <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
-                      { question.questionType == 'text' && <span>{ answer }</span> }
-                      { question.questionType == 'photo' && <img src={ answer } /> }
+                     <button disabled={true} className={"answerBtn btn" + (index+1 === question.correctAnswer ? ' correct': '')}>
+                      { question.questionType === 'text' && <span>{ answer }</span> }
+                      { question.questionType === 'photo' && <img src={ answer } alt="" /> }
                     </button>
                   </div>
                 )
@@ -216,26 +226,27 @@ class Question extends Component {
             <h3>{question.question}</h3>
             {
               question.answers.map( (answer, index) => {
-                if(this.state.buttons[index] != undefined) {
+                if(this.state.buttons[index] !== undefined) {
                   return (
-                    <button key={index} disabled={ this.state.buttons[index].disabled || false } className={`${this.state.buttons[index].className} answerBtn btn`}  onClick={() => this.checkAnswer(index+1, question.correctAnswer)}>
-                      { question.questionType == 'text' && <span>{answer}</span> }
-                      { question.questionType == 'photo' && <img src={answer} /> }
+                    <button key={index} className={`${this.state.buttons[index].className} answerBtn btn`}  onClick={() => this.checkAnswer(index+1, question.correctAnswer)}>
+                      { question.questionType === 'text' && <span>{answer}</span> }
+                      { question.questionType === 'photo' && <img src={answer} alt="" /> }
                     </button>
                   )
                 } else {
                   return (
-                    <button key={index} onClick={() => this.checkAnswer(index+1, question.correctAnswer)} className="answerBtn btn">
-                    { question.questionType == 'text' && answer }
-                    { question.questionType == 'photo' && <img src={answer}/> }
+                    <button key={index} onClick={() => this.checkAnswer(index+1, question.correctAnswer)} className="answerBtn btn">{answer}
+                    {/* { question.questionType === 'text' && answer }
+                    { question.questionType === 'photo' && <img src={answer} alt="" /> } */}
                     </button>
                   )
                 }
               })
             }
-            {this.state.showNextQuestionButton &&
-              <div><button onClick={() => this.nextQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn">Tiếp tục</button></div>
-            }
+            <div>
+              <button disabled={ this.state.disibalePreQuestionButton || false } onClick={() => this.preQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn">Quay lại</button>
+              <button onClick={() => this.nextQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn">Tiếp tục</button>
+            </div>
           </div>
         }
         {this.state.endQuiz && this.state.showDefaultResult && this.state.customResultPage == null &&
@@ -247,14 +258,14 @@ class Question extends Component {
         }
 
         {
-          this.state.endQuiz && this.state.onComplete != undefined &&
+          this.state.endQuiz && this.state.onComplete !== undefined &&
              this.state.onComplete(questionSummary)
 
             
         }
 
         {
-          this.state.endQuiz && !this.state.showDefaultResult  && this.state.customResultPage != undefined &&
+          this.state.endQuiz && !this.state.showDefaultResult  && this.state.customResultPage !== undefined &&
              this.state.customResultPage(questionSummary)
         }
         </div>

@@ -19,20 +19,37 @@ module.exports = function validateAddTestQuizInput(data) {
   if (Validator.isEmpty(data.courseId)) {
     errors.courseId = 'Hãy điền nội dung bài tập';
   }
-
-  console.log(data);
-
-  // if (!isEmpty(data.quizzes)) {
-  //   errors.quizzes = 'Hãy điền nội dung bài tập';
-  // }
-
-  // data.quizzes.forEach(quiz => {
-  //   quiz.question =  !isEmpty(data.courseId) ? quiz.question : '';
-  //   if (Validator.isEmpty(data.question)) {
-  //     errors.deadline = 'Hãy điền câu hỏi';
-  //   } 
-  // });
-
+  if (!data.quizzes || !data.quizzes.length) {
+    errors.quizzes = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
+  } else {
+    //validate array question
+    const quizArrayErrors = [];
+    data.quizzes.forEach((quiz, quizIndex) => {
+      const quizErrors = {};
+      if(!quiz || !quiz.question) {
+        quizErrors.question = 'Yêu cầu';
+      }
+      if (quiz || !quiz.answers || !quiz.answers.length) {
+        //validate array answer
+        const answerArrayErrors = [];
+        quiz.answers.forEach((answer, answerIndex) => {
+          if(!answer || !answer.length) {
+            answerArrayErrors[answerIndex] = 'Yêu cầu';
+          }
+        })
+        if (answerArrayErrors.length) {
+          quizErrors.answers = answerArrayErrors;
+          quizArrayErrors[quizIndex] = quizErrors;
+        }
+        //end array answer
+      }
+    });
+    if(quizArrayErrors.length) {
+      errors.quizzes = quizArrayErrors;
+    }
+    console.log(errors);
+    //end array question
+  }
   return {
     errors,
     isValid: isEmpty(errors)

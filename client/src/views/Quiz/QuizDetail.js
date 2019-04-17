@@ -27,7 +27,6 @@ class QuizDetailPage extends React.Component {
     if(this.props.testQuiz.listTestQuiz != null)
     {
       testQuiz= this.props.testQuiz.listTestQuiz.find(test => test._id.toString() === this.props.match.params.id);
-      console.log(testQuiz);
       var formatData = {
         "quizTitle": testQuiz.title,
         "quizSynopsis": testQuiz.description,

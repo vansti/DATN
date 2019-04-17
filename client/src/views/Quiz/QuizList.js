@@ -13,7 +13,7 @@ import { getListQuiz } from '../../actions/testQuizAction';
 //reducer
 // Component
 
-class QuizListPage extends React.Component {
+class QuizListPage extends Component {
   constructor (props) {
     super(props);
     this.state = {

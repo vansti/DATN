@@ -7,7 +7,6 @@ import { getCurentCourse } from '../../actions/courseActions';
 import { getUsers } from '../../actions/userActions';
 import PeopleInCourse from '../../components/PeopleInCourse';
 import PostInCourse from '../../components/PostInCourse';
-import QuizInCourse from '../../components/Quiz/QuizInCourse';
 
 class CourseDetail extends Component {
   constructor(props) {
@@ -78,9 +77,6 @@ class CourseDetail extends Component {
               </TabPane>
               <TabPane tabId="2">
                 <PeopleInCourse />
-              </TabPane>
-              <TabPane tabId="3">
-                <QuizInCourse />
               </TabPane>
             </TabContent>
           </CardBody>

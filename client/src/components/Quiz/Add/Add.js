@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Field, FieldArray, reduxForm, formValueSelector } from 'redux-form';
-import {Row, Modal, ModalBody, Alert, Card, CardBody, CardFooter, CardHeader, Col, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
-
-
+import { Col, Button, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import { addTestQuiz } from '../../../actions/testQuizAction';
-
-import range from 'lodash/range'
+import  validateFormAddQuiz  from '../../../validation/validateFormAddQuiz';
+//
+import './Add.scss';
 // import validate from './validate';
-
 class TestQuizForm extends Component {
-  renderInputFieldInline = ({ input, label, type, id='', meta: { touched, error } }) => (
+  submit = (values) => {
+    return this.props.addTestQuiz(values);
+  }
+  
+  renderInputFieldInline = ({ input, label, type, id='', meta: { touched, error } }) => {
+  return (
     <FormGroup row>
       <Label for={id} sm={2}>{label}: </Label>
       <Col sm={10}>
@@ -20,11 +23,11 @@ class TestQuizForm extends Component {
         </InputGroupAddon>
         <Input {...input} type={type} placeholder={label} id={id}/>
       </InputGroup>
-        {touched && error && <span>{error}</span>}
+        {touched && error && <Label className="error">{error}</Label>}
       </Col>
     </FormGroup>
-  );
-  
+    )
+  }  
   renderInputFieldHaveRemove = ({ input, label, type, id='', fields, index, meta: { touched, error }}) => (
     <Col sm={8}>
       <InputGroup className="input-prepend">
@@ -33,7 +36,7 @@ class TestQuizForm extends Component {
         </InputGroupAddon>
         <Input {...input} type={type} placeholder={label} id={id}/>
       </InputGroup>
-      {touched && error && <span>{error}</span>}
+      {touched && error && <Label className="error">{error}</Label>}
     </Col>
   );
 
@@ -49,7 +52,7 @@ class TestQuizForm extends Component {
           {children}
         </Input>
       </InputGroup>
-      {touched && error && <span>{error}</span>}
+      {touched && error && <Label className="error">{error}</Label>}
       </Col>
     </FormGroup>
   );
@@ -61,7 +64,7 @@ class TestQuizForm extends Component {
         <select {...input} >
           {children}
         </select>
-        {touched && error && <span>{error}</span>}
+        {touched && error && <Label className="error">{error}</Label>}
       </div>
     </div>
   );
@@ -89,20 +92,18 @@ class TestQuizForm extends Component {
           component={this.renderSelectField}
           label="Câu trả lời đúng"
         >
-          <option value="">Please select correct answer</option>
-            {fields.map((answer, index) => (
-              <option key={index+1} value={index+1}>{`Answer #${index + 1}`}</option>
-            ))}
+          {fields.map((answer, index) => (
+            <option key={index+1} value={index+1}>{`Câu trả lời ${index + 1}`}</option>
+          ))}
         </Field>
         </FormGroup>
-    
       {error && <li className="error">{error}</li>}
     </div>
   );
   
   renderQuizzes = ({ fields, meta: { touched, error, submitFailed } }) => (
     <FormGroup>
-        {(touched || submitFailed) && error && <span>{error}</span>}
+      
       {fields.map((quiz, index) => (
         <div key={index}>
           <h4>Câu hỏi {index + 1}: </h4>
@@ -133,14 +134,17 @@ class TestQuizForm extends Component {
           </FormGroup>
         </div>
       ))}
-      <Button color="success" type="button" onClick={() => fields.push({})}>Thêm câu hỏi</Button>
+      <Button color="success" type="button" onClick={() => fields.push({
+        "answers" : [ null, null, null, null ]
+      })}>Thêm câu hỏi</Button>
+      {(touched || submitFailed) && error && <div className="error">{error}</div>}
     </FormGroup>
   );
   render() {
 
   const { handleSubmit, courses, pristine, reset, submitting } = this.props;
     return (
-      <Form name="text-form" onSubmit = {handleSubmit}>
+      <Form name="text-form" onSubmit={ handleSubmit(this.submit) } >
         <Field
           name="testTitle"
           type="text"
@@ -178,7 +182,7 @@ class TestQuizForm extends Component {
 
 TestQuizForm = reduxForm({
   form: 'testQuizForm',
-  // validate
+  validateFormAddQuiz
 })(TestQuizForm);
 
 const selector = formValueSelector('textForm');
@@ -187,11 +191,9 @@ TestQuizForm = connect(
   state => {
     const quizzes = selector(state, 'quizzes');
     const questionType = quizzes && quizzes.map(quiz => quiz.questionType);
-
     return { questionType: questionType }
-  }
+  },
+  { addTestQuiz }
 )(TestQuizForm)
-
-
 
 export default TestQuizForm;

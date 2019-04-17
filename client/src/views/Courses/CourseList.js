@@ -44,7 +44,7 @@ class CourseList extends Component {
 
       if(currentcourses.length === 0)
       {
-        CourseListTable = <h3>Bạn hiện không có khóa học nào</h3>
+        CourseListTable = <h3>Hiện không có khóa học nào</h3>
       }
       else{
         CourseListTable=

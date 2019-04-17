@@ -1,9 +1,8 @@
 import React from 'react'
-import QuizAddForm from '../../components/Quiz/Add/index'
+import SubmitValidationForm from '../../components/Quiz/Add/index'
 import PropTypes from 'prop-types';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
-
 import {Modal, ModalBody} from 'reactstrap';
 
 import { getCurentCourse } from '../../actions/courseActions';
@@ -14,14 +13,14 @@ import {
   connect
 } from 'react-redux';
 
-
 class QuizAddPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       timeout: 300,
       isShowSuccess: false,
-      isLoading: false
+      isLoading: false,
+      errors: {}
     };
   }
 
@@ -36,22 +35,16 @@ class QuizAddPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isEmptyObj(nextProps.errors)) {
-      this.setState({ errors: nextProps.errors, isLoading: false});
-    }
-
-    this.setState({ errors: nextProps.errors});
+    // if (!isEmptyObj(nextProps.errors)) {
+    //   this.setState({ errors: nextProps.errors, isLoading: false});
+    //   throw new SubmissionError(nextProps.errors);
+    // }
 
     if (nextProps.success.data === "Thêm bài kiểm tra thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
     }
   }
   
-  submit = values => {
-    // print the form values to the console
-    this.props.addTestQuiz(values, this.props.history);
-    this.setState({isLoading: true});
-  }
 
   render() {
     let form = '';
@@ -62,17 +55,17 @@ class QuizAddPage extends React.Component {
     else {
       if(this.props.courses.currentcourses.length === 0)
       {
-        form = <tr><td></td><td></td><td >Bạn hiện không có khóa học nào</td><td></td></tr>
+        form = <tr><td></td><td></td><td >Hiện không có khóa học nào</td><td></td></tr>
       }
       else {
         form = (
-          <QuizAddForm onSubmit={this.submit} courses={this.props.courses.currentcourses}/>
+          <SubmitValidationForm courses={this.props.courses.currentcourses}/>
         )
       }
     }
     return (
       <div>
-      {form}
+        {form}
         <SweetAlert
           success
           confirmBtnText="OK"
@@ -89,8 +82,7 @@ class QuizAddPage extends React.Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
-        </div>
-      
+      </div>
     )
   }
     
@@ -108,4 +100,4 @@ const mapStateToProps = (state) => ({
   courses: state.courses
 });
 
-export default connect(mapStateToProps, {getCurentCourse, addTestQuiz })(QuizAddPage);
+export default connect(mapStateToProps, { getCurentCourse, addTestQuiz })(QuizAddPage);

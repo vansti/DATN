@@ -1,6 +1,7 @@
 import axios from 'axios';
-import moment from 'moment';
-import { format_date } from '../constants/format';
+import { SubmissionError } from 'redux-form';
+// import moment from 'moment';
+// import { format_date } from '../constants/format';
 import isEmpty from '../validation/is-empty';
 import {
   GET_ERRORS,
@@ -13,7 +14,7 @@ import {
 export const addTestQuiz = (testQuizData, history) => dispatch => {
   dispatch(clearErrors());
   dispatch(clearSuccess());
-  axios
+  return axios
     .post('/api/test/add-quiz', testQuizData)
     .then(res => {
       dispatch({
@@ -24,11 +25,8 @@ export const addTestQuiz = (testQuizData, history) => dispatch => {
       })
     })
     .catch(err =>{
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })}
-    );
+      throw new SubmissionError(err.response.data);
+    });
 };
 
 // Get list test quizzed
@@ -85,7 +83,7 @@ export const clearSuccess = () => {
 };
 
 export const formatDataListQuizTest = data => {
-  let formatDate = format_date.default;
+  // let formatDate = format_date.default;
   if(isEmpty(data)){
     return data;
   }
