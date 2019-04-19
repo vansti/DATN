@@ -8,7 +8,7 @@ import {
   export default function(state = initialState, action) {
     switch (action.type) {
       case GET_SUBMISSION:{
-        console.log(GET_SUBMISSION)
+        //console.log(GET_SUBMISSION)
         return {
           submission: action.payload,
         };
@@ -16,7 +16,7 @@ import {
       }
       
         case GET_SUBMISSION2:{
-          console.log(GET_SUBMISSION2)
+          //console.log(GET_SUBMISSION2)
         return {
           submission: action.payload,
         };

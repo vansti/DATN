@@ -8,6 +8,7 @@ import { addExercise } from '../actions/exerciseActions';
 import isEmptyObj from '../validation/is-empty';
 import { withRouter } from 'react-router-dom';
 import DateTimePicker from 'react-datetime-picker';
+
 import config from '../config'
 class PostBox extends Component {
   constructor(props) {

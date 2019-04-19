@@ -242,9 +242,6 @@ router.get('/:exerciseId/get-submissionTai', passport.authenticate('jwt', { sess
     let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId+'/'+userName[i]);
     a.push(fileName);
     }
-    for (var i = 0; i < a.length; i++){
-      console.log(a[i]);
-      }
 
     
     res.json(a);
