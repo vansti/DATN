@@ -87,6 +87,21 @@ class AddCourse extends Component {
 
   onSubmit = e => {
     e.preventDefault();
+    let formInputs = document.getElementsByClassName('form-control');
+    let pointColumns = formInputs.splice(3, formInputs.length);
+    if(pointColumns.length <=0){
+      alert("Hãy thêm ít nhất 1 cột điểm");
+      return;
+    }else{
+      let total = 0;
+      for(let i = 0; i < pointColumns.length; i++){
+        total += pointColumns[i];
+      }
+      if(total !== 100){
+        alert("Tổng phải bằng 100%");
+        return;
+      }
+    }
     const courseData = {
       title: this.state.title,
       intro: this.state.intro,
@@ -94,7 +109,8 @@ class AddCourse extends Component {
       studyTime: this.state.studyTime,
       openingDay: this.state.openingDay,
       fee: this.state.fee,
-      info: this.state.info
+      info: this.state.info,
+      pointColumns: pointColumns
     };
     this.props.clearErrors();
     this.props.addCourse(courseData, this.state.file);
@@ -152,6 +168,7 @@ class AddCourse extends Component {
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
                 {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
+              <FormGroup>{form}</FormGroup>
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>

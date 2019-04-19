@@ -39,7 +39,7 @@ router.post(
       // Return any errors with 400 status
       return res.status(400).json(errors);
     }
-
+    console.log(req.body);
     const newCourse = new Course({
       title: req.body.title,
       enrollDeadline: req.body.enrollDeadline,
