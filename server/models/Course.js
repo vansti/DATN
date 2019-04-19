@@ -24,6 +24,10 @@ const CourseSchema = new Schema({
   created: {
     type: Date,
     default: Date.now
+  },
+  pointColumns: {
+    type: Array,
+    required: true
   }
 })
 
