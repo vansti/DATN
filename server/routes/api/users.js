@@ -85,7 +85,7 @@ router.post('/login', (req, res) => {
   User.findOne({ email }).then(user => {
     // Check for User
     if (!user) {
-      errors.email = 'Không tìm thấy tài khoản này';
+      errors.email_login = 'Không tìm thấy tài khoản này';
       return res.status(404).json(errors);
     }
 
@@ -93,7 +93,7 @@ router.post('/login', (req, res) => {
     bcrypt.compare(password, user.password).then(isMatch => {
       if (isMatch) {
         // User Matched
-        const payload = { id: user.id, name: user.name, role: user.role}; // Create JWT Payload
+        const payload = { id: user.id, name: user.name, role: user.role }; // Create JWT Payload
 
         // Sign Token
         jwt.sign(
@@ -108,7 +108,7 @@ router.post('/login', (req, res) => {
           }
         );
       } else {
-        errors.password = 'Mật khẩu sai';
+        errors.password_login = 'Mật khẩu sai';
         return res.status(400).json(errors);
       }
     });
@@ -152,71 +152,9 @@ router.post(
     if (req.body.name) profileFields.name = req.body.name;
     if (req.body.phone) profileFields.phone = req.body.phone;
 
-    User.findByIdAndUpdate(req.user.id, profileFields, {new: true}).then(profile => res.json(profile));
-  }
-);
-
-// @route   POST api/users/change-password
-// @desc    Change password
-// @access  Private
-router.post(
-  '/change-password',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { errors, isValid } = validateChangePasswordInput(req.body);
-
-    // Check Validation
-    if (!isValid) {
-      // Return any errors with 400 status
-      return res.status(400).json(errors);
-    }
-    const opassword = req.body.opassword;
-    const password = req.body.password;
-
-    User.findById(req.user.id).then(user=>{
-      
-      bcrypt.compare(opassword, user.password).then(isMatch => {
-        if (isMatch) {
-          bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(password, salt, (err, hash) => {
-              if (err) throw err;
-              user.password = hash;
-              User.findByIdAndUpdate(req.user.id, user, {new: true}).then(profile => res.json(profile));
-            });
-          });
-        } else {
-          errors.password = 'Password hiện tại không đúng';
-          return res.status(400).json(errors);
-        }
-      });
-
-    })
-  }
-);
-
-// @route   GET api/users/get-users-in-course/:courseid
-// @desc    get users in course
-// @access  Private
-router.get(
-  '/get-users-in-course/:courseid',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const users = {
-      teachers:[],
-      students:[]
-    };
-
-    Course.findById(req.params.courseid).then(course=>{
-      User.find({'_id': { $in: course.teachers}}, { name: 1, email: 1, photo: 1 },function(err, teachers){
-        users.teachers = teachers;
-        User.find({'_id': { $in: course.students}}, { name: 1, email: 1, photo: 1 }, function(err, students){
-          users.students = students;
-          res.json(users)
-        });
-      });
-    })
-
-    
+    User.findByIdAndUpdate(req.user.id, profileFields, {new: true})
+    .then(res.json({"mes":"Thay đổi thành công"}))
+    .catch(err => console.log(err));
   }
 );
 
@@ -237,8 +175,74 @@ router.post(
            }
         }
       )
-     .then(profile => res.json(profile));
+      .then(res.json({"mes":"Thay đổi thành công"}))
+      .catch(err => console.log(err));
     });
+  }
+);
+
+// @route   POST api/users/change-password
+// @desc    Change password
+// @access  Private
+router.post(
+  '/change-password',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateChangePasswordInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+    const opassword = req.body.opassword;
+    const password = req.body.password;
+
+    bcrypt.compare(opassword, req.user.password).then(isMatch => {
+      if (isMatch) {
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(password, salt, (err, hash) => {
+            if (err) throw err;
+            User.findByIdAndUpdate(req.user.id,{ $set: { password: hash }})
+            .then(res.json({"mes":"Thay đổi password thành công"}))
+            .catch(err => console.log(err));
+          });
+        });
+      } else {
+        errors.password = 'Mật khẩu hiện tại không đúng';
+        return res.status(400).json(errors);
+      }
+    });
+  }
+);
+
+// @route   GET api/users/get-users-in-course/:courseid
+// @desc    get users in course
+// @access  Private
+router.get(
+  '/get-users-in-course/:courseid',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const users = {
+      teachers:[],
+      students:[]
+    };
+
+    async function run() {
+      try {
+        const course = await Course.findById(req.params.courseid)
+        const teachers = await User.find({'_id': { $in: course.teachers}}, { name: 1, email: 1, photo: 1 })
+        const students = await User.find({'_id': { $in: course.students}}, { name: 1, email: 1, photo: 1 })
+        users.teachers = teachers;
+        users.students = students;
+        res.json(users)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+    
   }
 );
 

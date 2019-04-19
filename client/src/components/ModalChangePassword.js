@@ -53,7 +53,7 @@ class ModalChangePassword extends Component {
 
     this.setState({ errors: nextProps.errors});
 
-    if (nextProps.success.data === "Thay đổi password thành công") {
+    if (nextProps.success.mes === "Thay đổi password thành công") {
       this.setState({
         isShowSuccess: true,
         opassword: '',

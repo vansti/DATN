@@ -8,15 +8,15 @@ module.exports = function validateLoginInput(data) {
   data.password = !isEmpty(data.password) ? data.password : '';
 
   if (!Validator.isEmail(data.email)) {
-    errors.email = 'Email không hợp lệ';
+    errors.email_login = 'Email không hợp lệ';
   }
 
   if (Validator.isEmpty(data.email)) {
-    errors.email = 'Email không được bỏ trống';
+    errors.email_login = 'Email không được bỏ trống';
   }
 
   if (Validator.isEmpty(data.password)) {
-    errors.password = 'Password không được bỏ trống';
+    errors.password_login = 'Password không được bỏ trống';
   }
 
   return {

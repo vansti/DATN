@@ -68,6 +68,7 @@ class Login extends Component {
                           </InputGroupAddon>
                           <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} />
                         </InputGroup>
+                        {errors.email_login && <Alert color="danger">{errors.email_login}</Alert>}
                         <InputGroup className="mb-4">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
@@ -76,8 +77,7 @@ class Login extends Component {
                           </InputGroupAddon>
                           <Input type="password" name="password" placeholder="Mật khẩu" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
                         </InputGroup>
-                        {errors.email && <Alert color="danger">{errors.email}</Alert>}
-                        {errors.password && <Alert color="danger">{errors.password}</Alert>}
+                        {errors.password_login && <Alert color="danger">{errors.password_login}</Alert>}
                         <Row>
                           <Col xs="6">
                             <Button color="primary" className="px-4" onClick={this.onSubmit}>Đăng nhập</Button>
