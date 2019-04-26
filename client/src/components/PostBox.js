@@ -9,6 +9,8 @@ import isEmptyObj from '../validation/is-empty';
 import { withRouter } from 'react-router-dom';
 import DateTimePicker from 'react-datetime-picker';
 import config from '../config'
+import NoImg from '../assets/img/NoImg.png';
+
 class PostBox extends Component {
   constructor(props) {
     super(props);
@@ -121,7 +123,14 @@ class PostBox extends Component {
         <ListGroupItem key={file.id}>
           <Row>
             <Col xs="10">
-              <a href={file.url}><img src={file.thumbnail} alt=""/> {file.name} </a>
+              {
+                file.thumbnail
+                ?
+                <img src={file.thumbnail} alt=""/> 
+                :
+                <img src={NoImg} style={{width:47}} alt=""/> 
+              }  
+              <a href={file.url} style={{marginLeft:10}}> {file.name} </a>
             </Col>
             <Col >
               <Button color="danger" onClick={this.delete.bind(this, file)}><i className="fa fa-trash-o"></i></Button>

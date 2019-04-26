@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-import { GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST, GET_SUCCESS, GET_ERRORS, CLEAR_SUCCESS } from './types';
+import { GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST, GET_SUCCESS, GET_ERRORS, CLEAR_SUCCESS, USERS_LOADING } from './types';
 
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
+  dispatch(setUsersLoading());
   axios
     .get('/api/users/get-users-in-course/' + courseid)
     .then(res =>
@@ -18,6 +19,12 @@ export const getUsers = (courseid) => dispatch => {
         payload: {}
       })
     );
+};
+
+export const setUsersLoading = () => {
+  return {
+    type: USERS_LOADING
+  };
 };
 
 // Clear a list of users

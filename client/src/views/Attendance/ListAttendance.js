@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Badge, Table, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getCurentCourse } from '../../actions/courseActions';
@@ -8,7 +8,7 @@ import ReactLoading from 'react-loading';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import isEmptyObj from '../../validation/is-empty';
-import {Chart} from 'react-google-charts';
+import { Chart } from 'react-google-charts';
 var moment = require('moment');
 
 class ListAttendance extends Component {
@@ -17,7 +17,7 @@ class ListAttendance extends Component {
     this.state = {
       users:[],
       intialUsers: [],
-      courseId: '',
+      courseId: '0',
       isLoading: false,
       startDate: null,
       highlightDates: [],
@@ -32,7 +32,9 @@ class ListAttendance extends Component {
             id: "Absent"
           }
         ]
-      ]
+      ],
+      loading: false,
+      attendance: []
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
@@ -51,27 +53,37 @@ class ListAttendance extends Component {
   onChangeSelectCourse = e => {
     if(e.target.value !== '0')
       this.props.getAttendance(e.target.value);
-    this.setState({ courseId: e.target.value, startDate: null });
+    this.setState({ 
+      courseId: e.target.value, 
+      startDate: null,
+      users: [],
+      intialUsers: [],
+      chartData: [
+        [
+          {
+            type: "date",
+            id: "Date"
+          },
+          {
+            type: "number",
+            id: "Absent"
+          }
+        ]
+      ]
+    });
   }
 
   componentWillReceiveProps(nextProps) {
 
-    if (!isEmptyObj(nextProps.attendance.attendance)) {
+    if (!isEmptyObj(nextProps.attendance)) {
+      const { loading, attendance } = nextProps.attendance
+
       this.setState({
-        chartData: [
-          [
-            {
-              type: "date",
-              id: "Date"
-            },
-            {
-              type: "number",
-              id: "Absent"
-            }
-          ]
-        ]
+        attendance,
+        loading
       })
-      nextProps.attendance.attendance.forEach(element => {
+
+      attendance.forEach(element => {
         var tempList = [];
         tempList.push(new Date(element.date))
         var count = 0
@@ -85,9 +97,6 @@ class ListAttendance extends Component {
         }))
       })
 
-      this.setState({
-        highlightDates: []
-      })
       var dateList = [];
       nextProps.attendance.attendance.forEach(element => {
         dateList.push(new Date(element.date))
@@ -107,9 +116,6 @@ class ListAttendance extends Component {
   submit=()=>{
     if(this.state.startDate !== null)
     {
-      this.setState({
-        users: []
-      })
       var userList = [];
       this.props.attendance.attendance.forEach(element => {
         if(moment(this.state.startDate).format('YYYY-MM-DD') === element.date)
@@ -125,16 +131,16 @@ class ListAttendance extends Component {
   onchange = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialUsers));
     updatedList = updatedList.filter((user)=>
-      user.email.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
-      user.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+      user.userId.email.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      user.userId.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
     );
     this.setState({users: updatedList});
   }
 
   render() {
     const superClass = this;
-    const {currentcourses} = this.props.courses;
-    const {attendance} = this.props.attendance;
+    const { currentcourses } = this.props.courses;
+    const { loading, users, courseId, intialUsers, attendance } = this.state;
 
     var SelectCourse =                 
               <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
@@ -169,7 +175,7 @@ class ListAttendance extends Component {
     
     var SelectDateChart = <div></div>;
 
-    if(!isEmptyObj(attendance) && this.state.courseId !== '0')
+    if(!isEmptyObj(attendance) && courseId !== '0')
     {
       SelectDate = 
           <div className="animated fadeIn">
@@ -195,7 +201,7 @@ class ListAttendance extends Component {
       SelectDateChart =
           <Chart
             chartType="Calendar"
-            loader={<div><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>}
+            loader={<div><ReactLoading type='bars' color='#05386B' /></div>}
             data={this.state.chartData}
             options={{
               title: 'Thống kê số lượng sinh viên nghỉ'
@@ -214,13 +220,16 @@ class ListAttendance extends Component {
           />
     }
 
-    if(this.state.courseId === '0'){
+    if(courseId === '0'){
       SelectDate = <div></div>;
     }
     
     var StudentList = <div className="animated fadeIn"><h4>Hãy chọn khóa học và ngày điểm danh</h4></div>;
-
-    if(!isEmptyObj(this.state.intialUsers) && isEmptyObj(this.state.users) && this.state.courseId !== '0')
+    if(isEmptyObj(attendance) && courseId !== '0')
+    {
+      StudentList = <div className="animated fadeIn"><h4>Chưa có điểm danh</h4></div>
+    }
+    if(!isEmptyObj(intialUsers) && isEmptyObj(users) && courseId !== '0')
     {
       StudentList = <div className="animated fadeIn">
                       <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
@@ -229,8 +238,7 @@ class ListAttendance extends Component {
                     </div>
     }
 
-    if(!isEmptyObj(this.state.users) && this.state.courseId !== '0' )
-    {
+    if(!isEmptyObj(users) && courseId !== '0'){
       StudentList = 
         <div className="animated fadeIn">
           <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
@@ -246,15 +254,15 @@ class ListAttendance extends Component {
             </thead>
             <tbody>
               {
-                this.state.users.map((user, index) =>
-                  <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user.userId)} className="changeCursor">
+                users.map(user =>
+                  <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user.userId._id)} className="changeCursor">
                     <th>                      
                       <div className="avatar">
-                        <img src={user.photo} className="img-avatar" alt="" />
+                        <img src={user.userId.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.email}</td> 
-                    <td>{user.name}</td>
+                    <td>{user.userId.email}</td> 
+                    <td>{user.userId.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
                         :<Badge className="mr-1" color="danger" pill>Vắng</Badge>
@@ -284,8 +292,16 @@ class ListAttendance extends Component {
             </Row>
           </CardHeader>
           <CardBody>
-            {SelectDateChart}
-            {StudentList}
+            {
+              loading
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Fragment>
+                {SelectDateChart}
+                {StudentList}
+              </Fragment>
+            }
           </CardBody>
         </Card>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >

@@ -72,37 +72,20 @@ router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req,
 // @route   Get api/exercises/get-comments/:exerciseId
 // @desc    Get comments
 // @access  Private
-router.get('/get-comments/:exerciseId', passport.authenticate('jwt', { session: false }), (req, res) => {
-  // Exercise.find({'_id': req.params.exerciseId},{ comments: 1 },function(err, comments){
-  //   res.json(comments)
-  // });
+router.get(
+  '/get-comments/:exerciseId',
+  passport.authenticate('jwt', { session: false }), 
+  (req, res) => {
 
-  Exercise.findById(req.params.exerciseId).then(exercise => {
-    var cexercise = {
-      comments: [],
-      _id: exercise._id
-    }
+  Exercise.findById(
+    req.params.exerciseId ,
+    { comments: 1 }
+  )
+  .populate('comments.user', '_id name email photo')
+  .lean()
+  .then(commments => res.json(commments))
+  .catch(err => console.log(err));
 
-    return Promise.all(exercise.comments.map(comment=>{
-      return User.findById(comment.user).then(user=>{
-        var temp_comment = {
-          _id: comment._id,
-          userName: user.name,
-          userPhoto: user.photo,
-          text: comment.text,
-          created: comment.created,
-        }
-        cexercise.comments.push(temp_comment)
-      })
-    })).then(()=>{
-      cexercise.comments.sort(function(a, b) {
-        a = new Date(a.created);
-        b = new Date(b.created);
-        return a<b ? -1 : a>b ? 1 : 0;
-      });
-      res.json(cexercise)
-    })
-  })
 });
 
 // @route   POST api/exercises/comment/:exerciseId
@@ -124,7 +107,7 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
     }
 
     exercise.comments.push(newComment);
-    exercise.save().then(exercise => res.json(exercise));
+    exercise.save().then(res.json({'mes':"Bình luận của bạn đã được gửi"}));
   })
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
 });

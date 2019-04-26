@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Moment from 'react-moment'; 
 import { getCurentCourse, clearSuccess } from '../../actions/courseActions';
 import { getUsers, clearUsers } from '../../actions/userActions';
-import { addAttendance, getAttendance, editAttendance, clearAttendance } from '../../actions/attendanceActions';
+import { addAttendance, getTodayAttendance, editAttendance, clearAttendance } from '../../actions/attendanceActions';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
@@ -19,21 +19,23 @@ class CheckAttendance extends Component {
       user:[],
       userAttendance:[],
       attendanceId:'',
-      courseId: '',
+      courseId: '0',
       isShowSuccess: false,
+      loadingUser: true,
+      loadingUserAttendance: true
     };
   }
  
   componentDidMount = () => {
-    this.props.getCurentCourse();
-    this.props.clearAttendance();
     this.props.clearUsers();
+    this.props.clearAttendance();
+    this.props.getCurentCourse();
   }
 
   onChangeSelectCourse = e => {
     if(e.target.value !== '0')
     {
-      this.props.getAttendance(e.target.value);
+      this.props.getTodayAttendance(e.target.value);
       this.props.getUsers(e.target.value);
     }
     
@@ -45,25 +47,35 @@ class CheckAttendance extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isEmptyObj(nextProps.users.users)) {
-      nextProps.users.users.students.map(user => {
+    if (!isEmptyObj(nextProps.users)) {
+      const { users, loading } = nextProps.users
+
+      users.students.map(user => {
         return user.isPresent = true;
       })
-      this.setState({ user: nextProps.users.users.students });
+
+      this.setState({
+        user: users.students,
+        loadingUser: loading
+      })
     }
 
-    if (!isEmptyObj(nextProps.attendance.attendance)) {
-      var today = moment().format('YYYY-MM-DD');
-
-      nextProps.attendance.attendance.forEach(element => {
-        if(element.date === today)
-        {
-          this.setState({
-            userAttendance: element.students,
-            attendanceId: element._id
-          })
-        }
-      })
+    if (!isEmptyObj(nextProps.attendance)) {
+      const { loading, today_attendance } = nextProps.attendance
+      if(!isEmptyObj(today_attendance))
+      {
+        this.setState({
+          attendanceId: today_attendance._id,
+          userAttendance: today_attendance.students,
+          loadingUserAttendance: loading
+        })
+      }else{
+        this.setState({
+          attendanceId: '',
+          userAttendance: [],
+          loadingUserAttendance: false
+        })
+      }
     }
 
     if (nextProps.success.data === "Điểm danh thành công") {
@@ -82,12 +94,11 @@ class CheckAttendance extends Component {
 
   onChangeSwitch2(userid){
     this.state.userAttendance.map(user => {
-      if(user.userId.toString() === userid.toString())
+      if(user.userId._id.toString() === userid.toString())
         return user.isPresent = !user.isPresent;
       return user;
     })
   }
-
 
   submit = () => {
     var today = moment().format('YYYY-MM-DD');
@@ -113,11 +124,17 @@ class CheckAttendance extends Component {
   }
 
   submit2 = () => {
+
     var editAttendance = {
       _id: this.state.attendanceId,
-      students: this.state.userAttendance
+      students: []
     };
- 
+
+    editAttendance.students = JSON.parse(JSON.stringify(this.state.userAttendance));
+    editAttendance.students.map(student => {
+      return student.userId = student.userId._id
+    })
+
     this.props.editAttendance(editAttendance);
     this.setState({isLoading: true})
 
@@ -128,13 +145,13 @@ class CheckAttendance extends Component {
       isShowSuccess: false
     })
     this.props.clearSuccess()
-    this.props.getAttendance(this.state.courseId);
+    this.props.getTodayAttendance(this.state.courseId);
   }
 
   render() {
     const {currentcourses} = this.props.courses;
-    const {users} = this.props.users;
-    
+    const { users } = this.props.users;
+    const { loadingUser, loadingUserAttendance, user, userAttendance, courseId } = this.state
     var SelectCourse = 
                 <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
                   <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
@@ -164,90 +181,87 @@ class CheckAttendance extends Component {
       }
     }
 
-    var StudentList = <h2>Hãy chọn khóa học</h2>;
-    if(!isEmptyObj(users) && isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
-      
-      if(users.students.length === 0)
-      {
-        StudentList = <h2>Chưa có học viên ghi danh</h2>
-      }
-      else{
-        StudentList = 
-          <div className="animated fadeIn">
-            <Button color="danger" onClick={this.submit}> Lưu điểm danh </Button>
-            <br/>
-            <br/>
-            <Table hover bordered striped responsive size="sm">
-              <thead>
-                <tr>
-                  <th>Hình đại diện</th>
-                  <th>Email</th>
-                  <th>Họ và Tên</th>
-                  <th>Trạng thái</th>
-                  <th>Điểm danh</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  users.students.map((user, index) =>
-                  <tr key={user._id}>
+    var StudentList = <h3>Hãy chọn khóa học</h3>;
+
+    if(isEmptyObj(user) && isEmptyObj(userAttendance) && courseId !== '0'){
+      StudentList = <h3>Chưa có học viên ghi danh</h3>
+    }
+    if(!isEmptyObj(user) && isEmptyObj(userAttendance) && courseId !== '0'){
+      StudentList = 
+        <div className="animated fadeIn">
+          <Button color="danger" onClick={this.submit}> Lưu điểm danh </Button>
+          <br/>
+          <br/>
+          <Table hover bordered striped responsive size="sm">
+            <thead>
+              <tr>
+                <th>Hình đại diện</th>
+                <th>Email</th>
+                <th>Họ và Tên</th>
+                <th>Trạng thái</th>
+                <th>Điểm danh</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                user.map(u =>
+                  <tr key={u._id}>
                     <th>                      
                       <div className="avatar">
-                        <img src={user.photo} className="img-avatar" alt="" />
+                        <img src={u.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.email}</td>
-                    <td>{user.name}</td>
+                    <td>{u.email}</td>
+                    <td>{u.name}</td>
                     <td> <Badge className="mr-1" color="dark" pill>Chưa điểm danh</Badge> </td>
-                    <td><AppSwitch onChange={this.onChangeSwitch.bind(this, user._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
+                    <td><AppSwitch onChange={this.onChangeSwitch.bind(this, u._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
                   </tr>
-                  )
-                }
-              </tbody>
-            </Table>
-          </div>
-      }
+                )
+              }
+            </tbody>
+          </Table>
+        </div>
     }
 
-    if(!isEmptyObj(users) && !isEmptyObj(this.state.userAttendance) && this.state.courseId !== '0'){
-        StudentList = 
-          <div className="animated fadeIn">
-            <Button color="danger" onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
-            <br/>
-            <br/>
-            <Table hover bordered striped responsive size="sm">
-              <thead>
-                <tr>
-                  <th>Hình đại diện</th>
-                  <th>Email</th>
-                  <th>Họ và Tên</th>
-                  <th>Trạng thái</th>
-                  <th>Điểm danh</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  this.state.userAttendance.map((user, index) =>
-                  <tr key={user._id}>
+    if(!isEmptyObj(users) && !isEmptyObj(userAttendance) && courseId !== '0'){
+      StudentList = 
+        <div className="animated fadeIn">
+          <Button color="danger" onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
+          <br/>
+          <br/>
+          <Table hover bordered striped responsive size="sm">
+            <thead>
+              <tr>
+                <th>Hình đại diện</th>
+                <th>Email</th>
+                <th>Họ và Tên</th>
+                <th>Trạng thái</th>
+                <th>Điểm danh</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                userAttendance.map(u =>
+                  <tr key={u._id}>
                     <th>                      
                       <div className="avatar">
-                        <img src={user.photo} className="img-avatar" alt="" />
+                        <img src={u.userId.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.email}</td>
-                    <td>{user.name}</td>
-                    <td>{user.isPresent === true
+                    <td>{u.userId.email}</td>
+                    <td>{u.userId.name}</td>
+                    <td>{u.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
                         :<Badge className="mr-1" color="danger" pill>Vắng</Badge>
                         }
                     </td>
-                    <td><AppSwitch onChange={this.onChangeSwitch2.bind(this, user.userId)} className={'mx-1'} variant={'pill'} color={'success'} checked={user.isPresent} label dataOn={'Có'} dataOff={'Ko'} /></td>
+                    <td><AppSwitch onChange={this.onChangeSwitch2.bind(this, u.userId._id)} className={'mx-1'} variant={'pill'} color={'success'} checked={u.isPresent} label dataOn={'Có'} dataOff={'Ko'} /></td>
                   </tr>
-                  )
-                }
-              </tbody>
-            </Table>
-          </div>
+                )
+              }
+            </tbody>
+          </Table>
+        </div>
     }
     
     return (
@@ -258,7 +272,13 @@ class CheckAttendance extends Component {
             {SelectCourse}
           </CardHeader>
           <CardBody>
-            {StudentList}
+            {
+              loadingUser || loadingUserAttendance
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              StudentList
+            }
           </CardBody>
         </Card>
         <SweetAlert
@@ -287,7 +307,7 @@ CheckAttendance.propTypes = {
   users: PropTypes.object.isRequired,
   getCurentCourse : PropTypes.func.isRequired,
   getUsers : PropTypes.func.isRequired,
-  getAttendance: PropTypes.func.isRequired,
+  getTodayAttendance: PropTypes.func.isRequired,
   addAttendance: PropTypes.func.isRequired,
   clearSuccess: PropTypes.func.isRequired,
   attendance : PropTypes.object.isRequired,
@@ -304,4 +324,4 @@ const mapStateToProps = state => ({
   attendance: state.attendance
 });
 
-export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, getAttendance, clearSuccess, editAttendance, clearAttendance, clearUsers })(CheckAttendance);  
+export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, getTodayAttendance, clearSuccess, editAttendance, clearAttendance, clearUsers })(CheckAttendance);  
