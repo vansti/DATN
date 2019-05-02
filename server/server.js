@@ -6,17 +6,17 @@ const passport = require('passport');
 const path = require('path');
 require('dotenv').config()
 
-const users = require('./server/routes/api/users');
+const users = require('./routes/api/users');
 
-const courses = require('./server/routes/api/courses');
+const courses = require('./routes/api/courses');
 
-const exercises = require('./server/routes/api/exercises');
+const exercises = require('./routes/api/exercises');
 
-const test = require('./server/routes/api/test');
+const test = require('./routes/api/test');
 
-const attendance = require('./server/routes/api/attendance');
+const attendance = require('./routes/api/attendance');
 
-const schedule = require('./server/routes/api/schedule');
+const schedule = require('./routes/api/schedule');
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.use(
 )
 
 //DB config
-const db = require('./server/config/keys').mongoURI;
+const db = require('./config/keys').mongoURI;
 
 //Connect to Mongo
 mongoose
@@ -45,7 +45,7 @@ mongoose.set('useCreateIndex', true);
 app.use(passport.initialize());
 
 // Passport Config
-require('./server/config/passport')(passport);
+require('./config/passport')(passport);
 
 // users Route
 app.use('/api/users', users)

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import {Card, Table, CardBody,  CardHeader, CardFooter, Button} from 'reactstrap';
 import Moment from 'react-moment'; 
 import isEmptyObj from '../../validation/is-empty';
-import ModalEnroll from '../../components/ModalEnroll';
 import ReactLoading from 'react-loading';
 //action
 import { getListQuiz } from '../../actions/testQuizAction';
@@ -80,9 +79,6 @@ class QuizListPage extends Component {
           </tbody>
         </Table>
       </CardBody>
-      <CardFooter>
-       <ModalEnroll/>
-      </CardFooter>
     </Card>
   </div>;
   }
