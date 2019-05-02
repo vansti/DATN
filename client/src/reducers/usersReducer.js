@@ -1,11 +1,15 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST, USERS_LOADING
 } from '../actions/types';
 
 const initialState = {
   student: null,
-  users: null,
-  approve_list: null
+  users: {
+    students:[],
+    teachers:[]
+  },
+  approve_list: null,
+  loading: false
 };
 
 export default function(state = initialState, action) {
@@ -13,7 +17,13 @@ export default function(state = initialState, action) {
     case GET_USERS:
       return {
         ...state,
-        users: action.payload
+        users: action.payload,        
+        loading: false        
+      };
+    case USERS_LOADING:
+      return {
+        ...state,
+        loading: true
       };
     case GET_STUDENT:
       return {
@@ -27,7 +37,11 @@ export default function(state = initialState, action) {
       };
     case CLEAR_USER:
       return {
-        users: null
+        ...state,
+        users: {
+          students:[],
+          teachers:[]
+        }
       };
     default:
       return state;

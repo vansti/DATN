@@ -1,9 +1,10 @@
 import {
-  GET_COMMENT
+  GET_COMMENT, COMMENT_LOADING
 } from '../actions/types';
 
 const initialState = {
-  comments: null
+  exercise_comments: [],
+  loading: false
 };
 
 export default function(state = initialState, action) {
@@ -11,7 +12,13 @@ export default function(state = initialState, action) {
     case GET_COMMENT:
       return {
         ...state,
-        comments: action.payload,
+        exercise_comments: action.payload,
+        loading: false
+      };
+    case COMMENT_LOADING:
+      return {
+        ...state,
+        loading: true
       };
     default:
       return state;

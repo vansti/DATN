@@ -1,11 +1,12 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input,Row,Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
-import { addComment, getComments } from '../actions/exerciseActions';
+import { addComment, getComments, clearErrors, clearSuccess, getExerciseList } from '../actions/exerciseActions';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../validation/is-empty';
 import ReactLoading from 'react-loading';
 import Moment from 'react-moment'; 
+import { withRouter } from 'react-router-dom';
 
 const styles = {
   bigAvatar: {
@@ -22,7 +23,9 @@ class PostComments extends Component {
       text:'',
       large: false,
       errors: {},
-      isLoading: false
+      isLoading: false,
+      loading: true,
+      comments: [],
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
@@ -32,6 +35,7 @@ class PostComments extends Component {
     this.setState({
       large: !this.state.large,
     });
+    this.props.getExerciseList(this.props.match.params.id);
   }
 
   onChange = e => {
@@ -46,23 +50,34 @@ class PostComments extends Component {
 
     this.setState({ errors: nextProps.errors});
 
-    if (nextProps.success.data === "Bình luận của bạn đã được gửi") {
+    if (nextProps.success.mes === "Bình luận của bạn đã được gửi") {
       this.setState({
-        isLoading: false
+        isLoading: false,
+        text:''
+      })
+      this.props.clearSuccess();
+    }
+
+    if (!isEmptyObj(nextProps.comments)) {
+      const { exercise_comments, loading } = nextProps.comments
+      const { comments } = exercise_comments
+      this.setState({
+        comments,
+        loading
       })
     }
   }
 
   onSubmit = e => {
     e.preventDefault();
+    this.props.clearErrors();
 
     const commentData = {
       text: this.state.text
     };
 
-    this.props.addComment(commentData,this.props.exercise._id);
+    this.props.addComment(commentData, this.props.exercise._id);
     this.setState({
-      text:'',
       isLoading: true
     });
   }
@@ -72,66 +87,62 @@ class PostComments extends Component {
 
     this.props.getComments(this.props.exercise._id);
     this.setState({
-      large: !this.state.large,
+      large: !this.state.large
     });
   }
 
 
   render() {
-    const exercise = this.props.exercise
-    var cexercise = this.props.comments.comments
-    var CommentList = '';
-    var ModalButton = '';
-    if(cexercise === null)
-    {
-      CommentList = <ReactLoading type='bars' color='#05386B' height={100} width={50} />
-      ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>  
-    }else{
-      if(exercise._id === cexercise._id)
-      {
-        ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{cexercise.comments.length} bình luận</Button>
-      }else{
-        ModalButton = <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>  
-      }
-      
-      if(cexercise.comments.length === 0)
-      {
-        CommentList = <b>Không có bình luận nào</b>
-      }else{
-        var comments = cexercise.comments
-        CommentList = comments.map(comment=>
-          <Fragment key={comment._id}>
-            <Row >
-              <Col sm="1">
-                <img src={comment.userPhoto} alt="avatar" style={styles.bigAvatar}/>
-              </Col>
-              <Col>
-                <b>{comment.userName}</b>
-                <small style={{marginLeft:20, color:'#A8A8A8'}}>
-                  <Moment format="HH:mm [ngày] DD [thg] MM, YYYY">
-                    {comment.created}
-                  </Moment>
-                </small>
-                <br/>
-                {
-                  comment.text.split('\n').map((itemChild, key) => {
-                    return <span key={key}>{itemChild}<br/></span>
-                  })
-                }
-              </Col>
-            </Row>
-            <br/>
-          </Fragment>
-          )
-      }
-    }
+    const { comments, loading } = this.state
+    const { exercise } = this.props
+
     return (
       <Fragment>
-        {ModalButton}
+        <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>
         <Modal isOpen={this.state.large} toggle={this.toggleLarge} className='modal-lg'>
           <ModalHeader  toggle={this.toggleLarge}>Bình luận về bài tập</ModalHeader>
           <ModalBody style={{overflowY:'scroll', height:400}}>
-            {CommentList}
+            {
+              loading
+              ?
+              <ReactLoading type='bars' color='#05386B' height={100} width={50} />
+              :
+              <Fragment>
+              {
+                comments.length === 0
+                ?
+                <b>Không có bình luận nào</b>
+                :
+                comments.map(comment=>
+                  <Fragment key={comment._id}>
+                    <Row >
+                      <Col sm="1">
+                        <img src={comment.user.photo} alt="avatar" style={styles.bigAvatar}/>
+                      </Col>
+                      <Col>
+                        <b>{comment.user.name} </b>
+                        <small style={{color:'#A8A8A8'}}>
+                          ( {comment.user.email} )
+                        </small>
+                        <small style={{marginLeft:20, color:'#A8A8A8'}}>
+                          <Moment format="HH:mm [ngày] DD [thg] MM, YYYY">
+                            {comment.created}
+                          </Moment>
+                        </small>
+                        <br/>
+                        {
+                          comment.text.split('\n').map((itemChild, key) => {
+                            return <span key={key}>{itemChild}<br/></span>
+                          })
+                        }
+                      </Col>
+                    </Row>
+                    <br/>
+                  </Fragment>
+                )
+              }
+              </Fragment>
+            }
           </ModalBody>
           <ModalFooter >
             <Input type="textarea" name="text" value={this.state.text} onChange={this.onChange} placeholder="Bình luận ..." />
@@ -155,7 +166,7 @@ PostComments.propTypes = {
   getComments: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   success: PropTypes.object.isRequired,
-  comments: PropTypes.object.isRequired,
+  comments: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -164,4 +175,4 @@ const mapStateToProps = state => ({
   comments: state.comments
 });
 
-export default connect(mapStateToProps, { addComment, getComments })(PostComments);  
+export default withRouter(connect(mapStateToProps, { addComment, getComments, clearErrors, clearSuccess, getExerciseList })(PostComments));  

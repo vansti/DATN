@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS } from './types';
+import { GET_SUCCESS, GET_ERRORS, 
+  GET_EXERCISE_LIST, GET_COMMENT, 
+  CLEAR_SUCCESS, GET_SUBMISSION, 
+  DEL_SUBMISSION, CLEAR_ERRORS,
+  EXERCISE_LOADING, COMMENT_LOADING
+} from './types';
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
@@ -21,7 +26,14 @@ export const addExercise = (exerciseData) => dispatch => {
     );
 };
 
+export const setExercisesLoading = () => {
+  return {
+    type: EXERCISE_LOADING
+  };
+};
+
 export const getExerciseList = (courseId) => dispatch => {
+  dispatch(setExercisesLoading());
   axios
     .get(`/api/exercises/${courseId}`)
     .then(res =>
@@ -39,14 +51,13 @@ export const getExerciseList = (courseId) => dispatch => {
 };
 
 // Add Comment
-export const addComment = (commentData,exerciseId) => dispatch => {
-  dispatch(clearSuccess());
+export const addComment = (commentData, exerciseId) => dispatch => {
   axios
     .post(`/api/exercises/comment/${exerciseId}`, commentData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Bình luận của bạn đã được gửi'}
+        payload: res.data
       })
       dispatch(getComments(exerciseId))
     })
@@ -60,7 +71,7 @@ export const addComment = (commentData,exerciseId) => dispatch => {
 
 // get comment
 export const getComments = (exerciseId) => dispatch => {
-  dispatch(clearSuccess());
+  dispatch(setCommentsLoading());
   axios
     .get(`/api/exercises/get-comments/${exerciseId}`)
     .then(res =>
@@ -75,6 +86,12 @@ export const getComments = (exerciseId) => dispatch => {
         payload: {}
       })
     );
+};
+
+export const setCommentsLoading = () => {
+  return {
+    type: COMMENT_LOADING
+  };
 };
 
 // Add Submission

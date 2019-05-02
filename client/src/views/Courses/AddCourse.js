@@ -82,6 +82,7 @@ class AddCourse extends Component {
 
     if (nextProps.success.data === "Thêm khóa học thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
+      this.props.clearSuccess();
     }
   }
 
@@ -133,8 +134,6 @@ class AddCourse extends Component {
       isLoading: false,
       invalidImg: false,
     })
-    this.props.clearSuccess();
-    this.props.clearErrors();
   }
 
   onEditorChange( evt ) {

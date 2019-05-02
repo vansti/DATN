@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
+const moment = require('moment');
 
 // Course Model
 const Attendance = require('../../models/Attendance');
@@ -39,32 +40,35 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
-    Attendance.aggregate([
-      {
-        $match:{ 'courseId': req.params.courseId}
-      },
-      {
-        $lookup:
-        {
-          from: "users",
-          localField: "students.userId",
-          foreignField : "_id",
-          as: "attendance_users"
-        }
+    Attendance.find(
+      { 
+        'courseId' : req.params.courseId
       }
-    ]).then((attendance)=>{
-      attendance.map(element=>{
-        element.students.map((student)=>{
-          const temp = element.attendance_users.filter(user => user._id.toString() === student.userId.toString());
-          student.name = temp[0].name
-          student.email = temp[0].email
-          student.photo = temp[0].photo
-        })
-        delete element.attendance_users
-      })
-      res.json(attendance)
-    })
+    )
+    .populate('students.userId', '_id name email photo')
+    .then(attendance => res.json(attendance))
+    .catch(err => console.log(err));
+  }
+);
 
+// @route   GET api/attendance/get-today-attendance/:courseId
+// @desc    get today attendance by courseId
+// @access  Private
+router.get(
+  '/get-today-attendance/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    var today = moment().format('YYYY-MM-DD');
+
+    Attendance.findOne(
+      { 
+        'courseId' : req.params.courseId,
+        'date' : today
+      }
+    )
+    .populate('students.userId', '_id name email photo')
+    .then(attendance => res.json(attendance))
+    .catch(err => console.log(err));
   }
 );
 

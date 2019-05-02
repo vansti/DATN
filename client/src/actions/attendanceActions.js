@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_ATTENDANCE, CLEAR_ATTENDANCE, GET_STUDENT_ABSENT_LIST} from './types';
+import { 
+  GET_SUCCESS, 
+  GET_ERRORS, 
+  GET_ATTENDANCE, 
+  CLEAR_ATTENDANCE, 
+  GET_STUDENT_ABSENT_LIST, 
+  ATTENDANCE_LOADING,
+  GET_TODAY_ATTENDANCE
+} from './types';
 
 // Add Attendance
 export const addAttendance= (newAttendance) => dispatch => {
@@ -47,6 +55,7 @@ export const clearAttendance = () => {
 
 // Get Attendance
 export const getAttendance = (courseId) => dispatch => {
+  dispatch(setAttendacneLoading());
   axios
     .get('/api/attendance/get-attendance/' + courseId)
     .then(res =>{
@@ -61,6 +70,31 @@ export const getAttendance = (courseId) => dispatch => {
         payload: {}
       })
     );
+};
+
+// Get Attendance
+export const getTodayAttendance = (courseId) => dispatch => {
+  dispatch(setAttendacneLoading());
+  axios
+    .get('/api/attendance/get-today-attendance/' + courseId)
+    .then(res =>{
+      dispatch({
+        type: GET_TODAY_ATTENDANCE,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_TODAY_ATTENDANCE,
+        payload: {}
+      })
+    );
+};
+
+export const setAttendacneLoading = () => {
+  return {
+    type: ATTENDANCE_LOADING
+  };
 };
 
 // get a student absent list in a course by courseId and that studentId

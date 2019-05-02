@@ -4,13 +4,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import { withRouter } from 'react-router-dom';
+import isEmptyObj from '../validation/is-empty';
 
 class PeopleInCourse extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-
+      users: {
+        students:[],
+        teachers:[]
+      },
+      loading: true
     };
     this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
   }
@@ -19,70 +24,86 @@ class PeopleInCourse extends Component {
     this.props.history.push('/student-info/' + studentId)
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!isEmptyObj(nextProps.users)) {
+      const {users, loading} = nextProps.users
+      this.setState({
+        users,
+        loading
+      })
+    }
+  }
+
   render() {
-    const {users} = this.props.users;
-
-    var StudentList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>;
-    if(users !== null)
-    {
-      if(users.students.length === 0)
-      {
-        StudentList = <tr><td></td><td>Chưa có học viên</td></tr>
-      }
-      else{
-        StudentList = users.students.map((user, index) =>
-        <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user._id)} className="changeCursor">
-          <th>                      
-            <div className="avatar">
-              <img src={user.photo} className="img-avatar" alt="" />
-            </div>
-          </th>
-          <td>{user.name}</td>
-        </tr>
-        )
-      }
-    }
-
-    var TeacherList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>;
-    if(users !== null)
-    {
-      if(users.teachers.length === 0)
-      {
-        TeacherList = <tr><td></td><td>Chưa có giáo viên tham gia</td></tr>
-      }
-      else{
-        TeacherList = users.teachers.map((user, index) =>
-        <tr key={user._id}>
-          <th>                      
-            <div className="avatar">
-              <img src={user.photo} className="img-avatar" alt="" />
-            </div>
-          </th>
-          <td>{user.name}</td>
-        </tr>
-        )
-      }
-    }
-
+    const { students, teachers } = this.state.users
+    const { loading } = this.state
     return (
       <Container>
         <Row>
-          <Col sm="12" md={{ size: 6, offset: 3 }}>
-            <h3>Giáo viên</h3>
-            <Table responsive hover>
-              <tbody>
-                {TeacherList}
-              </tbody>
-            </Table>
-            <br/>
-            <br/>
-            <h3>Học viên</h3>
-            <Table responsive hover>
-              <tbody>
-                {StudentList}
-              </tbody>
-            </Table>
-          </Col>
+          {
+            loading
+            ?
+            <div style={{position:'fixed', top:'50%', left: '50%' }}>
+              <ReactLoading type='bars' color='#05386B' height={100} width={50} />
+            </div>
+            :
+            <Col sm="12" md={{ size: 6, offset: 3 }}>
+              <h3>Giáo viên</h3>
+              <Table responsive hover>
+                <tbody>
+                  {
+                    teachers.length === 0
+                    ?
+                    <tr><td></td><td>Chưa có giáo viên tham gia</td></tr>
+                    :
+                    teachers.map(user =>
+                      <tr key={user._id}>
+                        <td>                      
+                          <div className="avatar">
+                            <img src={user.photo} className="img-avatar" alt="" />
+                          </div>
+                        </td>
+                        <td>
+                          <div>{user.name}</div>
+                          <div className="small text-muted">
+                            {user.email}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  }
+                </tbody>
+              </Table>
+              <br/>
+              <br/>
+              <h3>Học viên</h3>
+              <Table responsive hover>
+                <tbody>
+                  {                    
+                    students.length === 0
+                    ?
+                    <tr><td></td><td>Chưa có học viên</td></tr>
+                    :
+                    students.map(user =>
+                      <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user._id)} className="changeCursor">
+                        <td>                      
+                          <div className="avatar">
+                            <img src={user.photo} className="img-avatar" alt="" />
+                          </div>
+                        </td>
+                        <td>
+                          <div>{user.name}</div>
+                          <div className="small text-muted">
+                            {user.email}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  }
+                </tbody>
+              </Table>
+            </Col>
+          }
         </Row>
       </Container>
     )

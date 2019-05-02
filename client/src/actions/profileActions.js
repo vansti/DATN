@@ -13,10 +13,10 @@ export const editProfile = (userData, fileData) => dispatch => {
         let fd = new FormData();
         fd.append('image', fileData, fileData.name)
         axios.post('/api/users/edit-avatar', fd)
-        .then(data  => {
+        .then(res2  => {
           dispatch({
             type: GET_SUCCESS,
-            payload: {data: 'Thay đổi thành công'}
+            payload: res2.data
           })
           dispatch(getCurrentProfile());
         });
@@ -25,8 +25,9 @@ export const editProfile = (userData, fileData) => dispatch => {
       {
         dispatch({
           type: GET_SUCCESS,
-          payload: {data: 'Thay đổi thành công'}
+          payload: res.data
         })
+        dispatch(getCurrentProfile());
       }
       
     })
@@ -67,7 +68,7 @@ export const changePassword = (passwordData, history) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Thay đổi password thành công'}
+        payload: res.data
       })
     })
     .catch(err =>
@@ -84,15 +85,6 @@ export const clearErrors = () => {
     type: CLEAR_ERRORS
   };
 };
-
-
-export const getSuccess = () => dispatch => {
-  dispatch({
-    type: GET_SUCCESS,
-    payload: {data: 'Thay đổi thành công'}
-  })
-};
-
 
 export const clearSuccess = () => {
   return {

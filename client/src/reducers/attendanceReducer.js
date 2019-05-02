@@ -1,9 +1,11 @@
 import {
-  GET_ATTENDANCE, CLEAR_ATTENDANCE, GET_STUDENT_ABSENT_LIST
+  GET_ATTENDANCE, CLEAR_ATTENDANCE, GET_STUDENT_ABSENT_LIST, ATTENDANCE_LOADING, GET_TODAY_ATTENDANCE
 } from '../actions/types';
 
 const initialState = {
-  attendance: null,
+  loading: false,
+  today_attendance: {},
+  attendance: [],
   student_absent_list: null 
 };
 
@@ -13,11 +15,24 @@ export default function(state = initialState, action) {
       return {
         ...state,
         attendance: action.payload,
+        loading: false
       };
+    case GET_TODAY_ATTENDANCE:
+      return {
+        ...state,
+        today_attendance: action.payload,
+        loading: false
+      };
+    case ATTENDANCE_LOADING:
+      return {
+        ...state,
+        loading: true
+      }
     case CLEAR_ATTENDANCE:
       return {
         ...state,
-        attendance: null
+        today_attendance: {},
+        attendance: []
       };
     case GET_STUDENT_ABSENT_LIST:
       return {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser } from '../../../actions/authActions';
+import { loginUser, clearErrors } from '../../../actions/authActions';
 import icon from '../../../assets/img/e-icon.png'
 
 class Login extends Component {
@@ -38,6 +38,7 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
+    this.props.clearErrors();
     this.props.loginUser(userData);
   }
 
@@ -67,6 +68,7 @@ class Login extends Component {
                           </InputGroupAddon>
                           <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} />
                         </InputGroup>
+                        {errors.email_login && <Alert color="danger">{errors.email_login}</Alert>}
                         <InputGroup className="mb-4">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
@@ -75,8 +77,7 @@ class Login extends Component {
                           </InputGroupAddon>
                           <Input type="password" name="password" placeholder="Mật khẩu" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
                         </InputGroup>
-                        {errors.email && <Alert color="danger">{errors.email}</Alert>}
-                        {errors.password && <Alert color="danger">{errors.password}</Alert>}
+                        {errors.password_login && <Alert color="danger">{errors.password_login}</Alert>}
                         <Row>
                           <Col xs="6">
                             <Button color="primary" className="px-4" onClick={this.onSubmit}>Đăng nhập</Button>
@@ -121,4 +122,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser })(Login);
+export default connect(mapStateToProps, { loginUser, clearErrors })(Login);
