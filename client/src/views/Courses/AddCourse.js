@@ -3,7 +3,7 @@ import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, F
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import PointColumnsForm from '../../components/PointsColumn/Add/index'
+// import PointColumnsForm from '../../components/PointsColumn/Add/index'
 import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
@@ -20,6 +20,9 @@ const styles = {
     margin: 'auto',
     border: '1px solid #ddd',
     borderRadius: 5
+  },
+  buttonDanger: {
+    margin: '0 0 0 10px'
   }
 }
 
@@ -41,6 +44,15 @@ class AddCourse extends Component {
       errors:{},
       isLoading: false,
       invalidImg: false,
+      pointColumns: [{
+        pointName: 'Điểm giữa kỳ',
+        pointRate: '30',
+      },
+      {
+        pointName: 'Điểm cuối kỳ',
+        pointRate: '70',
+      }
+    ],
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -88,21 +100,9 @@ class AddCourse extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    let formInputs = document.getElementsByClassName('form-control');
-    let pointColumns = formInputs.splice(3, formInputs.length);
-    if(pointColumns.length <=0){
-      alert("Hãy thêm ít nhất 1 cột điểm");
-      return;
-    }else{
-      let total = 0;
-      for(let i = 0; i < pointColumns.length; i++){
-        total += pointColumns[i];
-      }
-      if(total !== 100){
-        alert("Tổng phải bằng 100%");
-        return;
-      }
-    }
+    // let formInputs = document.getElementsByClassName('form-control');
+    // let pointColumns = formInputs.splice(3, formInputs.length);
+   
     const courseData = {
       title: this.state.title,
       intro: this.state.intro,
@@ -111,7 +111,7 @@ class AddCourse extends Component {
       openingDay: this.state.openingDay,
       fee: this.state.fee,
       info: this.state.info,
-      pointColumns: pointColumns
+      pointColumns: this.state.pointColumns
     };
     this.props.clearErrors();
     this.props.addCourse(courseData, this.state.file);
@@ -123,6 +123,15 @@ class AddCourse extends Component {
       title:'',
       intro: '',
       coursePhoto: '',
+      pointColumns: [{
+          pointName: 'Điểm giữa kỳ',
+          pointRate: '30',
+        },
+        {
+          pointName: 'Điểm cuối kỳ',
+          pointRate: '70',
+        }
+      ],
       enrollDeadline: null,
       studyTime: '',
       openingDay: null,
@@ -146,8 +155,37 @@ class AddCourse extends Component {
 
   onChangeOpeningDay = openingDay => this.setState({ openingDay })
 
+  handlePointColumnNameChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointName: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handlePointColumnPointRateChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointRate: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handleAddPointColumn = () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.concat([{ pointName: "", pointRate: ""}])
+    });
+  };
+
+  handleRemovePointColumn = idx => () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.filter((s, sidx) => idx !== sidx)
+    });
+  };
+
   render() {
-    let form = (<PointColumnsForm onSubmit={this.submit}/>);
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
@@ -167,7 +205,37 @@ class AddCourse extends Component {
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
                 {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
-              <FormGroup>{form}</FormGroup>
+                {this.state.pointColumns.map((pointColumn, idx) => (
+                <FormGroup key={idx}>
+                  <div className="point-columns form-row">
+                    <div className="col form-row">
+                      <Label className="col-3">Tên cột điểm: </Label>
+                      <input
+                        className="form-control col"
+                        type="text"
+                        placeholder={`Tên cột điểm`}
+                        value={pointColumn.pointName}
+                        onChange={this.handlePointColumnNameChange(idx)}
+                      />
+                    </div>
+                    <div className="col form-row">
+                      <Label className="col-3">Tỉ lệ điểm (%): </Label>
+                      <input
+                        className="form-control col"
+                        type="number"
+                        placeholder={`Tỉ lệ điểm`}
+                        value={pointColumn.pointRate}
+                        onChange={this.handlePointColumnPointRateChange(idx)}
+                      />
+                    </div>
+                    <button style={styles.buttonDanger} type="button" className="btn btn-danger" onClick={this.handleRemovePointColumn(idx)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                  </div>
+                </FormGroup>
+                ))}
+                <FormGroup>
+                  <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
+                  {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
+                </FormGroup>
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>

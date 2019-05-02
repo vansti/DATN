@@ -25,10 +25,6 @@ const CourseSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  pointColumns: {
-    type: Array,
-    required: true
-  }
 })
 
 module.exports = Course = mongoose.model('courses', CourseSchema)

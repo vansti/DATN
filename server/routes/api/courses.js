@@ -43,14 +43,15 @@ router.post(
     const newCourse = new Course({
       title: req.body.title,
       enrollDeadline: req.body.enrollDeadline,
-      intro: req.body.intro
+      intro: req.body.intro,
     });
 
     const newCourseDetail = new CourseDetail({
       studyTime: req.body.studyTime,
       openingDay: req.body.openingDay,
       fee: req.body.fee,
-      info: req.body.info
+      info: req.body.info,
+      pointColumns: req.body.pointColumns
     });
 
     async function run() {
@@ -177,7 +178,7 @@ router.get(
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, fee: 1, info: 1, 
+          { studyTime: 1, openingDay: 1, fee: 1, info: 1, pointColumns: 1, 
             enrollStudents:  
             {
               $elemMatch: {
@@ -191,7 +192,6 @@ router.get(
           course: course,
           course_detail: course_detail
         }
-
         if(result.course_detail.enrollStudents === undefined)
           result.isEnroll = false
         else{   

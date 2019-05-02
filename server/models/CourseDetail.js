@@ -25,6 +25,14 @@ const CourseDetailSchema = new Schema({
       type: Date,
       default: Date.now
     }
+  }],
+  pointColumns: [{
+    pointName: {
+      type: String
+    },
+    pointRate: {
+      type: Number
+    }
   }]
 })
 

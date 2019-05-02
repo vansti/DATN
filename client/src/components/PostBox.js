@@ -22,7 +22,6 @@ class PostBox extends Component {
       large: false,
       errors: {},
       isShowSuccess: false,
-      
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);

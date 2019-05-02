@@ -47,7 +47,6 @@ module.exports = function validateAddTestQuizInput(data) {
     if(quizArrayErrors.length) {
       errors.quizzes = quizArrayErrors;
     }
-    console.log(errors);
     //end array question
   }
   return {

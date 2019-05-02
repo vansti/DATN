@@ -24,7 +24,21 @@ module.exports = function validateAddCourseInput(data) {
   
   if (Validator.isEmpty(data.info)) 
     errors.info = 'Hãy điền nội dung khoa học'; 
-     
+
+  if (!data.pointColumns || !data.pointColumns.length)
+    errors.pointColumns = 'Hãy điền Thông tin cột điểm'; 
+  else {
+    total = 0;
+    for(let i = 0; i < data.pointColumns.length; i++){
+      if(Validator.isEmpty(data.pointColumns[i].pointName))
+        data.pointColumns[i].pointName = "Cột điểm " + i;
+      data.pointColumns[i].pointRate = isEmpty(data.pointColumns[i].pointRate) ? 0 : parseInt(data.pointColumns[i].pointRate);
+      total += data.pointColumns[i].pointRate;
+    }
+    if(total !== 100){
+      errors.pointColumns = 'Tỉ lệ điểm phải bằng 100%'; 
+    }
+  }
   return {
     errors,
     isValid: isEmpty(errors)

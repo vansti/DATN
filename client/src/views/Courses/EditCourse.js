@@ -68,7 +68,6 @@ class EditCourse extends Component {
     if (nextProps.success.data === 'Chỉnh sửa khóa học thành công') {
       this.setState({isShowSuccess: true, isLoading: false})
     }
-
     if (!isEmptyObj(nextProps.courses))
     {
       let {courseinfo} = nextProps.courses
@@ -80,7 +79,8 @@ class EditCourse extends Component {
         studyTime: courseinfo.course_detail.studyTime,
         openingDay: new Date(courseinfo.course_detail.openingDay),
         fee: courseinfo.course_detail.fee,
-        info: courseinfo.course_detail.info
+        info: courseinfo.course_detail.info,
+        pointColumns: courseinfo.course_detail.pointColumns,
       });
     }
   }
@@ -125,7 +125,8 @@ class EditCourse extends Component {
       studyTime: this.state.studyTime,
       openingDay: this.state.openingDay,
       fee: this.state.fee,
-      info: this.state.info
+      info: this.state.info,
+      pointColumns: this.state.pointColumns,
     };
     this.props.clearErrors();
     this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
@@ -152,6 +153,35 @@ class EditCourse extends Component {
   onChangeDeadline = enrollDeadline => this.setState({ enrollDeadline })
 
   onChangeOpeningDay = openingDay => this.setState({ openingDay })
+  handlePointColumnNameChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointName: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handlePointColumnPointRateChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointRate: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handleAddPointColumn = () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.concat([{ pointName: "", pointRate: ""}])
+    });
+  };
+
+  handleRemovePointColumn = idx => () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.filter((s, sidx) => idx !== sidx)
+    });
+  };
 
   render() {
     const { errors } = this.state;
@@ -173,6 +203,37 @@ class EditCourse extends Component {
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
                 {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
+              {/* {this.state.pointColumns.map((pointColumn, idx) => (
+              <FormGroup key={idx}>
+                <div className="point-columns form-row">
+                  <div className="col form-row">
+                    <Label className="col-3">Tên cột điểm: </Label>
+                    <input
+                      className="form-control col"
+                      type="text"
+                      placeholder={`Tên cột điểm`}
+                      value={pointColumn.pointName}
+                      onChange={this.handlePointColumnNameChange(idx)}
+                    />
+                  </div>
+                  <div className="col form-row">
+                    <Label className="col-3">Tỉ lệ điểm (%): </Label>
+                    <input
+                      className="form-control col"
+                      type="number"
+                      placeholder={`Tỉ lệ điểm`}
+                      value={pointColumn.pointRate}
+                      onChange={this.handlePointColumnPointRateChange(idx)}
+                    />
+                  </div>
+                  <button style={styles.buttonDanger} type="button" className="btn btn-danger" onClick={this.handleRemovePointColumn(idx)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+              </FormGroup>
+              ))}
+              <FormGroup>
+                <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
+                {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
+              </FormGroup> */}
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>
