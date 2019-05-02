@@ -98,6 +98,7 @@ export const setAttendacneLoading = () => {
 
 // get a student absent list in a course by courseId and that studentId
 export const getStudentAbsent = (courseId, studentId) => dispatch => {
+  dispatch(setAttendacneLoading());
   axios
     .get(`/api/attendance/get-student-absent/${courseId}/${studentId}`)
     .then(res =>{

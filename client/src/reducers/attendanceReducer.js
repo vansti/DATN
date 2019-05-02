@@ -6,7 +6,10 @@ const initialState = {
   loading: false,
   today_attendance: {},
   attendance: [],
-  student_absent_list: null 
+  student_absent_list: {
+    absentlist: [],
+    attendanceNumber: null
+  } 
 };
 
 export default function(state = initialState, action) {
@@ -38,6 +41,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         student_absent_list: action.payload,
+        loading: false
       };
     default:
       return state;

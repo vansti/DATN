@@ -29,6 +29,11 @@ class StudentIfo extends Component {
     super(props);
 
     this.state = {
+      student: {},
+      studentcourses: [],
+      loadingStudent: true,
+      loadingStudentCourse: true,
+      loadingStudentAbsentList: false,
       isShowAbsentList: false
     };
     this.handleAbsent = this.handleAbsent.bind(this);
@@ -46,60 +51,50 @@ class StudentIfo extends Component {
     this.props.getStudentAbsent(courseId,this.props.match.params.id)
   }
 
-  render() {
-    const {student} = this.props.users
-    const {studentcourses} = this.props.courses
-    const {student_absent_list} = this.props.attendance
+  componentWillReceiveProps(nextProps) {
+    if (!isEmptyObj(nextProps.users)) {
+      const { student, loading } = nextProps.users
 
-    var CourseListTable = <ReactLoading type='bars' color='#05386B' height={100} width={50}/>
-
-    if(studentcourses !== null){
-
-      if(studentcourses.length === 0)
-      {
-        CourseListTable = <h3>Học viên chưa ghi danh khóa nào</h3>
-      }
-      else{
-        CourseListTable=
-        <Table responsive bordered>
-          <thead className="thead-light">
-            <tr>
-              <th colSpan="3" className="text-center">khóa học của học viên</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              studentcourses.map(course=>
-              <Fragment key={course._id} >
-                <tr >
-                  <td rowSpan="2">
-                    <div className="text-center">
-                      <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                    </div>
-                  </td >
-                  <td rowSpan="2">
-                    {course.title}
-                  </td>
-                  <td className="changeCursor" onClick={this.handleAbsent.bind(this, course._id)}>
-                    Xem ngày vắng
-                  </td>
-                </tr>
-                <tr>
-                  <td className="changeCursor">
-                    Xem điểm số
-                  </td>
-                </tr>
-              </Fragment>
-              )
-            }
-          </tbody>
-        </Table>
-      }
+      this.setState({
+        student,
+        loadingStudent: loading
+      })
     }
+
+    if (!isEmptyObj(nextProps.courses)) {
+      const { studentcourses, loading } = nextProps.courses
+
+      this.setState({
+        studentcourses,
+        loadingStudentCourse: loading
+      })
+    } 
+
+    if (!isEmptyObj(nextProps.attendance)) {
+      const { student_absent_list, loading } = nextProps.attendance
+
+      this.setState({
+        student_absent_list,
+        loadingStudentAbsentList: loading
+      })
+    } 
+
+  }
+
+  render() {
+    const { 
+      student, 
+      loadingStudent, 
+      loadingStudentCourse, 
+      studentcourses, 
+      loadingStudentAbsentList, 
+      student_absent_list, 
+      isShowAbsentList 
+    } = this.state
 
     var AbsentList = null;
 
-    if(!isEmptyObj(student_absent_list) && this.state.isShowAbsentList === true){
+    if(isShowAbsentList === true){
       AbsentList = 
       <Fragment>
         <div><strong>Số ngày nghỉ / Tổng số ngày điểm danh </strong>: {student_absent_list.absentlist.length} / {student_absent_list.attendanceNumber} </div>
@@ -157,9 +152,9 @@ class StudentIfo extends Component {
         <Row>
           <Col lg={6}>
             {
-              isEmptyObj(student)
+              loadingStudent || loadingStudentCourse
               ? 
-              <ReactLoading type='bars' color='#05386B' height={100} width={50} />
+              <ReactLoading type='bars' color='#05386B'/>
               :
               <Card>
                 <CardHeader>
@@ -175,7 +170,45 @@ class StudentIfo extends Component {
                   </Row>
                 </CardHeader>
                 <CardBody>
-                  {CourseListTable}
+                  {
+                    studentcourses.length === 0
+                    ?
+                    <h3>Học viên chưa ghi danh khóa nào</h3>
+                    :
+                    <Table responsive bordered>
+                      <thead className="thead-light">
+                        <tr>
+                          <th colSpan="3" className="text-center">khóa học của học viên</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {
+                        studentcourses.map(course=>
+                          <Fragment key={course._id} >
+                            <tr >
+                              <td rowSpan="2">
+                                <div className="text-center">
+                                  <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                                </div>
+                              </td >
+                              <td rowSpan="2">
+                                {course.title}
+                              </td>
+                              <td className="changeCursor" onClick={this.handleAbsent.bind(this, course._id)}>
+                                Xem ngày vắng
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="changeCursor">
+                                Xem điểm số
+                              </td>
+                            </tr>
+                          </Fragment>
+                        )
+                      }
+                      </tbody>
+                    </Table>
+                  }
                 </CardBody>
               </Card>
             }
@@ -186,7 +219,13 @@ class StudentIfo extends Component {
                 <strong>Thông tin của học viên trong khóa học</strong>
               </CardHeader>
               <CardBody>
-                {AbsentList}
+                {
+                  loadingStudentAbsentList
+                  ? 
+                  <ReactLoading type='bars' color='#05386B' />
+                  :
+                  AbsentList
+                }
               </CardBody>
             </Card>
           </Col>

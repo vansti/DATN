@@ -28,7 +28,8 @@ export default function(state = initialState, action) {
     case GET_STUDENT:
       return {
         ...state,
-        student: action.payload
+        student: action.payload,
+        loading: false        
       };
     case GET_APPROVE_LIST:
       return {
