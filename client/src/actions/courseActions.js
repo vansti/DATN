@@ -1,8 +1,17 @@
 import axios from 'axios';
 
-import { GET_ERRORS, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS,
-         GET_CURRENT_COURSES, GET_STUDENT_COURSES , GET_ALL_COURSES,
-         GET_COURSE_INFO, GET_MANAGE_COURSES } from './types';
+import { 
+  GET_ERRORS, 
+  CLEAR_ERRORS, 
+  GET_SUCCESS, 
+  CLEAR_SUCCESS, 
+  GET_CURRENT_COURSES, 
+  GET_STUDENT_COURSES , 
+  GET_ALL_COURSES,
+  GET_COURSE_INFO, 
+  GET_MANAGE_COURSES, 
+  ALLCOURSE_LOADING 
+} from './types';
 
 // Add Course
 export const addCourse = (courseData, fileData) => dispatch => {
@@ -116,6 +125,7 @@ export const unenrollCourse = (courseId) => dispatch => {
 
 // get curent user courses
 export const getCurentCourse = () => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get('/api/courses/current')
     .then(res =>
@@ -132,8 +142,15 @@ export const getCurentCourse = () => dispatch => {
     );
 };
 
+export const setAllCourseLoading = () => {
+  return {
+    type: ALLCOURSE_LOADING
+  };
+};
+
 // lấy hết khóa học chưa hết hạn ghi danh
 export const getAllCourse = () => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get('/api/courses/all-course')
     .then(res =>
@@ -152,6 +169,7 @@ export const getAllCourse = () => dispatch => {
 
 // lấy thông tin chi tiết của 1 khóa học
 export const getCourseInfo = (courseId) => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get(`/api/courses/course-info/${courseId}`)
     .then(res =>
@@ -170,6 +188,7 @@ export const getCourseInfo = (courseId) => dispatch => {
 
 // lấy tất cả các khóa học
 export const getManageCourses = () => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get(`/api/courses/manage-courses`)
     .then(res =>
@@ -188,6 +207,7 @@ export const getManageCourses = () => dispatch => {
 
 // get student courses by student id
 export const getStudentCourse = (studentId) => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get('/api/courses/' + studentId)
     .then(res =>

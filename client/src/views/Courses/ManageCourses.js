@@ -9,7 +9,8 @@ import {
   CardHeader,
   Button,
   Modal,
-  ModalBody
+  ModalBody,
+  Input
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -34,12 +35,14 @@ class ManageCourses extends Component {
   constructor() {
     super();
     this.state = {
-      courses: [],
+      managecourses: [],
+      loading: true,
       currentPage: 1,
       coursesPerPage: 5,
       isShowSuccess: false,
       isLoading: false,
-      titleSuccess: ''
+      titleSuccess: '',
+      intialManagecourses: []
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -56,7 +59,12 @@ class ManageCourses extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.courses) {
-      this.setState({ courses: nextProps.courses.managecourses});
+      const { managecourses, loading } = nextProps.courses
+      this.setState({ 
+        intialManagecourses: managecourses,
+        managecourses, 
+        loading 
+      });
     }
 
     if (nextProps.success === "Tham gia khóa học thành công" || nextProps.success === "Đã tham gia vào khóa học này") {
@@ -113,16 +121,24 @@ class ManageCourses extends Component {
     this.props.clearSuccess();
   }
 
+  onSearch = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
+    updatedList = updatedList.filter((course)=>
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
+    this.setState({ managecourses: updatedList });
+  }
+
   render() {
-    let { courses, currentPage, coursesPerPage } = this.state;
-    const {role} = this.props.auth.user
+    let { managecourses, currentPage, coursesPerPage, loading } = this.state;
+    const { role } = this.props.auth.user
 
     // Logic for displaying current courses
     let indexOfLastTodo = currentPage * coursesPerPage;
     let indexOfFirstTodo = indexOfLastTodo - coursesPerPage;
-    let currentcourses = courses.slice(indexOfFirstTodo, indexOfLastTodo);
+    let currentcourses = managecourses.slice(indexOfFirstTodo, indexOfLastTodo);
     prev  = currentPage > 0 ? (currentPage -1) :0;
-    last = Math.ceil(courses.length/coursesPerPage);
+    last = Math.ceil(managecourses.length/coursesPerPage);
 
     // Logic for displaying page numbers
     let pageNumbers = [];
@@ -137,98 +153,107 @@ class ManageCourses extends Component {
             <i className="fa fa-wrench"></i><b>Quản lý khóa học</b>
           </CardHeader>
           <CardBody>
-            <Table responsive className="mb-0 d-none d-sm-table">
-              <tbody>
-                {
-                  currentcourses.map(course=>
-                    <tr key={course._id}>
-                      <td>
-                        <div className="text-center">
-                          <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                        </div>
-                      </td>
-                      <td>
-                        {course.title}
-                      </td>
+            {
+              loading
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Fragment>
+                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                <Table style={{marginTop:20}} responsive className="mb-0 d-none d-sm-table">
+                  <tbody>
+                    {
+                      currentcourses.map(course=>
+                        <tr key={course._id}>
+                          <td>
+                            <div className="text-center">
+                              <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                            </div>
+                          </td>
+                          <td>
+                            {course.title}
+                          </td>
+                          {
+                            role === 'teacher'
+                            ?
+                            <Fragment>
+                              <td>
+                                <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                  Tham gia
+                                </Button>
+                              </td>
+                            </Fragment>
+                            :
+                            <Fragment>
+                            <td>
+                                <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                  Chỉnh sửa
+                                </Button>
+                              </td>
+                              <td>
+                                <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                                  Phê duyệt
+                                </Button>
+                              </td>
+                              <td>
+                                <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                  Tham gia
+                                </Button>
+                              </td>
+                            </Fragment>
+                          }
+
+                        </tr>
+                      )
+                    }
+                  </tbody>
+                </Table>
+                <br/>
+                <nav>
+                  <Pagination>
+                    <PaginationItem>
+                      { 
+                        prev === 0 
+                        ? <PaginationLink previous tag="button" disabled />
+                        : <PaginationLink previous tag="button" onClick={this.handleFirstClick} id={prev} href={prev} />
+                      }
+                    </PaginationItem>
+                    <PaginationItem>
+                      { 
+                        prev === 0 
+                        ? <PaginationLink disabled>Trước</PaginationLink> 
+                        : <PaginationLink onClick={this.handleClick} id={prev} href={prev}>Trước</PaginationLink>
+                      }
+                    </PaginationItem>
                       {
-                        role === 'teacher'
-                        ?
-                        <Fragment>
-                          <td>
-                            <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                              Tham gia
-                            </Button>
-                          </td>
-                        </Fragment>
-                        :
-                        <Fragment>
-                         <td>
-                            <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                              Chỉnh sửa
-                            </Button>
-                          </td>
-                          <td>
-                            <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                              Phê duyệt
-                            </Button>
-                          </td>
-                          <td>
-                            <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                              Tham gia
-                            </Button>
-                          </td>
-                        </Fragment>
+                        pageNumbers.map((number,i) =>
+                          <PaginationItem key= {i} active = {pageNumbers[currentPage-1] === (number) ? true : false} >
+                            <PaginationLink onClick={this.handleClick} href={number} key={number} id={number}>
+                              {number}
+                            </PaginationLink>
+                          </PaginationItem>
+                        )
                       }
 
-                    </tr>
-                  )
-                }
-              </tbody>
-            </Table>
-            <br/>
-            <nav>
-              <Pagination>
-                <PaginationItem>
-                  { 
-                    prev === 0 
-                    ? <PaginationLink previous tag="button" disabled />
-                    : <PaginationLink previous tag="button" onClick={this.handleFirstClick} id={prev} href={prev} />
-                  }
-                </PaginationItem>
-                <PaginationItem>
-                  { 
-                    prev === 0 
-                    ? <PaginationLink disabled>Trước</PaginationLink> 
-                    : <PaginationLink onClick={this.handleClick} id={prev} href={prev}>Trước</PaginationLink>
-                  }
-                </PaginationItem>
-                  {
-                    pageNumbers.map((number,i) =>
-                      <PaginationItem key= {i} active = {pageNumbers[currentPage-1] === (number) ? true : false} >
-                        <PaginationLink onClick={this.handleClick} href={number} key={number} id={number}>
-                          {number}
-                        </PaginationLink>
-                      </PaginationItem>
-                    )
-                  }
+                    <PaginationItem>
+                      {
+                        currentPage === last 
+                        ? <PaginationLink disabled>Sau</PaginationLink> 
+                        : <PaginationLink onClick={this.handleClick} id={pageNumbers[currentPage]} href={pageNumbers[currentPage]}>Sau</PaginationLink>
+                      }
+                    </PaginationItem>
 
-                <PaginationItem>
-                  {
-                    currentPage === last 
-                    ? <PaginationLink disabled>Sau</PaginationLink> 
-                    : <PaginationLink onClick={this.handleClick} id={pageNumbers[currentPage]} href={pageNumbers[currentPage]}>Sau</PaginationLink>
-                  }
-                </PaginationItem>
-
-                <PaginationItem>
-                  {
-                    currentPage === last 
-                    ? <PaginationLink next tag="button" disabled />
-                    : <PaginationLink next tag="button" onClick={this.handleLastClick} id={pageNumbers[currentPage]} href={pageNumbers[currentPage]}/>
-                  }
-                </PaginationItem>
-              </Pagination>
-            </nav>
+                    <PaginationItem>
+                      {
+                        currentPage === last 
+                        ? <PaginationLink next tag="button" disabled />
+                        : <PaginationLink next tag="button" onClick={this.handleLastClick} id={pageNumbers[currentPage]} href={pageNumbers[currentPage]}/>
+                      }
+                    </PaginationItem>
+                  </Pagination>
+                </nav>
+              </Fragment>
+            }
           </CardBody>
         </Card>
         <SweetAlert

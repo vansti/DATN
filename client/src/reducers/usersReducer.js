@@ -8,7 +8,10 @@ const initialState = {
     students:[],
     teachers:[]
   },
-  approve_list: null,
+  approve_list: {
+    enrollStudents: [],
+    students: []
+  },
   loading: false
 };
 
@@ -28,12 +31,14 @@ export default function(state = initialState, action) {
     case GET_STUDENT:
       return {
         ...state,
-        student: action.payload
+        student: action.payload,
+        loading: false        
       };
     case GET_APPROVE_LIST:
       return {
         ...state,
-        approve_list: action.payload
+        approve_list: action.payload,
+        loading: false        
       };
     case CLEAR_USER:
       return {

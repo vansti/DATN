@@ -1,6 +1,15 @@
 import axios from 'axios';
 
-import { GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST, GET_SUCCESS, GET_ERRORS, CLEAR_SUCCESS, USERS_LOADING } from './types';
+import { 
+  GET_USERS, 
+  CLEAR_USER, 
+  GET_STUDENT, 
+  GET_APPROVE_LIST, 
+  GET_SUCCESS, 
+  GET_ERRORS, 
+  CLEAR_SUCCESS, 
+  USERS_LOADING 
+} from './types';
 
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
@@ -21,21 +30,9 @@ export const getUsers = (courseid) => dispatch => {
     );
 };
 
-export const setUsersLoading = () => {
-  return {
-    type: USERS_LOADING
-  };
-};
-
-// Clear a list of users
-export const clearUsers = () => {
-  return {
-    type: CLEAR_USER
-  };
-};
-
 // Get student info
 export const getStudent = (studentId) => dispatch => {
+  dispatch(setUsersLoading());
   axios
     .get('/api/users/' + studentId)
     .then(res =>
@@ -54,6 +51,7 @@ export const getStudent = (studentId) => dispatch => {
 
 // lấy danh sách học viên ghi danh và danh sách học viên dc duyệt của 1 khóa học
 export const getApproveList = (courseId) => dispatch => {
+  dispatch(setUsersLoading());
   axios
     .get('/api/users/approve-list/' + courseId)
     .then(res =>
@@ -87,6 +85,19 @@ export const approveStudent = (courseId, studentId) => dispatch => {
         payload: err.response.data
       })
     );
+};
+
+export const setUsersLoading = () => {
+  return {
+    type: USERS_LOADING
+  };
+};
+
+// Clear a list of users
+export const clearUsers = () => {
+  return {
+    type: CLEAR_USER
+  };
 };
 
 export const clearSuccess = () => {

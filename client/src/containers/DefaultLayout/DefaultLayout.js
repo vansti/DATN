@@ -40,7 +40,7 @@ class DefaultLayout extends Component {
   }
   
   render() {
-    const role = this.props.auth.user.role
+    const { role } = this.props.auth.user
     let AppSidebarNavRole;
 
     if (role.toString() === 'student') {

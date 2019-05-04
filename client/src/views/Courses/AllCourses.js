@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getAllCourse } from '../../actions/courseActions';
 import { Row, Col, Card, CardBody, CardHeader, Button } from 'reactstrap';
 import Moment from 'react-moment'; 
+import ReactLoading from 'react-loading';
 
 const styles = {
   bigAvatar: {
@@ -20,6 +21,8 @@ class AllCourses extends Component {
     super(props);
 
     this.state = {
+      loading: true,
+      allcourses: []
     };
     this.handleDetail = this.handleDetail.bind(this);
   }
@@ -27,15 +30,30 @@ class AllCourses extends Component {
   componentDidMount = () => {
     this.props.getAllCourse();
   }
+  
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.courses) {
+      const { allcourses, loading } = nextProps.courses
+      this.setState({
+        allcourses,
+        loading
+      })
+    }
+  }
 
   handleDetail(courseId){
     this.props.history.push(`/course-info/${courseId}`);
   }
 
   render() {
-    const {allcourses} = this.props.courses
+    const { loading, allcourses } = this.state
     return (
       <div className="animated fadeIn">
+      {
+        loading
+        ?
+        <ReactLoading type='bars' color='#05386B'/>
+        :
         <Row>
           {
             allcourses.map(course =>
@@ -65,6 +83,7 @@ class AllCourses extends Component {
             )
           }
         </Row>
+      }
       </div>
     )
   }

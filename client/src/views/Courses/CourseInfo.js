@@ -22,6 +22,9 @@ class CourseInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      courseId: null,
+      courseinfo: [],
+      loading: true,
       titleSucess: '',
       isShowSuccess: false,
       isLoading: false
@@ -51,6 +54,14 @@ class CourseInfo extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.courses) {
+      const { courseinfo, loading } = nextProps.courses
+      this.setState({
+        courseinfo,
+        loading
+      })
+    }
+
     if (nextProps.success.data) {
       this.setState({
         titleSucess: nextProps.success.data,
@@ -61,8 +72,8 @@ class CourseInfo extends Component {
   }
 
   render() {
-    const {courseinfo} = this.props.courses
-    const {role} = this.props.auth.user
+    const { courseinfo, loading } = this.state
+    const { role } = this.props.auth.user
 
     return (
       <div className="animated fadeIn">
@@ -71,59 +82,65 @@ class CourseInfo extends Component {
             <b><i className="fa fa-info-circle"></i>&nbsp;Thông tin khóa học</b>
           </CardHeader>
           <CardBody>
-            <Jumbotron>
-              <Media>
-                <Media left>
-                  <img src={courseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+            {
+              loading
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Jumbotron>
+                <Media>
+                  <Media left>
+                    <img src={courseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+                  </Media>
+                  <Media body>
+                    <h4 className="display-4">{courseinfo.course.title}</h4>
+                  </Media>
                 </Media>
-                <Media body>
-                  <h4 className="display-4">{courseinfo.course.title}</h4>
-                </Media>
-              </Media>
-              <p className="lead">{courseinfo.course.intro}</p>
-              <Row>
-                <Col xs="9">
-                  <b><i className="fa fa-hourglass"></i>&ensp;&ensp;Hạn đăng ký - </b>
-                  <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                    {courseinfo.course.enrollDeadline}
-                  </Moment><br/>
-                  <b><i className="fa fa-usd" style={{fontSize: "1.50em"}}></i>&ensp;&ensp;Học phí - </b>
-                  <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
-                  <b><i className="fa fa-calendar" style={{fontSize: "0.90em"}}></i>&ensp;&ensp;Thời gian học - </b>
-                  {courseinfo.course_detail.studyTime}.<br/>
-                  <b><i className="fa fa-clock-o"></i>&ensp;&ensp;Ngày khai giảng - </b>
-                  <Moment format="[ngày] DD [thg] MM, YYYY.">
-                    {courseinfo.course_detail.openingDay}
-                  </Moment><br/>
-                </Col>
-                <Col>
-                  {
-                    role === 'student'
-                    ?
-                    <Fragment>
-                      {
-                        courseinfo.isEnroll === false
-                        ?
-                        <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
-                          <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
-                        </Button>
-                        :
-                        <Button color="danger" onClick={this.handleUnEnroll} className="btn-pill" size="lg" block>
-                          <i className="fa fa-times"></i>&nbsp;Hủy ghi danh
-                        </Button>
-                      }
-                    </Fragment>
-                    :
-                    <Fragment>
-                    </Fragment>
-                  }
+                <p className="lead">{courseinfo.course.intro}</p>
+                <Row>
+                  <Col xs="9">
+                    <b><i className="fa fa-hourglass"></i>&ensp;&ensp;Hạn đăng ký - </b>
+                    <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
+                      {courseinfo.course.enrollDeadline}
+                    </Moment><br/>
+                    <b><i className="fa fa-usd" style={{fontSize: "1.50em"}}></i>&ensp;&ensp;Học phí - </b>
+                    <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
+                    <b><i className="fa fa-calendar" style={{fontSize: "0.90em"}}></i>&ensp;&ensp;Thời gian học - </b>
+                    {courseinfo.course_detail.studyTime}.<br/>
+                    <b><i className="fa fa-clock-o"></i>&ensp;&ensp;Ngày khai giảng - </b>
+                    <Moment format="[ngày] DD [thg] MM, YYYY.">
+                      {courseinfo.course_detail.openingDay}
+                    </Moment><br/>
+                  </Col>
+                  <Col>
+                    {
+                      role === 'student'
+                      ?
+                      <Fragment>
+                        {
+                          courseinfo.isEnroll === false
+                          ?
+                          <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
+                            <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
+                          </Button>
+                          :
+                          <Button color="danger" onClick={this.handleUnEnroll} className="btn-pill" size="lg" block>
+                            <i className="fa fa-times"></i>&nbsp;Hủy ghi danh
+                          </Button>
+                        }
+                      </Fragment>
+                      :
+                      <Fragment>
+                      </Fragment>
+                    }
 
-                </Col>
-              </Row>
+                  </Col>
+                </Row>
 
-              <hr/>
-              <div dangerouslySetInnerHTML={ { __html: courseinfo.course_detail.info} }></div>
-            </Jumbotron>
+                <hr/>
+                <div dangerouslySetInnerHTML={ { __html: courseinfo.course_detail.info} }></div>
+              </Jumbotron>
+            }
           </CardBody>
         </Card>
         <SweetAlert
