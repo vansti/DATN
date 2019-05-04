@@ -15,6 +15,7 @@ const validateAddExerciseInput = require('../../validation/addexercise');
 const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
+const SubExercise = require('../../models/SubExercise');
 router.use(cors());
 
 
@@ -55,8 +56,24 @@ router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req,
   Course.findById(req.params.courseId).then(course => {
     Exercise.find({
         '_id': { $in: course.exercises}
-    }, function(err, exercises){
-      res.json(exercises)
+    }, async function(err, exercises){
+      for(let i = 0; i < exercises.length; i++){
+        // let temp = (await SubExercise.findById(exercises[i]._id));
+        // if(temp){
+        //   exercises[i]["point"] = temp.point;
+        // }
+        exercises[i]["point"] = "XYZ";
+      }
+      var a = [];
+      return Promise.all(exercises.map(exercise=>{
+        console.log(exercise)
+        exercise.point = 'XYZ'
+        return a.push(exercise) 
+      })).then(()=>
+        res.json(a)
+      )
+      //console.log(exercises[0]);
+
     });
   })
 });

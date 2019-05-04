@@ -27,7 +27,7 @@ const SubExerciseSchema = new Schema({
         type: String,
       },
       point:{ 
-        type: Double,
+        type: Number,
       },
     }
   ],

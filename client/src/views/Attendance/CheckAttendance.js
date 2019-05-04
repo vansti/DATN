@@ -39,8 +39,8 @@ class CheckAttendance extends Component {
 
   onChangeSwitch(userid){
     this.state.user.map(user => {
-      if(user._id.toString() === userid.toString())
-        return user.isPresent = !user.isPresent;
+      // if(user._id.toString() === userid.toString())
+      //   return user.isPresent = !user.isPresent;
       return user;
     })
   }

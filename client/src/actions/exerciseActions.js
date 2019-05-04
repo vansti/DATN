@@ -26,11 +26,13 @@ export const addExercise = (exerciseData) => dispatch => {
 export const getExerciseList = (courseId) => dispatch => {
   axios
     .get(`/api/exercises/${courseId}`)
-    .then(res =>
+    .then(res =>{
+      console.log(res);
       dispatch({
         type: GET_EXERCISE_LIST,
         payload: res.data
       })
+    }
     )
     .catch(err =>
       dispatch({

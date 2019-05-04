@@ -75,6 +75,12 @@ class PostList extends Component {
                     </Moment>
                   </small>
                 </Col>
+                <Col >                 
+                    Điểm
+                    <p>
+                      {exercise.point}
+                    </p>
+                </Col>
               </Row>
             </CardHeader>
             <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
