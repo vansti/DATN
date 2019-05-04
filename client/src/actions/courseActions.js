@@ -125,6 +125,7 @@ export const unenrollCourse = (courseId) => dispatch => {
 
 // get curent user courses
 export const getCurentCourse = () => dispatch => {
+  dispatch(setAllCourseLoading())
   axios
     .get('/api/courses/current')
     .then(res =>

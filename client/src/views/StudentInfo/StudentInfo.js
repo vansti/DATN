@@ -128,7 +128,8 @@ class StudentIfo extends Component {
                           {element.event.end}
                         </Moment>
                       </Fragment>
-                      : <span></span>
+                      : 
+                      <span>Chưa cập nhật</span>
                     }
                   </td>
                   <td>
@@ -136,7 +137,8 @@ class StudentIfo extends Component {
                       element.event
                       ? 
                       <span>{element.event.text}</span> 
-                      : <span></span>
+                      : 
+                      <span>Chưa cập nhật</span>
                     }
                   </td>
                 </tr>

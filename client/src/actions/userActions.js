@@ -51,6 +51,7 @@ export const getStudent = (studentId) => dispatch => {
 
 // lấy danh sách học viên ghi danh và danh sách học viên dc duyệt của 1 khóa học
 export const getApproveList = (courseId) => dispatch => {
+  dispatch(setUsersLoading());
   axios
     .get('/api/users/approve-list/' + courseId)
     .then(res =>

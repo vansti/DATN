@@ -11,12 +11,26 @@ class ApproveStudent extends Component {
   constructor() {
     super();
     this.state = {
+      approve_list: {
+        enrollStudents: [],
+        students: []
+      },
+      courseId: null,
+      loading: true,
       isLoading: false
     };
     this.handleClickApprove = this.handleClickApprove.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.users) {
+      const { approve_list, loading } = nextProps.users
+      this.setState({ 
+        approve_list, 
+        loading 
+      });
+    }
+
     if (nextProps.success === "Duyệt thành công") {
       this.setState({isLoading: false})
       this.props.clearSuccess();
@@ -33,7 +47,7 @@ class ApproveStudent extends Component {
   } 
 
   render() {
-    const {approve_list} = this.props.users;
+    const { approve_list, loading } = this.state;
     return (
       <div className="animated fadeIn">
         <Card>
@@ -42,8 +56,9 @@ class ApproveStudent extends Component {
           </CardHeader>
           <CardBody>
             {
-              approve_list === null
-              ? <ReactLoading type='bars' color='#05386B'/>
+              loading
+              ? 
+              <ReactLoading type='bars' color='#05386B'/>
               :
               <div className="animated fadeIn">
                 {
@@ -94,8 +109,9 @@ class ApproveStudent extends Component {
           </CardHeader>
           <CardBody>
             {
-              approve_list === null
-              ? <ReactLoading type='bars' color='#05386B'/>
+              loading
+              ? 
+              <ReactLoading type='bars' color='#05386B'/>
               :
               <div className="animated fadeIn">
                 {
