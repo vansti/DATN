@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Question from './Question';
 import QuestionSubmit from './QuestionSubmit';
 import "./style.css";
 
