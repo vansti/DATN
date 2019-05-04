@@ -27,12 +27,7 @@ class QuizDetailPage extends React.Component {
     if(this.props.testQuiz.listTestQuiz != null)
     {
       testQuiz= this.props.testQuiz.listTestQuiz.find(test => test._id.toString() === this.props.match.params.id);
-      var formatData = {
-        "quizTitle": testQuiz.title,
-        "quizSynopsis": testQuiz.description,
-        "questions": testQuiz.listQuiz,
-      }
-      return  <Quiz quiz={formatData} shuffle={true} onComplete={this.onCompleteAction}/>
+      return  <Quiz quiz={testQuiz} shuffle={true} onComplete={this.onCompleteAction}/>
     }
     else {
       return <ReactLoading type='bars' color='#05386B' height={100} width={50} />

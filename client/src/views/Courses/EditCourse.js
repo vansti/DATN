@@ -52,6 +52,7 @@ class EditCourse extends Component {
       errors: {},
       isLoading: false,
       invalidImg: false,
+      pointColumns: []
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -80,7 +81,7 @@ class EditCourse extends Component {
         openingDay: new Date(courseinfo.course_detail.openingDay),
         fee: courseinfo.course_detail.fee,
         info: courseinfo.course_detail.info,
-        pointColumns: courseinfo.course_detail.pointColumns,
+        pointColumns: courseinfo.course_detail.pointColumns ? courseinfo.course_detail.pointColumns : [],
       });
     }
   }
@@ -203,7 +204,7 @@ class EditCourse extends Component {
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
                 {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
-              {/* {this.state.pointColumns.map((pointColumn, idx) => (
+              {this.state.pointColumns.map((pointColumn, idx) => (
               <FormGroup key={idx}>
                 <div className="point-columns form-row">
                   <div className="col form-row">
@@ -233,7 +234,7 @@ class EditCourse extends Component {
               <FormGroup>
                 <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
                 {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
-              </FormGroup> */}
+              </FormGroup>
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>

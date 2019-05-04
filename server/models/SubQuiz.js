@@ -5,15 +5,13 @@ require('dotenv').config();
 //Create schema
 const SubQuizSchema = new Schema({
   quizId:{type: mongoose.Schema.ObjectId, ref: 'quizzes'},
-  listAnswer:[{   
-  }],
+  listAnswer:[],
   userId: {
     type: mongoose.Schema.ObjectId, ref: 'users'
   },
   point:{
-    type: Number,//loai diem cua course
+    columnPoint: Number,//loai diem cua course
     point: Number,
-    courseId: Number
   },
   date: {
     type: Date

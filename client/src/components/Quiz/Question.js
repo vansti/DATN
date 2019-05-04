@@ -24,7 +24,7 @@ class Question extends Component {
 
   checkAnswer = (index, correctAnswer) => {
     const { correct, incorrect, currentQuestionIndex } = this.state;
-    if(index == correctAnswer[0]) {
+    if(index === correctAnswer[0]) {
       if( incorrect.indexOf(currentQuestionIndex) < 0 && correct.indexOf(currentQuestionIndex) < 0) {
         correct.push(currentQuestionIndex)
       }
@@ -170,21 +170,21 @@ class Question extends Component {
         return this.state[filteredValue].indexOf(index) !== -1
       })
     }
-
     return questions.map((question, questionIdx) => {
       return (
         <div className="result-answer-wrapper" key={questionIdx+1}>
         <h3>
-          Q{questionIdx+1}: {question.question}
+          Câu {questionIdx+1}: {question.question}
         </h3>
         <div className="result-answer">
             {
               question.answers.map( (answer, index) => {
                 return(
                   <div>
-                     <button disabled={true} className={"answerBtn btn" + (index+1 === question.correctAnswer ? ' correct': '')}>
-                      { question.questionType === 'text' && <span>{ answer }</span> }
-                      { question.questionType === 'photo' && <img src={ answer } alt="" /> }
+                     <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
+                      <span>{ answer }</span>
+                      {/* { question.questionType === 'text' && <span>{ answer }</span> } */}
+                      {/* { question.questionType === 'photo' && <img src={ answer } alt="" /> } */}
                     </button>
                   </div>
                 )
@@ -212,18 +212,10 @@ class Question extends Component {
         {!this.state.endQuiz &&
           <div className="questionWrapperBody">
             <div className="questionModal">
-              {this.state.incorrectAnswer &&
-                <div className="alert incorrect">{this.renderMessageforIncorrectAnswer(question)}</div>
-              }
-              {this.state.correctAnswer &&
-                <div className="alert correct">
-                  {this.renderMessageforCorrectAnswer(question)} 
-                  {this.renderExplanation(question, false)}
-                </div>
-              }
+              <div className="alert default">
+                <h3 clas>Câu hỏi {this.state.currentQuestionIndex + 1}: <span>{question.question}</span></h3>
+              </div>
             </div>
-            <div>Question {this.state.currentQuestionIndex + 1}:</div>
-            <h3>{question.question}</h3>
             {
               question.answers.map( (answer, index) => {
                 if(this.state.buttons[index] !== undefined) {
@@ -243,9 +235,9 @@ class Question extends Component {
                 }
               })
             }
-            <div>
-              <button disabled={ this.state.disibalePreQuestionButton || false } onClick={() => this.preQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn">Quay lại</button>
-              <button onClick={() => this.nextQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn">Tiếp tục</button>
+            <div className="row justify-content-between m-0">
+              <button disabled={ this.state.disibalePreQuestionButton || false } onClick={() => this.preQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn col-4">Quay lại</button>
+              <button onClick={() => this.nextQuestion(this.state.currentQuestionIndex)} className="nextQuestionBtn btn col-4">Tiếp tục</button>
             </div>
           </div>
         }

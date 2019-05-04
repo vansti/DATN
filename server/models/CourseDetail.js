@@ -32,6 +32,9 @@ const CourseDetailSchema = new Schema({
     },
     pointRate: {
       type: Number
+    },
+    typeTest: {
+      type: String
     }
   }]
 })

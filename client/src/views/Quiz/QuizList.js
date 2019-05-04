@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 //package
 import PropTypes from 'prop-types';
-import {Card, Table, CardBody,  CardHeader, CardFooter, Button} from 'reactstrap';
+import {Card, Table, CardBody,  CardHeader, Button} from 'reactstrap';
 import Moment from 'react-moment'; 
 import isEmptyObj from '../../validation/is-empty';
 import ReactLoading from 'react-loading';

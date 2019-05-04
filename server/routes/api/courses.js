@@ -107,7 +107,8 @@ router.post(
               studyTime: req.body.studyTime,
               openingDay: req.body.openingDay,
               fee: req.body.fee,
-              info: req.body.info
+              info: req.body.info,
+              pointColumns: req.body.pointColumns
             }
           }
         )
@@ -301,7 +302,6 @@ router.post(
 
     async function run() {
       try {
-
         await 
         CourseDetail.findOneAndUpdate(
           { 'courseId' : req.params.courseId },

@@ -39,6 +39,7 @@ module.exports = function validateAddCourseInput(data) {
       errors.pointColumns = 'Tỉ lệ điểm phải bằng 100%'; 
     }
   }
+  console.log(data.pointColumns);
   return {
     errors,
     isValid: isEmpty(errors)

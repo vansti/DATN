@@ -7,7 +7,7 @@ import {Modal, ModalBody} from 'reactstrap';
 
 import { getCurentCourse } from '../../actions/courseActions';
 import { addTestQuiz } from '../../actions/testQuizAction';
-import isEmptyObj from '../../validation/is-empty';
+// import isEmptyObj from '../../validation/is-empty';
 
 import {
   connect

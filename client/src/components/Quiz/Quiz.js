@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Question from './Question';
+import QuestionSubmit from './QuestionSubmit';
 import "./style.css";
 
 class Quiz extends Component {
@@ -30,7 +31,7 @@ class Quiz extends Component {
       console.error("Quiz object is required.");
       return (null);
     } 
-    let questions = quiz.questions;
+    let questions = quiz.listQuiz;
       if(shuffle) {
         questions = this.shuffleQuestions(questions);
       }
@@ -38,21 +39,28 @@ class Quiz extends Component {
         <div className="react-quiz-container">
           {!this.state.start &&
             <div>
-              <h2>{quiz.quizTitle}</h2>
-              <div>{quiz.questions.length} Câu hỏi</div>
-              { quiz.quizSynopsis && 
+              <div className="questionModal">
+                <div className="alert default">
+                  <h2>{quiz.title}</h2>
+                </div>
+              </div>
+              { quiz.description && 
                   <div className="quiz-synopsis">
-                      {quiz.quizSynopsis}
+                      {quiz.description}
                   </div> 
               }
+              <div>Gồm {questions.length} câu hỏi</div>
               <div className="startQuizWrapper">
-                <button onClick={() => this.start()} className="startQuizBtn btn">Bắt đầu làm bài</button>
+                <button onClick={this.start} className="startQuizBtn btn">Bắt đầu làm bài</button>
               </div>
             </div>
           }
 
-          {
+          {/* {
             this.state.start && <Question questions={questions} showDefaultResult={showDefaultResult} onComplete={onComplete} customResultPage={customResultPage}/>
+          } */}
+          {
+            this.state.start && <QuestionSubmit questions={questions} showDefaultResult={showDefaultResult} onComplete={onComplete} customResultPage={customResultPage}/>
           }
         </div>
       );
