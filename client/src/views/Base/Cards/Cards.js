@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import { Badge, Card, CardBody, CardFooter, CardHeader, Col, Row, Collapse, Fade } from 'reactstrap';
 import { AppSwitch } from '@coreui/react'
-
+const styles = {
+  bigAvatar: {
+    height: 100,
+    width: 100,
+    margin: 'auto',
+    border: '1px solid #ddd',
+    borderRadius: 5
+  }
+}
 class Cards extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +38,14 @@ class Cards extends Component {
           <Col xs="12" sm="6" md="4">
             <Card>
               <CardHeader>
-                Card title
+                <Row>
+                  <Col xs="4">
+                    <img src='https://res.cloudinary.com/dk9jsd8vf/image/upload/v1552047406/1.png' alt="avatar" style={styles.bigAvatar}/>
+                  </Col>
+                  <Col>
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
+                  </Col>
+                </Row>
               </CardHeader>
               <CardBody>
                 Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut

@@ -14,7 +14,13 @@ const exercises = require('./server/routes/api/exercises');
 
 const attendance = require('./server/routes/api/attendance');
 
+<<<<<<< HEAD
 const subExercise = require('./server/routes/api/subExercise.js');
+=======
+const schedule = require('./server/routes/api/schedule');
+
+const quiz = require('./server/routes/api/quiz');
+>>>>>>> master
 
 const app = express();
 
@@ -57,7 +63,15 @@ app.use('/api/exercises', exercises)
 // attendance Route
 app.use('/api/attendance', attendance)
 
+<<<<<<< HEAD
 //app.use('/api/subExercise', subExercise)
+=======
+// schedule Route
+app.use('/api/schedule', schedule)
+
+// exercises Route
+app.use('/api/quiz', quiz);
+>>>>>>> master
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

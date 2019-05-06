@@ -1,9 +1,22 @@
 import {
-  GET_CURRENT_COURSES
+  GET_CURRENT_COURSES, 
+  GET_STUDENT_COURSES, 
+  GET_ALL_COURSES, 
+  GET_COURSE_INFO,
+  GET_MANAGE_COURSES,
+  ALLCOURSE_LOADING
 } from '../actions/types';
 
 const initialState = {
-  currentcourses: null
+  courseinfo: {
+    course: {},
+    course_detail: {}
+  },
+  allcourses: [],
+  currentcourses: [],
+  studentcourses: [],
+  managecourses: [],
+  loading: false
 };
 
 export default function(state = initialState, action) {
@@ -12,6 +25,36 @@ export default function(state = initialState, action) {
       return {
         ...state,
         currentcourses: action.payload,
+        loading: false
+      };
+    case GET_STUDENT_COURSES:
+      return {
+        ...state,
+        studentcourses: action.payload,
+        loading: false
+      };
+    case GET_ALL_COURSES:
+      return {
+        ...state,
+        allcourses: action.payload,
+        loading: false
+      };
+    case ALLCOURSE_LOADING:
+      return {
+        ...state,
+        loading: true
+      };
+    case GET_COURSE_INFO:
+      return {
+        ...state,
+        courseinfo: action.payload,
+        loading: false
+      };
+    case GET_MANAGE_COURSES:
+      return {
+        ...state,
+        managecourses: action.payload,
+        loading: false
       };
     default:
       return state;

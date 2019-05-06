@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {Modal,ModalBody,Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Fade, Button, Collapse, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
+import {Modal,ModalBody,Alert, Card, CardBody, CardFooter, CardHeader, Col, Row, Button, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { editProfile, getCurrentProfile } from '../../actions/profileActions';
+import { editProfile, getCurrentProfile, clearErrors, clearSuccess } from '../../actions/profileActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ModalChangePasword from '../../components/ModalChangePassword';
 import ReactLoading from 'react-loading';
@@ -14,7 +14,7 @@ const styles = {
     width: 200,
     height: 200,
     margin: 'auto',
-    borderRadius:50
+    borderRadius: 100
   },
   input: {
     fontSize: 10
@@ -24,30 +24,17 @@ class EditProfile extends Component {
   constructor(props) {
     super(props);
 
-    this.toggle = this.toggle.bind(this);
-    this.toggleFade = this.toggleFade.bind(this);
     this.state = {
+      file: null,
       name:'',
       email:'',
       photo: '',
       phone: '',
-      collapse: true,
-      fadeIn: true,
-      timeout: 300,
       isShowSuccess: false,
       errors:{},
-      file_avatar: null,
-      imagePreviewUrl: '',
-      isLoading: false
+      isLoading: false,
+      invalidImg: false
     };
-  }
-
-  toggle() {
-    this.setState({ collapse: !this.state.collapse });
-  }
-
-  toggleFade() {
-    this.setState((prevState) => { return { fadeIn: !prevState }});
   }
 
   handleChange = name => event => {
@@ -74,24 +61,23 @@ class EditProfile extends Component {
       this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo})
     }
 
-    if (nextProps.success.data === "Thay đổi thành công") {
+    if (nextProps.success.mes === "Thay đổi thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
+      this.props.clearSuccess();
     }
 
   }
 
   onSubmit = e => {
     e.preventDefault();
+    this.setState({isLoading: true})
     const profileData = {
       name: this.state.name,
       email: this.state.email,
-      phone: this.state.phone,
-      photo: this.state.photo,
+      phone: this.state.phone
     };
-
-    this.props.editProfile(profileData, this.props.history);
-    document.getElementById("editform").reset();
-    this.setState({isLoading: true})
+    this.props.editProfile(profileData, this.state.file);
+    this.props.clearErrors();
   }
 
   hideAlertSuccess(){
@@ -101,97 +87,108 @@ class EditProfile extends Component {
   }
 
   onDrop = (files) => {
-    let file = files[0]
-    let reader = new FileReader();
-    reader.onloadend = () => {
+    if(files[0] === undefined)
+    {
       this.setState({
-        photo: reader.result
-      });
+        invalidImg: true
+      })
+    }else{
+      let file = files[0]
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        this.setState({
+          photo: reader.result,
+          invalidImg: false
+        });
+      }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file)
+    this.setState({
+      file: files[0]
+    })
   }
 
   render() {
     const { errors } = this.state;
     return (
-      
       <div className="animated fadeIn">
         <Row>
           <Col xs="12">
-            <Fade timeout={this.state.timeout} in={this.state.fadeIn}>
-              <Card>
-                <CardHeader>
-                  <i className="fa fa-edit"></i>Chỉnh sửa thông tin cá nhân
-                  <div className="card-header-actions">
-                    <Button color="link" className="card-header-action btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></Button>
-                    <Button color="link" className="card-header-action btn-close" onClick={this.toggleFade}><i className="icon-close"></i></Button>
-                  </div>
-                </CardHeader>
-                <Collapse isOpen={this.state.collapse} id="collapseExample">
-                  <CardBody>
-                    <Form className="form-horizontal" id="editform" onSubmit={this.onSubmit}>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Email</Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
-                          </InputGroup>
-                          {errors.email && <Alert color="danger">{errors.email}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Họ và Tên</Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="icon-user"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.name} onChange={this.handleChange('name')}/>
-                          </InputGroup>
-                          {errors.name && <Alert color="danger">{errors.name}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="prependedInput">Số điện thoại</Label>
-                        <div className="controls">
-                          <InputGroup className="input-prepend">
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText><i className="icon-phone"></i></InputGroupText>
-                            </InputGroupAddon>
-                            <Input size="16" type="text" value={this.state.phone || ''} onChange={this.handleChange('phone')}/>
-                          </InputGroup>
-                          {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
-                        </div>
-                      </FormGroup>
-                      <hr/>
-                      <Label htmlFor="prependedInput">Hình đại diện</Label>
-                      <br/>
-                      <Row>
-                        <Col xs="4">
-                          <div className="preview-image">
-                            <img src={this.state.photo} alt="avatar" style={styles.bigAvatar}/>
-                          </div>
-                        </Col>
-                        <Col>
-                          <ReactDropzone accept="image/*" onDrop={this.onDrop} >
-                            Thả avatar của bạn vào đây!
-                          </ReactDropzone>
-                        </Col>
-                      </Row>
-                    </Form>
-                    <div >
-                      <ModalChangePasword />
+            <Card>
+              <CardHeader>
+                <i className="fa fa-edit"></i><b>Chỉnh sửa thông tin cá nhân</b>
+              </CardHeader>
+              <CardBody>
+                <Form className="form-horizontal" id="editform" onSubmit={this.onSubmit}>
+                  <FormGroup>
+                    <Label>Email</Label>
+                    <div className="controls">
+                      <InputGroup className="input-prepend">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
+                      </InputGroup>
+                      {errors.email && <Alert color="danger">{errors.email}</Alert>}
                     </div>
-                  </CardBody>
-                  <CardFooter>
-                    <Button type="submit" color="primary" onClick={this.onSubmit}>Lưu thay đổi</Button>
-                  </CardFooter>
-                </Collapse>
-              </Card>
-            </Fade>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>Họ và Tên</Label>
+                    <div className="controls">
+                      <InputGroup className="input-prepend">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="icon-user"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input size="16" type="text" value={this.state.name} onChange={this.handleChange('name')}/>
+                      </InputGroup>
+                      {errors.name && <Alert color="danger">{errors.name}</Alert>}
+                    </div>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>Số điện thoại</Label>
+                    <div className="controls">
+                      <InputGroup className="input-prepend">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="icon-phone"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input size="16" type="text" value={this.state.phone || ''} onChange={this.handleChange('phone')}/>
+                      </InputGroup>
+                      {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+                    </div>
+                  </FormGroup>
+                  <hr/>
+                  <Label htmlFor="prependedInput">Hình đại diện</Label>
+                  <br/>
+                  <Row>
+                    <Col xs="4">
+                      <div className="preview-image">
+                        <img src={this.state.photo} alt="avatar" style={styles.bigAvatar}/>
+                      </div>
+                    </Col>
+                    <Col>
+                      <ReactDropzone accept="image/*" onDrop={this.onDrop} >
+                        Thả avatar của bạn vào đây!
+                      </ReactDropzone>
+                    </Col>
+                  </Row>
+                  {
+                    this.state.invalidImg === true
+                    ?
+                    <div>
+                      <br/>
+                      <Alert color="danger">Hình ảnh không hợp lệ</Alert>
+                    </div> 
+                    : null
+                  }
+                </Form>
+                <div >
+                  <ModalChangePasword />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <Button type="submit" color="primary" onClick={this.onSubmit}>Lưu thay đổi</Button>
+              </CardFooter>
+            </Card>
           </Col>
         </Row>
         <SweetAlert
@@ -228,4 +225,4 @@ const mapStateToProps = state => ({
   errors: state.errors,
   success: state.success
 });
-export default connect(mapStateToProps, { editProfile,getCurrentProfile})(EditProfile); 
+export default connect(mapStateToProps, { editProfile, getCurrentProfile, clearErrors, clearSuccess })(EditProfile); 

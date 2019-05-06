@@ -16,7 +16,7 @@ const AttendanceSchema = new Schema({
     }
   ],
   date: {
-    type: Date
+    type: String
   }
 })
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader,Form,FormGroup,Input,Label,Alert } from 'reactstrap';
 import { changePassword } from '../actions/profileActions';
 import PropTypes from 'prop-types';
@@ -53,7 +53,7 @@ class ModalChangePassword extends Component {
 
     this.setState({ errors: nextProps.errors});
 
-    if (nextProps.success.data === "Thay đổi password thành công") {
+    if (nextProps.success.mes === "Thay đổi password thành công") {
       this.setState({
         isShowSuccess: true,
         opassword: '',
@@ -74,8 +74,8 @@ class ModalChangePassword extends Component {
   render() {
     const { errors } = this.state;
     return (
-      <div className="animated fadeIn">
-        <Button onClick={this.toggle} color="danger" className="btn-pill float-right" ><i className="fa fa-lock"></i> Thay đồi mật khẩu</Button>
+      <Fragment>
+        <Button onClick={this.toggle} color="danger" className="btn-pill float-right" ><i className="fa fa-key"></i> Thay đồi mật khẩu</Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle}>Thay đổi mật khẩu</ModalHeader>
           <ModalBody>
@@ -118,7 +118,7 @@ class ModalChangePassword extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
-      </div>
+      </Fragment>
       
     );
   }

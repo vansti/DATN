@@ -42,8 +42,22 @@ const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
+<<<<<<< HEAD
 //const CheckPoint = React.lazy(() => import('./views/Courses/Checkpoint.js'));
 
+=======
+const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
+const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
+const AddQuiz = React.lazy(() => import('./views/Quiz/AddQuiz/AddQuiz'));
+const QuizList = React.lazy(() => import('./views/Quiz/QuizList/QuizList'));
+const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail'));
+const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
+const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
+const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
+const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
+const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
+const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
+>>>>>>> master
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -90,11 +104,26 @@ const routes = [
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
   { path: '/edit-profile', exact: true, name: 'Thay đổi thông tin', component: EditProfile },
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
-  { path: '/courses', exact: true, name: 'Danh sách khóa học', component: CourseList },
+  { path: '/courses', exact: true, name: 'Khóa học của tôi', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
+<<<<<<< HEAD
  // { path: '/checkpoint/:id', exact: true, name:'Xem điểm',component: CheckPoint},
+=======
+  { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
+  { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
+  { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
+  { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },
+  { path: '/quiz/:id', exact: true, name: 'Nội dung khóa học', component: QuizDetail },
+  { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
+  { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
+  { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
+  { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
+  { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
+  { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
+
+>>>>>>> master
 ];
 
 export default routes;

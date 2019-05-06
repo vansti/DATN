@@ -17,6 +17,7 @@ import {
 // sidebar nav config
 import TeacherNavigation from '../../TeacherNav';
 import StudentNavigation from '../../StudentNav';
+import AdminNavigation from '../../AdminNav';
 // routes config
 import routes from '../../routes';
 
@@ -39,13 +40,15 @@ class DefaultLayout extends Component {
   }
   
   render() {
-    const role = this.props.auth.user.role
+    const { role } = this.props.auth.user
     let AppSidebarNavRole;
 
     if (role.toString() === 'student') {
       AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;
     } else if(role.toString() === 'teacher'){
       AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;
+    } else if(role.toString() === 'admin'){
+      AppSidebarNavRole = <AppSidebarNav navConfig={AdminNavigation} {...this.props} />;
     }
 
     return (
