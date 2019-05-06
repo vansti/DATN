@@ -23,28 +23,7 @@ class Question extends Component {
     };
   }
   checkAnswer = (index, correctAnswer) => {
-    const { correct, incorrect, currentQuestionIndex } = this.state;
-    if(index == correctAnswer[0]) {
-      if( incorrect.indexOf(currentQuestionIndex) < 0 && correct.indexOf(currentQuestionIndex) < 0) {
-        correct.push(currentQuestionIndex)
-      }
-      this.setState({
-        // correctAnswer: true,
-        // incorrectAnswer: false,
-        // showNextQuestionButton: true,
-        correct: correct
-      })
-    } else {
-      if( correct.indexOf(currentQuestionIndex) < 0 && incorrect.indexOf(currentQuestionIndex) < 0 ) {
-        incorrect.push(currentQuestionIndex)
-      }
-
-      this.setState({
-        incorrectAnswer: true,
-        correctAnswer: false,
-        incorrect: incorrect
-      })
-    }
+    const { currentQuestionIndex } = this.state;
     this.nextQuestion(currentQuestionIndex);
   }
 
@@ -82,92 +61,8 @@ class Question extends Component {
     }
   }
 
-  renderMessageforCorrectAnswer = (question) => {
-    const defaultMessage = 'Câu trả lời đúng, mời bạn tiếp tục.';
-    return question.messageForCorrectAnswer || defaultMessage;
-  }
-
-  renderMessageforIncorrectAnswer = (question) => {
-    const defaultMessage = 'Câu trả lời không chính xác, hãy thử lại.';
-    return question.messageForIncorrectAnswer || defaultMessage;
-  }
-
-  renderExplanation = (question, isResultPage) => {
-    const explanation = question.explanation;
-    if(!explanation) {
-      return (null);
-    }
-    
-    if(isResultPage) {
-      return (
-        <div className="explaination">
-          {explanation}
-        </div>
-      )
-    }
-
-    return (
-      <div>
-        <br/>
-        {explanation}
-      </div>
-    )
-  }
-
-  handleChange = (event) => {
-    this.setState({filteredValue: event.target.value});
-  }
-
   onSubmit = () => {
 
-  }
-
-  renderQuizResultFilter = () => {
-    return (
-      <div className="quiz-result-filter">
-          <select value={this.state.filteredValue} onChange={this.handleChange}>
-            <option value="all">Tất cả</option>
-            <option value="correct">Câu đúng</option>
-            <option value="incorrect">Câu sai</option>
-          </select>
-      </div>
-    );
-  }
-
-  renderQuizResultQuestions = () => {
-    const { filteredValue } = this.state;
-    let questions = this.props.questions;
-
-    if(filteredValue !== 'all') {
-      questions = questions.filter( (question, index) => {
-        return this.state[filteredValue].indexOf(index) !== -1
-      })
-    }
-    return questions.map((question, questionIdx) => {
-      return (
-        <div className="result-answer-wrapper" key={questionIdx+1}>
-        <h3>
-          Câu {questionIdx+1}: {question.question}
-        </h3>
-        <div className="result-answer">
-            {
-              question.answers.map( (answer, index) => {
-                return(
-                  <div>
-                     <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
-                      <span>{ answer }</span>
-                      {/* { question.questionType === 'text' && <span>{ answer }</span> } */}
-                      {/* { question.questionType === 'photo' && <img src={ answer } alt="" /> } */}
-                    </button>
-                  </div>
-                )
-              })
-            }
-        </div>
-        {this.renderExplanation(question, true)}
-      </div>
-      )
-    })
   }
 
   render() {

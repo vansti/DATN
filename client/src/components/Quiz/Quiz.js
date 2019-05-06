@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import QuestionSubmit from './QuestionSubmit';
+import Question from './Question';
+// import QuestionSubmit from './QuestionSubmit';
 import "./style.css";
 
 class Quiz extends Component {
@@ -59,7 +60,7 @@ class Quiz extends Component {
             this.state.start && <Question questions={questions} showDefaultResult={showDefaultResult} onComplete={onComplete} customResultPage={customResultPage}/>
           } */}
           {
-            this.state.start && <QuestionSubmit questions={questions} showDefaultResult={showDefaultResult} onComplete={onComplete} customResultPage={customResultPage}/>
+            this.state.start && <Question questions={questions} showDefaultResult={showDefaultResult} onComplete={onComplete} customResultPage={customResultPage}/>
           }
         </div>
       );

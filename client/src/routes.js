@@ -42,7 +42,8 @@ const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
 const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
 const QuizList = React.lazy(() => import('./views/Quiz/QuizList'));
-const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail'));
+const QuizExercise = React.lazy(() => import('./views/Quiz/QuizExcercise'));
+const QuizTest = React.lazy(() => import('./views/Quiz/QuizTest'));
 const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
@@ -102,9 +103,10 @@ const routes = [
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
   { path: '/courses', exact: true, name: 'Khóa học của tôi', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
-  { path: '/test/quiz', exact: true, name: 'Danh sách bài kiểm tra trắc nghiệm', component: QuizList },
-  { path: '/test/quiz/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail },
-  { path: '/test/add-quiz', exact: true, name: 'Thêm bài kiểm tra trắc nghiệm', component: QuizAdd },
+  { path: '/quiz', exact: true, name: 'Danh sách bài trắc nghiệm', component: QuizList },
+  { path: '/quiz/test/:id', exact: true, name: 'Nội dung kiểm tra trắc nghiệm', component: QuizTest },
+  { path: '/quiz/excercise/:id', exact: true, name: 'Nội dung bài bài tập trắc nghiệm', component: QuizExercise },
+  { path: '/quiz/add', exact: true, name: 'Thêm bài kiểm tra trắc nghiệm', component: QuizAdd },
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import SubmitValidationForm from '../../components/Quiz/Add/index'
 import PropTypes from 'prop-types';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -6,14 +6,13 @@ import ReactLoading from 'react-loading';
 import {Modal, ModalBody} from 'reactstrap';
 
 import { getCurentCourse } from '../../actions/courseActions';
-import { addTestQuiz } from '../../actions/testQuizAction';
 // import isEmptyObj from '../../validation/is-empty';
 
 import {
   connect
 } from 'react-redux';
 
-class QuizAddPage extends React.Component {
+class QuizAddPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,11 +34,6 @@ class QuizAddPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // if (!isEmptyObj(nextProps.errors)) {
-    //   this.setState({ errors: nextProps.errors, isLoading: false});
-    //   throw new SubmissionError(nextProps.errors);
-    // }
-
     if (nextProps.success.data === "Thêm bài kiểm tra thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
     }
@@ -89,7 +83,6 @@ class QuizAddPage extends React.Component {
 }
 
 QuizAddPage.propTypes = {
-  addTestQuiz: PropTypes.func.isRequired,
   getCurentCourse: PropTypes.func.isRequired,
   courses: PropTypes.object.isRequired,
 };
@@ -100,4 +93,4 @@ const mapStateToProps = (state) => ({
   courses: state.courses
 });
 
-export default connect(mapStateToProps, { getCurentCourse, addTestQuiz })(QuizAddPage);
+export default connect(mapStateToProps, { getCurentCourse })(QuizAddPage);

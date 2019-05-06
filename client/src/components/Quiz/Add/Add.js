@@ -4,10 +4,8 @@ import { Field, FieldArray, reduxForm, formValueSelector } from 'redux-form';
 import { Col, Button, Form, FormGroup, InputGroupAddon, Label, InputGroup, InputGroupText, Input} from 'reactstrap';
 import { addTestQuiz } from '../../../actions/testQuizAction';
 import  validateFormAddQuiz  from '../../../validation/validateFormAddQuiz';
-//
-import './Add.scss';
 // import validate from './validate';
-class TestQuizForm extends Component {
+class AddTestQuizForm extends Component {
   submit = (values) => {
     return this.props.addTestQuiz(values);
   }
@@ -180,20 +178,20 @@ class TestQuizForm extends Component {
   }
 }
 
-TestQuizForm = reduxForm({
-  form: 'testQuizForm',
+AddTestQuizForm = reduxForm({
+  form: 'addTestQuizForm',
   validateFormAddQuiz
-})(TestQuizForm);
+})(AddTestQuizForm);
 
 const selector = formValueSelector('textForm');
 
-TestQuizForm = connect(
+AddTestQuizForm = connect(
   state => {
     const quizzes = selector(state, 'quizzes');
     const questionType = quizzes && quizzes.map(quiz => quiz.questionType);
     return { questionType: questionType }
   },
   { addTestQuiz }
-)(TestQuizForm)
+)(AddTestQuizForm)
 
-export default TestQuizForm;
+export default AddTestQuizForm;

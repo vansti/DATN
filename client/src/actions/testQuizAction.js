@@ -29,6 +29,22 @@ export const addTestQuiz = (testQuizData, history) => dispatch => {
     });
 };
 
+export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
+  return axios
+    .post('/api/test/sub-quiz', submisstionQuiz)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: {
+          data: res.data
+        }
+      })
+    })
+    .catch(err =>{
+      throw new SubmissionError(err.response.data);
+    });
+};
+
 // Get list test quizzed
 export const getListQuiz = () => dispatch => {
   axios

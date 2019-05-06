@@ -35,7 +35,7 @@ const CourseDetailSchema = new Schema({
     },
     typeTest: {
       type: String
-    }
+    },
   }]
 })
 

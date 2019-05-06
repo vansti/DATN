@@ -138,3 +138,23 @@
    height: 30px;
    border: 1px solid #ffffff;
 }
+.form-quiz-test {
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 1px 1px 3px 1px #cccccc;
+  border-radius: 3px;
+}
+.form-quiz-test .title {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  line-height: inherit;
+  color: inherit;
+  font-weight: 600;
+}
+.form-quiz-test ul{
+  padding-left: 20px;
+}

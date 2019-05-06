@@ -59,12 +59,12 @@ export default {
       children: [
         {
           name: 'Danh sách',
-          url: '/test/quiz',
+          url: '/quiz',
           icon: 'icon-list',
         },
         {
           name: 'Thêm bài kiểm tra',
-          url: '/test/add-quiz',
+          url: '/quiz/add',
           icon: 'icon-plus',
         },
       ]
