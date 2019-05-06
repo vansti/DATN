@@ -12,6 +12,7 @@ import attendanceReducer from './attendanceReducer';
 import scheduleReducer from './scheduleReducer';
 import submissionReducer from './submissionReducer';
 import testQuizReducer from './testQuizReducer';
+import pointReducer from './pointReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -26,6 +27,7 @@ export default combineReducers({
   attendance: attendanceReducer,
   schedule: scheduleReducer,
   testQuiz: testQuizReducer,
-  submission: submissionReducer
+  submission: submissionReducer,
+  point: pointReducer
 });
 

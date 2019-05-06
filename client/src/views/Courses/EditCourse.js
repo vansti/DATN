@@ -88,7 +88,7 @@ class EditCourse extends Component {
         openingDay: new Date(courseinfo.course_detail.openingDay),
         fee: courseinfo.course_detail.fee,
         info: courseinfo.course_detail.info,
-        pointColumns: courseinfo.course_detail.pointColumns ? courseinfo.course_detail.pointColumns : [],
+        pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : []
       });
     }
   }

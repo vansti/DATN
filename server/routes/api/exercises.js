@@ -47,18 +47,33 @@ router.post(
       courseId: req.body.courseId
     });
 
-    newExercise.save().then(exercise=>{
-      Course.findByIdAndUpdate(
-        req.body.courseId,
-        { 
-          $push: {
-            exercises: exercise._id
-          }
-        }
-      )             
-      .then(course => res.json(course))
-      .catch(err => console.log(err));
-    })
+    async function run() {
+      try {
+        const exercise = await newExercise.save()
+
+        await Course.findByIdAndUpdate(
+                req.body.courseId,
+                { 
+                  $push: {
+                    exercises: exercise._id
+                  }
+                }
+              ) 
+
+        const subExercise = new SubExercise({
+          exerciseId: exercise._id,
+          studenExercise: []
+        });
+
+        await subExercise.save()
+
+        res.json({'mes':"Tạo bài tập thành công"})
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
   }
 );
 

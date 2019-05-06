@@ -15,6 +15,8 @@ class ListAttendance extends Component {
   constructor() {
     super();
     this.state = {
+      currentcourses: [], 
+      loadingCurrentcourses: true,
       users:[],
       intialUsers: [],
       courseId: '0',
@@ -33,7 +35,7 @@ class ListAttendance extends Component {
           }
         ]
       ],
-      loading: false,
+      loadingAttendance: false,
       attendance: []
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
@@ -75,12 +77,20 @@ class ListAttendance extends Component {
 
   componentWillReceiveProps(nextProps) {
 
+    if (nextProps.courses) {
+      const { currentcourses, loading } = nextProps.courses
+      this.setState({ 
+        currentcourses, 
+        loadingCurrentcourses: loading
+      });
+    }
+
     if (!isEmptyObj(nextProps.attendance)) {
       const { loading, attendance } = nextProps.attendance
 
       this.setState({
         attendance,
-        loading
+        loadingAttendance: loading
       })
 
       attendance.forEach(element => {
@@ -139,37 +149,15 @@ class ListAttendance extends Component {
 
   render() {
     const superClass = this;
-    const { currentcourses } = this.props.courses;
-    const { loading, users, courseId, intialUsers, attendance } = this.state;
-
-    var SelectCourse =                 
-              <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
-                <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
-              </div>
-
-    if(currentcourses !== null)
-    {
-      if(currentcourses.length === 0)
-        SelectCourse = 
-                  <div className="card-header-actions" style={{marginRight:10}} >
-                      <Input  type="select">
-                        <option value="0">Chưa tham gia khóa học</option>
-                      </Input>
-                  </div>
-      else{
-        SelectCourse = 
-        <div className="card-header-actions" style={{marginRight:10}}>
-          <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-            <option value="0">Hãy chọn khóa học</option>
-              { 
-                currentcourses.map(course=>
-                  <option key={course._id} value={course._id}>{course.title}</option>
-                )
-              }
-          </Input>
-        </div>
-      }
-    }
+    const { 
+      loadingAttendance, 
+      users, 
+      courseId, 
+      intialUsers, 
+      attendance, 
+      currentcourses, 
+      loadingCurrentcourses 
+    } = this.state;
 
     var SelectDate = <div></div>;
     
@@ -287,13 +275,42 @@ class ListAttendance extends Component {
               </Col>
               <Col>
                 {SelectDate}
-                {SelectCourse}
+                {
+                  loadingCurrentcourses
+                  ?
+                  <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
+                    <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
+                  </div>
+                  :
+                  <Fragment>
+                  {
+                    currentcourses.length === 0
+                    ?
+                    <div className="card-header-actions" style={{marginRight:10}} >
+                      <Input  type="select">
+                        <option value="0">Chưa tham gia khóa học</option>
+                      </Input>
+                    </div>
+                    :
+                    <div className="card-header-actions" style={{marginRight:10}}>
+                      <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+                        <option value="0">Hãy chọn khóa học</option>
+                          { 
+                            currentcourses.map(course=>
+                              <option key={course._id} value={course._id}>{course.title}</option>
+                            )
+                          }
+                      </Input>
+                    </div>
+                  }
+                  </Fragment>
+                }
               </Col>
             </Row>
           </CardHeader>
           <CardBody>
             {
-              loading
+              loadingAttendance
               ?
               <ReactLoading type='bars' color='#05386B'/>
               :

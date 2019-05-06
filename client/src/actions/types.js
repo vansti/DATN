@@ -18,6 +18,9 @@ export const CLEAR_ATTENDANCE = 'CLEAR_ATTENDANCE';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const GET_USERS = 'GET_USERS';
 export const CLEAR_USER = 'CLEAR_USER';
+//Point
+export const GET_POINT_COLUMNS = 'GET_POINT_COLUMNS';
+export const POINT_LOADING = 'POINT_LOADING';
 //Schedule
 export const GET_SCHEDULE = 'GET_SCHEDULE';
 export const GET_SUBMISSION = 'GET_SUBMISSION';
