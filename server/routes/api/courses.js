@@ -43,14 +43,14 @@ router.post(
       title: req.body.title,
       enrollDeadline: req.body.enrollDeadline,
       intro: req.body.intro,
+      pointColumns: req.body.pointColumns
     });
 
     const newCourseDetail = new CourseDetail({
       studyTime: req.body.studyTime,
       openingDay: req.body.openingDay,
       fee: req.body.fee,
-      info: req.body.info,
-      pointColumns: req.body.pointColumns
+      info: req.body.info
     });
 
     async function run() {
@@ -92,7 +92,8 @@ router.post(
             {
               title: req.body.title,
               enrollDeadline: req.body.enrollDeadline,
-              intro: req.body.intro
+              intro: req.body.intro,
+              pointColumns: req.body.pointColumns
             }
           }
         )
@@ -106,8 +107,7 @@ router.post(
               studyTime: req.body.studyTime,
               openingDay: req.body.openingDay,
               fee: req.body.fee,
-              info: req.body.info,
-              pointColumns: req.body.pointColumns
+              info: req.body.info
             }
           }
         )
@@ -173,12 +173,12 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1}).lean()
 
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, fee: 1, info: 1, pointColumns: 1, 
+          { studyTime: 1, openingDay: 1, fee: 1, info: 1, 
             enrollStudents:  
             {
               $elemMatch: {
@@ -392,6 +392,23 @@ router.post(
     }
 
     run();
+  }
+);
+
+// @route   GET api/courses/get-point-colums/:courseId
+// @desc    lấy cột điểm trong khóa học
+// @access  Private
+router.get(
+  '/get-point-columns/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Course.findById(
+      req.params.courseId,
+      {pointColumns: 1}
+    )
+    .populate('pointColumns.test','title')
+    .then(course => res.json(course))
+    .catch(err => console.log(err));
   }
 );
 

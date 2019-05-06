@@ -70,6 +70,11 @@ export default {
       ]
     },
     {
+      name: 'Quản lý cột điểm',
+      url: '/point-list',
+      icon: 'fa fa-bars',
+    },
+    {
       name: 'Example',
       icon: 'fa fa-question-circle',
       children: [

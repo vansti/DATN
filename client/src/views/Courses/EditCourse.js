@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component , Fragment } from 'react';
 import {
   Modal, 
   ModalBody, 
@@ -11,7 +11,12 @@ import {
   Button, 
   Form, 
   FormGroup, 
-  Label, Input, InputGroup, InputGroupText, InputGroupAddon} from 'reactstrap';
+  Label, 
+  Input, 
+  InputGroup, 
+  InputGroupText, 
+  InputGroupAddon
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCourseInfo, editCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
@@ -39,6 +44,7 @@ class EditCourse extends Component {
     super(props);
 
     this.state = {
+      loading: true,
       title: '',
       intro: '',
       coursePhoto: '',
@@ -71,8 +77,9 @@ class EditCourse extends Component {
     }
     if (!isEmptyObj(nextProps.courses))
     {
-      let {courseinfo} = nextProps.courses
+      let { courseinfo, loading } = nextProps.courses
       this.setState({ 
+        loading,
         title: courseinfo.course.title,
         intro: courseinfo.course.intro,
         coursePhoto: courseinfo.course.coursePhoto,
@@ -81,7 +88,7 @@ class EditCourse extends Component {
         openingDay: new Date(courseinfo.course_detail.openingDay),
         fee: courseinfo.course_detail.fee,
         info: courseinfo.course_detail.info,
-        pointColumns: courseinfo.course_detail.pointColumns ? courseinfo.course_detail.pointColumns : [],
+        pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : []
       });
     }
   }
@@ -185,9 +192,15 @@ class EditCourse extends Component {
   };
 
   render() {
-    const { errors } = this.state;
+    const { errors, loading } = this.state;
     return (
       <div className="animated fadeIn">
+      {
+        loading
+        ?
+        <ReactLoading type='bars' color='#05386B'/>
+        :
+        <Fragment>
         <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
           <Card>
             <CardHeader>
@@ -303,6 +316,7 @@ class EditCourse extends Component {
               <CKEditor data={this.state.info} onChange={this.onEditorChange} />
             </CardBody>
           </Card>
+
         </Form>
 
         <Button type="submit" style={{marginBottom:20}} color="primary" onClick={this.onSubmit}>Chỉnh sửa</Button>
@@ -321,6 +335,8 @@ class EditCourse extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        </Fragment>
+        }
       </div>
     )
   }

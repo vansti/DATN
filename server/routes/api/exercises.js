@@ -39,12 +39,41 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    newExercise.save().then(exercise=>{
-      Course.findById(req.body.courseId).then(course => {
-        course.exercises.unshift(exercise._id);
-        course.save().then(course => res.json(course));
-      })
-    })
+    const newExercise = new Exercise({
+      title: req.body.title,
+      text: req.body.text,
+      attachFiles: req.body.attachFiles,
+      deadline: req.body.deadline,
+      courseId: req.body.courseId
+    });
+
+    async function run() {
+      try {
+        const exercise = await newExercise.save()
+
+        await Course.findByIdAndUpdate(
+                req.body.courseId,
+                { 
+                  $push: {
+                    exercises: exercise._id
+                  }
+                }
+              ) 
+
+        const subExercise = new SubExercise({
+          exerciseId: exercise._id,
+          studenExercise: []
+        });
+
+        await subExercise.save()
+
+        res.json({'mes':"Tạo bài tập thành công"})
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
   }
 );
 

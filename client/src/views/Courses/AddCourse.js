@@ -9,7 +9,7 @@ import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
 import CKEditor from 'ckeditor4-react';
-import DateTimePicker from 'react-datetime-picker';
+// import DateTimePicker from 'react-datetime-picker';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
@@ -113,6 +113,7 @@ class AddCourse extends Component {
       info: this.state.info,
       pointColumns: this.state.pointColumns
     };
+    // console.log(courseData)
     this.props.clearErrors();
     this.props.addCourse(courseData, this.state.file);
     this.setState({isLoading: true});
@@ -264,7 +265,17 @@ class AddCourse extends Component {
               </FormGroup>
               <FormGroup>
                 <Label>Hạn chót ghi danh</Label> <br/>
-                <DateTimePicker value={this.state.enrollDeadline} onChange={this.onChangeDeadline} />
+                <DatePicker
+                  selected={this.state.enrollDeadline}
+                  onChange={this.onChangeDeadline}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  isClearable={true}
+                  dateFormat="dd/MM/yyyy HH:mm aa"
+                  customInput={<Input />}
+                  timeCaption="time"
+                />
                 {errors.enrollDeadline && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
             </CardBody>
