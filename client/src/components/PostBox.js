@@ -7,7 +7,8 @@ import ReactLoading from 'react-loading';
 import { addExercise } from '../actions/exerciseActions';
 import isEmptyObj from '../validation/is-empty';
 import { withRouter } from 'react-router-dom';
-import DateTimePicker from 'react-datetime-picker';
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import config from '../config'
 import NoImg from '../assets/img/NoImg.png';
 
@@ -170,7 +171,17 @@ class PostBox extends Component {
                 <Label>Hạn nộp</Label>
               </Col>
               <Col xs="12" md="9">
-                <DateTimePicker value={this.state.deadline} onChange={this.onChangeDeadline} />
+                <DatePicker
+                  selected={this.state.deadline} 
+                  onChange={this.onChangeDeadline}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  isClearable={true}
+                  dateFormat="dd/MM/yyyy HH:mm"
+                  customInput={<Input />}
+                  timeCaption="time"
+                />
                 {errors.deadline && <Alert color="danger">{errors.deadline}</Alert>}
               </Col>
   

@@ -39,11 +39,25 @@ router.post(
       return res.status(400).json(errors);
     }
 
+    const newExercise = new Exercise({
+      title: req.body.title,
+      text: req.body.text,
+      attachFiles: req.body.attachFiles,
+      deadline: req.body.deadline,
+      courseId: req.body.courseId
+    });
+
     newExercise.save().then(exercise=>{
-      Course.findById(req.body.courseId).then(course => {
-        course.exercises.unshift(exercise._id);
-        course.save().then(course => res.json(course));
-      })
+      Course.findByIdAndUpdate(
+        req.body.courseId,
+        { 
+          $push: {
+            exercises: exercise._id
+          }
+        }
+      )             
+      .then(course => res.json(course))
+      .catch(err => console.log(err));
     })
   }
 );

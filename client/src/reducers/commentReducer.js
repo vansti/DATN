@@ -4,7 +4,7 @@ import {
 
 const initialState = {
   exercise_comments: [],
-  loading: false
+  loading: true
 };
 
 export default function(state = initialState, action) {

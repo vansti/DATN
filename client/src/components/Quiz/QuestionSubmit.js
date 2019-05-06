@@ -24,6 +24,7 @@ class Question extends Component {
   }
   checkAnswer = (index, correctAnswer) => {
     const { correct, incorrect, currentQuestionIndex } = this.state;
+    // eslint-disable-next-line
     if(index == correctAnswer[0]) {
       if( incorrect.indexOf(currentQuestionIndex) < 0 && correct.indexOf(currentQuestionIndex) < 0) {
         correct.push(currentQuestionIndex)
@@ -154,6 +155,7 @@ class Question extends Component {
               question.answers.map( (answer, index) => {
                 return(
                   <div>
+                    {/*eslint-disable-next-line*/}
                      <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
                       <span>{ answer }</span>
                       {/* { question.questionType === 'text' && <span>{ answer }</span> } */}

@@ -7,7 +7,7 @@ import { getListQuiz } from '../../actions/testQuizAction';
 //component
 import Quiz from '../../components/Quiz/Quiz';
 import ReactLoading from 'react-loading';
-class QuizDetailPage extends React.Component {
+class QuizDetailPage extends Component {
   constructor (props) {
     super(props);
     this.state = {
