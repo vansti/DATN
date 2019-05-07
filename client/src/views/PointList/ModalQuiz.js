@@ -1,23 +1,23 @@
 import React, { Component,Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody, Button, Table } from 'reactstrap';
 import { connect } from 'react-redux';
-import { getExerciseList, clearSuccess } from '../../actions/exerciseActions'; 
 import ReactLoading from 'react-loading';
-import { setPointColumnsExercise, getPointColumns } from '../../actions/pointActions'; 
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { getQuizListInCourse, clearSuccess } from '../../actions/testQuizAction'; 
+import { setPointColumnsQuiz, getPointColumns } from '../../actions/pointActions'; 
 
-class ModalExercise extends Component {
+class ModalQuiz extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      exercises: [],
+      quizzes: [],
       loading: true,
       isOpenModal: false,
       isLoading: false,
       isShowSuccess: false
     };
     this.toggleModal = this.toggleModal.bind(this);
-    this.handleClickExercise = this.handleClickExercise.bind(this);
+    this.handleClickQuiz = this.handleClickQuiz.bind(this);
   }
 
   toggleModal() {
@@ -29,27 +29,27 @@ class ModalExercise extends Component {
   onOpenModal = e => {
     e.preventDefault();
 
-    this.props.getExerciseList(this.props.courseId);
+    this.props.getQuizListInCourse(this.props.courseId);
     this.setState({
       isOpenModal: !this.state.isOpenModal
     });
   }
 
-  handleClickExercise(exerciseId){
-    this.props.setPointColumnsExercise(this.props.courseId, this.props.pointColumnsId, exerciseId)
+  handleClickQuiz(quizId){
+    this.props.setPointColumnsQuiz(this.props.courseId, this.props.pointColumnsId, quizId)
     this.setState({ isLoading: true })
   } 
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.exercises) {
-      const { exercises, loading } = nextProps.exercises
+    if (nextProps.testQuiz) {
+      const { quizzes, loading } = nextProps.testQuiz
       this.setState({
-        exercises,
+        quizzes,
         loading
       })
     }
 
-    if (nextProps.success.mes === "Chọn bài tập thành công") {
+    if (nextProps.success.mes === "Chọn trắc nghiệm thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
       this.props.clearSuccess()
     }
@@ -63,12 +63,12 @@ class ModalExercise extends Component {
   }
 
   render() {
-    const { exercises, loading } = this.state;
+    const { quizzes, loading } = this.state;
     return (
       <Fragment>
-        <Button color="success" className="btn-pill" onClick={this.onOpenModal}>chọn bài tập</Button>
+        <Button color="success" className="btn-pill" onClick={this.onOpenModal}>chọn trắc nghiệm</Button>
         <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
-          <ModalHeader  toggle={this.toggleModal}>Chọn bài tập</ModalHeader>
+          <ModalHeader  toggle={this.toggleModal}>Chọn trắc nghiệm</ModalHeader>
           <ModalBody style={{overflowY:'scroll', height:400}}>
           {
             loading
@@ -77,17 +77,17 @@ class ModalExercise extends Component {
             :
             <Fragment>
             {
-              exercises.length === 0
+              quizzes.length === 0
               ?
-              <b>Chưa có bài tập</b>
+              <b>Chưa có bài trắc nghiệm</b>
               :
               <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
                 <tbody>
                 {
-                  exercises.map(exercise=>
-                    <tr key={exercise._id} className="changeCursor" onClick={this.handleClickExercise.bind(this, exercise._id)}>
+                  quizzes.map(quiz=>
+                    <tr key={quiz._id} className="changeCursor" onClick={this.handleClickQuiz.bind(this, quiz._id)}>
                       <td>
-                        {exercise.title}
+                        {quiz.title}
                       </td>
                     </tr>
                   )
@@ -102,11 +102,11 @@ class ModalExercise extends Component {
         <SweetAlert
           	success
             confirmBtnText="OK"
-            title=''
+            title=''            
           	confirmBtnBsStyle="success"
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}>
-            Chọn bài tập thành công!
+            Chọn trắc nghiệm thành công!
         </SweetAlert>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
           <ModalBody className="text-center">
@@ -121,8 +121,8 @@ class ModalExercise extends Component {
 }
 
 const mapStateToProps = state => ({
-  exercises: state.exercises,
+  testQuiz: state.testQuiz,
   success: state.success
 });
 
-export default connect(mapStateToProps, { getExerciseList, setPointColumnsExercise, clearSuccess, getPointColumns })(ModalExercise);  
+export default connect(mapStateToProps, { getQuizListInCourse, clearSuccess, setPointColumnsQuiz, getPointColumns })(ModalQuiz);  

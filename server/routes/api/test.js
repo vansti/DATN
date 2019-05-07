@@ -131,4 +131,17 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
     run();
 });
 
+// @route   GET api/test/:courseId
+// @desc    Return all quiz in a course
+// @access  Private
+router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Course.findById(req.params.courseId).then(course => {
+    Quiz.find({
+        '_id': { $in: course.quizzes}
+    }, function(err, quizzes){
+      res.json(quizzes)
+    });
+  })
+});
+
 module.exports = router;

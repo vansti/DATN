@@ -9,6 +9,11 @@ export default {
       name: 'Khóa học của tôi',
       url: '/courses',
       icon: 'fa fa-book',
+    },
+    {
+      name: 'Làm quiz',
+      url: '/quiz',
+      icon: 'icon-list',
     }
   ],
 };

@@ -50,3 +50,21 @@ export const setPointColumnsExercise = ( courseId, pointColumnsId, exerciseId ) 
       })
     );
 };
+
+// gán pointcolumn loại quiz
+export const setPointColumnsQuiz = ( courseId, pointColumnsId, quizId ) => dispatch => {
+  axios
+    .get(`/api/courses/set-point-colums-quiz/${courseId}/${pointColumnsId}/${quizId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};

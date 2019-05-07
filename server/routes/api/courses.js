@@ -23,6 +23,7 @@ const Course = require('../../models/Course');
 const CourseDetail = require('../../models/CourseDetail');
 const User = require('../../models/User');
 const SubExercise = require('../../models/SubExercise');
+const SubQuiz = require('../../models/SubQuiz');
 
 router.use(cors());
 router.use(formData.parse())
@@ -441,6 +442,42 @@ router.get(
         .catch(err => console.log(err));
 
         res.json({ mes: "Chọn bài tập thành công" })
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   GET api/courses/set-point-colums-quiz/:courseId/:pointColumnsId/:quizId
+// @desc    gán bài cho cột điểm
+// @access  Private
+router.get(
+  '/set-point-colums-quiz/:courseId/:pointColumnsId/:quizId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const subquizId = await SubQuiz.findOne({ 'quizId' : req.params.quizId }, { _id : 1 })
+
+        await Course.updateOne(
+          { _id: req.params.courseId, "pointColumns._id": req.params.pointColumnsId },
+          { 
+            $set: 
+            { 
+              "pointColumns.$.test" :  req.params.quizId,
+              "pointColumns.$.testModel" :  'quizzes',
+              "pointColumns.$.submit" :  subquizId._id,
+              "pointColumns.$.submitModel" :  'subquiz',              
+            } 
+          }
+        )
+        .catch(err => console.log(err));
+
+        res.json({ mes: "Chọn trắc nghiệm thành công" })
       }catch (err) {
         console.log(err)
       }

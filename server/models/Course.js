@@ -31,7 +31,7 @@ const CourseSchema = new Schema({
     testModel: {
       type: String,
       required: true,
-      enum: ['exercises', 'testquizzes']
+      enum: ['exercises', 'quizzes']
     },
     submit:{
       type: mongoose.Schema.Types.ObjectId,

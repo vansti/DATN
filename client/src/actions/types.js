@@ -10,6 +10,9 @@ export const GET_COMMENT = 'GET_COMMENT';
 //Quiz
 export const GET_CURRENT_TESTQUIZ = 'GET_CURRENT_TESTQUIZ';
 export const GET_DETEAIL_QUIZ = 'GET_CURRENT_TESTQUIZ';
+export const GET_QUIZ_LIST = 'GET_QUIZ_LIST';
+export const QUIZ_LOADING = 'QUIZ_LOADING';
+
 //Attendance
 export const GET_PROFILE = 'GET_PROFILE';
 export const GET_ATTENDANCE = 'GET_ATTENDANCE';

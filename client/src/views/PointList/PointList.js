@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Card, CardBody, CardHeader, Row ,Col, Input, Table, Button } from 'reactstrap';
+import { Card, CardBody, CardHeader, Row ,Col, Input, Table } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCurentCourse } from '../../actions/courseActions'; 
@@ -7,6 +7,7 @@ import { getPointColumns } from '../../actions/pointActions';
 import ReactLoading from 'react-loading';
 // import isEmptyObj from '../../validation/is-empty';
 import ModalExercise from './ModalExercise';
+import ModalQuiz from './ModalQuiz';
 
 class PointList extends Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class PointList extends Component {
 
   render() {
     const { currentcourses, pointColumns, loadingCurrentcourses, loadingPointcolumns, courseId } = this.state
-    console.log(pointColumns)
+    
     return (
       <div className="animated fadeIn">
         <Card>
@@ -138,7 +139,7 @@ class PointList extends Component {
                             }
                           </td>
                           <td><ModalExercise pointColumnsId={element._id} courseId={courseId}/></td>
-                          <td><Button color="success" className="btn-pill">chọn trắc nghiệm</Button></td>
+                          <td><ModalQuiz pointColumnsId={element._id} courseId={courseId}/></td>
                         </tr>
                       )
                     }
