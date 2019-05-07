@@ -1,11 +1,12 @@
 import {
-  GET_EXERCISE_LIST, 
-  EXERCISE_LOADING
+  GET_EXERCISE_LIST,GET_EXER, 
+  // EXERCISE_LOADING
 } from '../actions/types';
 
 const initialState = {
-  exercises: [],
-  loading: false
+  exercises: null,
+  exercise: null,
+  // loading: false
 };
 
 export default function(state = initialState, action) {
@@ -16,10 +17,15 @@ export default function(state = initialState, action) {
         exercises: action.payload,
         loading: false
       };
-    case EXERCISE_LOADING:
+    // case EXERCISE_LOADING:
+    //   return {
+    //     ...state,
+    //     loading: true
+    //   };
+    case GET_EXER:
       return {
         ...state,
-        loading: true
+        exercise: action.payload,
       };
     default:
       return state;
