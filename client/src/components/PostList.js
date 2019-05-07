@@ -53,8 +53,11 @@ class PostList extends Component {
     this.setState({
       accordion: state,
     });
+    this.score = this.score.bind(this);
   }
-
+  score(exerciseId){
+    this.props.history.push(`/score/${this.props.match.params.id}/${exerciseId}`)
+  }
   render() {
     const { exercises, loading } = this.state;
     return (
@@ -122,6 +125,7 @@ class PostList extends Component {
                         }
                       </ListGroup>
                       <br/>
+                      <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
                       <SubmitExercise exerciseId={exercise._id}/>
                     </CardBody>
                     <CardFooter>

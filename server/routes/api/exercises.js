@@ -24,6 +24,52 @@ router.use(cors());
 
 router.use(fileUpload());
 
+// @route   POST api/exercise/add-exercise
+// @desc    add exercise
+// @access  Private
+router.post(
+  '/add-point',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const newPoint = new SubExercise({
+      exerciseId: req.body.exerciseId,
+      studentSubmission: req.body.studentSubmission,
+      
+    });
+
+
+
+    // SubExercise.updateOne({
+    //   exerciseId: req.params.exerciseId
+    // },{
+    //   $push: { 
+    //     studenExercise: {
+    //       userId: req.user._id,
+    //       attachFile: submission,
+    //   }} 
+    // }).then(()=>{
+    //   res.json("Đã nộp");
+    // });
+    // newPoint
+    // .save()
+    // .then(point => {
+    //   res.json(point)
+    // })
+    //console.log(req.body)
+    SubExercise.updateOne({
+      exerciseId: req.body.exerciseId,
+      
+    },{
+      $set: { 
+        studentSubmission : req.body.studentSubmission
+        } 
+    }).then(()=>{
+      res.json("Đã thêm điểm");
+    });
+
+  }
+);
+
 
 // @route   POST api/exercise/add-exercise
 // @desc    add exercise
@@ -80,7 +126,7 @@ router.post(
 // @route   GET api/exercises/:courseId
 // @desc    Return exercise list
 // @access  Private
-router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/:courseId', (req, res) => {
   Course.findById(req.params.courseId).then(course => {
     Exercise.find({
         '_id': { $in: course.exercises}
@@ -133,6 +179,29 @@ router.post('/comment/:exerciseId', passport.authenticate('jwt', { session: fals
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
 });
 
+// @route   Get api/exercises/exercise/:id
+// @desc    Get 1 exercise
+// @access  Private
+router.get('/exercise/:id', (req, res) => {
+  Exercise.findById(req.params.id, { title: 1 }).then(exercise => {
+    res.json(exercise)
+    //console.log(exercise)
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+
+});
+// @route   Get api/exercises/exercisePoint/:id
+// @desc    Get exercise points
+// @access  Private
+router.get('/exercisePoint/:id', (req, res) => {
+  console.log('req.params.id')
+  SubExercise.find({exerciseId: req.params.id}, { studentSubmission: 1 }).then(studentSubmission => {
+    res.json(studentSubmission)
+    console.log(studentSubmission)
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy điểm của bài tập' }));
+
+});
 // @route   POST api/exercises/:exerciseId/submit
 // @desc    submit a exercise
 // @access  Private
@@ -150,23 +219,23 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     return res.status(404).json(errors);
   }
 
-  var dir = './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/'; 
+  var dir = './file_upload/' + req.params.exerciseId + '/' + req.user._id + '/'; 
   
   if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, {recursive: true}, err=>{});
   }
   //Path /file_upload/:userId/:exerciseId
-  uploadedFile.mv('./file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name, function(err) {
+  uploadedFile.mv(dir + uploadedFile.name, function(err) {
     if (err)
       return res.status(500).send(err);
   });
   const submission = {
         name: uploadedFile.name,
-        url: './file_upload/' + req.user._id + '/' + req.params.exerciseId + '/' + uploadedFile.name,
+        url: dir + uploadedFile.name,
     }
   SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
     if(data != null){
-      if(!data.studentExercise.find(submission => submission.userId.toString() === req.user._id)){
+      if(!data.studentSubmission.find(submission => submission.userId.toString() === req.user._id)){
         SubExercise.updateOne({
           exerciseId: req.params.exerciseId
         },{
@@ -203,9 +272,9 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
 // @desc    download a submission to exercise
 // @access  Private
 router.get('/:exerciseId/download', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let file = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
+  let file = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/' + req.user.id )[0];
   //Path /file_upload/:userId/exerciseId/file
-  return res.download('./file_upload/' + req.user.id + '/' + req.params.exerciseId + '/' + file);
+  return res.download('./file_upload/' + req.params.exerciseId + '/' + req.user.id + '/' + file);
 });
 
 // @route   POST api/exercises/:exerciseId/get-submission
@@ -213,7 +282,8 @@ router.get('/:exerciseId/download', passport.authenticate('jwt', { session: fals
 // @access  Private
 router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
-    let fileName = fs.readdirSync('./file_upload/' + req.user.id + '/' + req.params.exerciseId)[0];
+    
+    let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId + '/' + req.user.id)[0];
     res.json(fileName);
   }catch(e){
     res.json("")
@@ -221,9 +291,32 @@ router.get('/:exerciseId/get-submission', passport.authenticate('jwt', { session
   //Path /file_upload/:userId/exerciseId/file
 });
 
+// @route   POST api/exercises/:exerciseId/get-submission
+// @desc    get a submission
+// @access  Private
+router.get('/:exerciseId/get-submissionTai', passport.authenticate('jwt', { session: false }),(req, res) => {
+  //console.log('abc');
+  try{
+    let userName = fs.readdirSync('./file_upload/' + req.params.exerciseId);
+    var a =[];
+    var name_array = [1,31,2];
+    for (var i = 0; i < userName.length; i++){
+    let fileName = fs.readdirSync('./file_upload/' + req.params.exerciseId+'/'+userName[i]);
+    a.push(fileName);
+    }
+
+    
+    res.json(a);
+  }catch(e){
+    res.json("")
+  }
+  //console.log('abc');
+  //Path /file_upload/:userId/exerciseId/file
+});
+
 router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
   try{
-    rimraf.sync('./file_upload/' + req.user.id + '/' + req.params.exerciseId);
+    rimraf.sync('./file_upload/' + req.params.exerciseId + '/' + req.user.id);
     res.json("Đã xóa");
   }catch(e){
     console.log(e);

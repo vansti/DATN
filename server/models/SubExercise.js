@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 //Create schema
 const SubExerciseSchema = new Schema({
   exerciseId:{type: mongoose.Schema.ObjectId, ref: 'exercises'},
-  studentExercise:[
+  studentSubmission:[
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
       attachFile: 
@@ -28,9 +28,7 @@ const SubExerciseSchema = new Schema({
       },
     }
   ],
-  isLate:{
-    type: Boolean
-  }
+  
 })
 
 module.exports = SubExercise = mongoose.model('subexcercise', SubExerciseSchema)

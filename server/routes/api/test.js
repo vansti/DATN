@@ -12,6 +12,8 @@ const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Quiz = require('../../models/Quiz');
 const SubQuiz = require('../../models/SubQuiz');
+//service
+const quizService = require('../../service/quizService');
 router.use(cors());
 
 
@@ -38,7 +40,7 @@ router.post(
             deadline: '2019-06-01',
         });
         const newSubQuiz = new SubQuiz({
-            studentExercise: []
+            studentSubmission: []
         });
         async function run() {
             try {
@@ -81,25 +83,6 @@ router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: f
     }).catch(err => console.log(err));
 });
 
-function checkvalueKeyExist(arr, key, value) {
-    let result = -1;
-    arr.forEach((element, index) => {
-        if(JSON.stringify(element[key]) === JSON.stringify(value)) {
-            result = index;
-        }
-    });
-    return result;
-}
-
-function calPointQuiz(listQuiz, submistionAnswer) {
-    let numberQuizCorrect = 0;
-    listQuiz.forEach((element, index) => {
-        if(element.correctAnswer == submistionAnswer[index]) {
-            numberQuizCorrect++;
-        }
-    });
-    return numberQuizCorrect / listQuiz.length * 10;
-}
 // @route   POST api/test/sub-quiz
 // @desc    get one quiz
 // @access  Private
@@ -114,9 +97,10 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
             const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId});
             const quiz = await Quiz.findById(req.body.quizId);
 
-            submission.point = calPointQuiz(quiz.listQuiz, params.answer);
-            let index = checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId)
-            if(index !== -1) {
+            submission.point = quizService.calPointQuiz(quiz.listQuiz, params.answer);
+            let index = quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId);
+            console.log(index);
+            if(index === -1) {
                 subQuiz.studentSubmission.unshift(submission);
                 const subQuizUpdated = await subQuiz.save();
                 res.json(subQuizUpdated);
