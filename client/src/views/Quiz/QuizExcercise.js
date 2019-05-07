@@ -7,7 +7,7 @@ import { getListQuiz } from '../../actions/testQuizAction';
 //component
 import Quiz from '../../components/Quiz/Quiz';
 import ReactLoading from 'react-loading';
-class QuizDetailPage extends Component {
+class QuizExcercisePage extends Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -36,7 +36,7 @@ class QuizDetailPage extends Component {
   }
 }
 
-QuizDetailPage.propTypes = {
+QuizExcercisePage.propTypes = {
   getListQuiz : PropTypes.func.isRequired,
   testQuiz: PropTypes.object.isRequired,
 };
@@ -49,4 +49,4 @@ const mapStateToProps = state => ({
   testQuiz: state.testQuiz
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuizDetailPage);
+export default connect(mapStateToProps, mapDispatchToProps)(QuizExcercisePage);

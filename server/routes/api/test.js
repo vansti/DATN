@@ -10,8 +10,8 @@ const validateAddTestQuizInput = require('../../validation/addTestQuiz');
 // Model
 const Course = require('../../models/Course');
 const User = require('../../models/User');
-const Exercise = require('../../models/Exercise');
-const Quiz = require('../../models/TestQuiz');
+const Quiz = require('../../models/Quiz');
+const SubQuiz = require('../../models/SubQuiz');
 router.use(cors());
 
 
@@ -29,7 +29,7 @@ router.post(
             // Return any errors with 400 status
             return res.status(400).json(errors);
         }
-        const newTestQuiz = new Quiz({
+        const newQuiz = new Quiz({
             title: req.body.testTitle,
             description: req.body.testSynopsis,
             courseId: req.body.courseId,
@@ -37,20 +37,29 @@ router.post(
             time: '1600',
             deadline: '2019-06-01',
         });
-        newTestQuiz.save().then(testQuiz => {
-            Course.findById(req.body.courseId).then(course => {
-                course.testQuiz.unshift(testQuiz._id);
-                course.save().then(course => res.json(course));
-            })
-        })
-        // res.json({
-        //     "message": "function under construction",
-        //     "data": req.body
-        // });
-    }
-);
+        const newSubQuiz = new SubQuiz({
+            studentExercise: []
+        });
+        async function run() {
+            try {
+                const quiz = await newQuiz.save();
+                //create subQuiz
+                newSubQuiz.quizId = quiz._id;
+                const subQuiz = await newSubQuiz.save();
+                //update array quiz for course
+                const course = await Course.findById(req.body.courseId);
+                course.quizzes.unshift(quiz._id);
+                const courseUpdated = await course.save();
 
-// @route   POST api/test/quiz
+                res.json(courseUpdated);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    run();
+});
+
+// @route   get api/test/quiz
 // @desc    get all quizes
 // @access  Private
 router.get(
@@ -63,7 +72,7 @@ router.get(
     }
 );
 
-// @route   POST api/test/quiz-detail
+// @route   get api/test/quiz-detail
 // @desc    get one quiz
 // @access  Private
 router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
@@ -71,4 +80,55 @@ router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: f
         res.json(quiz);
     }).catch(err => console.log(err));
 });
+
+function checkvalueKeyExist(arr, key, value) {
+    let result = -1;
+    arr.forEach((element, index) => {
+        if(JSON.stringify(element[key]) === JSON.stringify(value)) {
+            result = index;
+        }
+    });
+    return result;
+}
+
+function calPointQuiz(listQuiz, submistionAnswer) {
+    let numberQuizCorrect = 0;
+    listQuiz.forEach((element, index) => {
+        if(element.correctAnswer == submistionAnswer[index]) {
+            numberQuizCorrect++;
+        }
+    });
+    return numberQuizCorrect / listQuiz.length * 10;
+}
+// @route   POST api/test/sub-quiz
+// @desc    get one quiz
+// @access  Private
+router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+    let params = req.body;
+    submission = {
+        userId: req.user._id,
+        answer: params.answer
+    }
+    async function run() {
+        try {
+            const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId});
+            const quiz = await Quiz.findById(req.body.quizId);
+
+            submission.point = calPointQuiz(quiz.listQuiz, params.answer);
+            let index = checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId)
+            if(index !== -1) {
+                subQuiz.studentSubmission.unshift(submission);
+                const subQuizUpdated = await subQuiz.save();
+                res.json(subQuizUpdated);
+            } else {
+                res.json({error: 'Không thể tiếp tục, bạn đã làm bài kiểm tra này.'});
+            }
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    run();
+});
+
 module.exports = router;

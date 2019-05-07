@@ -23,8 +23,12 @@ class QuizListPage extends Component {
     this.props.getListQuiz();
   }
 
-  jumpToDetail = testQuizid => {
-    this.props.history.push('/test/quiz/' + testQuizid)
+  jumpToQuizTest = testQuizid => {
+    this.props.history.push('/quiz/test/' + testQuizid)
+  }
+
+  jumpToQuizExcercise = testQuizid => {
+    this.props.history.push('/quiz/excercise/' + testQuizid)
   }
   
   render () {
@@ -34,10 +38,10 @@ class QuizListPage extends Component {
       {
         list = <tr><td></td><td></td><td ><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td><td></td></tr>
       } else if(isEmptyObj(listTestQuiz)) {
-          list = <tr><td></td><td></td><td >Bạn hiện không có bài kiểm tra nào</td><td></td></tr>
+          list = <tr><td></td><td></td><td >Bạn hiện không có bài kiểm tra nào</td><td></td><td></td></tr>
         } else {
           list = listTestQuiz.map(testQuiz=>
-            <tr key={testQuiz._id} onClick={this.jumpToDetail.bind(this, testQuiz._id)} className="changeCursor">
+            <tr key={testQuiz._id}  className="changeCursor">
               <td>
                 {testQuiz.title}
               </td>
@@ -53,7 +57,8 @@ class QuizListPage extends Component {
                 </Moment>
               </td>
               <td className="text-right">
-                <Button onClick={this.toggle} color="primary">Làm bài</Button>
+                <Button className="ml-2 mr-2" onClick={this.jumpToQuizExcercise.bind(this, testQuiz._id)} color="primary">Làm bài tập</Button>
+                <Button className="ml-2 mr-2" onClick={this.jumpToQuizTest.bind(this, testQuiz._id)} color="primary">Làm Kiểm tra</Button>
               </td>
             </tr>
           )
