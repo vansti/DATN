@@ -6,6 +6,7 @@ import { getCurentCourse } from '../../actions/courseActions';
 import { getPointColumns } from '../../actions/pointActions'; 
 import ReactLoading from 'react-loading';
 // import isEmptyObj from '../../validation/is-empty';
+import ModalExercise from './ModalExercise';
 
 class PointList extends Component {
   constructor(props) {
@@ -136,7 +137,7 @@ class PointList extends Component {
                               'Chưa chọn'
                             }
                           </td>
-                          <td><Button color="success" className="btn-pill">chọn bài tập</Button></td>
+                          <td><ModalExercise pointColumnsId={element._id} courseId={courseId}/></td>
                           <td><Button color="success" className="btn-pill">chọn trắc nghiệm</Button></td>
                         </tr>
                       )

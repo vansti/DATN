@@ -22,6 +22,8 @@ const validateAddCourseInput = require('../../validation/addcourse');
 const Course = require('../../models/Course');
 const CourseDetail = require('../../models/CourseDetail');
 const User = require('../../models/User');
+const SubExercise = require('../../models/SubExercise');
+
 router.use(cors());
 router.use(formData.parse())
 
@@ -395,7 +397,7 @@ router.post(
   }
 );
 
-// @route   GET api/courses/get-point-colums/:courseId
+// @route   GET api/courses/get-point-columns/:courseId
 // @desc    lấy cột điểm trong khóa học
 // @access  Private
 router.get(
@@ -409,6 +411,42 @@ router.get(
     .populate('pointColumns.test','title')
     .then(course => res.json(course))
     .catch(err => console.log(err));
+  }
+);
+
+// @route   GET api/courses/set-point-colums-exercise/:courseId/:pointColumnsId/:exerciseId
+// @desc    gán bài cho cột điểm
+// @access  Private
+router.get(
+  '/set-point-colums-exercise/:courseId/:pointColumnsId/:exerciseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const subexerciseId = await SubExercise.findOne({ 'exerciseId' : req.params.exerciseId }, { _id : 1 })
+
+        await Course.updateOne(
+          { _id: req.params.courseId, "pointColumns._id": req.params.pointColumnsId },
+          { 
+            $set: 
+            { 
+              "pointColumns.$.test" :  req.params.exerciseId,
+              "pointColumns.$.testModel" :  'exercises',
+              "pointColumns.$.submit" :  subexerciseId._id,
+              "pointColumns.$.submitModel" :  'subexcercise',              
+            } 
+          }
+        )
+        .catch(err => console.log(err));
+
+        res.json({ mes: "Chọn bài tập thành công" })
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
   }
 );
 

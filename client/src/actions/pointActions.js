@@ -2,7 +2,9 @@ import axios from 'axios';
 
 import { 
   POINT_LOADING,
-  GET_POINT_COLUMNS
+  GET_POINT_COLUMNS,
+  GET_SUCCESS,
+  GET_ERRORS
 } from './types';
 
 
@@ -27,6 +29,24 @@ export const getPointColumns = (courseId) => dispatch => {
       dispatch({
         type: GET_POINT_COLUMNS,
         payload: {}
+      })
+    );
+};
+
+// gán pointcolumn loại exercise
+export const setPointColumnsExercise = ( courseId, pointColumnsId, exerciseId ) => dispatch => {
+  axios
+    .get(`/api/courses/set-point-colums-exercise/${courseId}/${pointColumnsId}/${exerciseId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
       })
     );
 };
