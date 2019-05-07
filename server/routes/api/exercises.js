@@ -24,6 +24,52 @@ router.use(cors());
 
 router.use(fileUpload());
 
+// @route   POST api/exercise/add-exercise
+// @desc    add exercise
+// @access  Private
+router.post(
+  '/add-point',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const newPoint = new SubExercise({
+      exerciseId: req.body.exerciseId,
+      studentExercise: req.body.studentExercise,
+      
+    });
+
+
+
+    // SubExercise.updateOne({
+    //   exerciseId: req.params.exerciseId
+    // },{
+    //   $push: { 
+    //     studenExercise: {
+    //       userId: req.user._id,
+    //       attachFile: submission,
+    //   }} 
+    // }).then(()=>{
+    //   res.json("Đã nộp");
+    // });
+    // newPoint
+    // .save()
+    // .then(point => {
+    //   res.json(point)
+    // })
+    console.log(req.body)
+    SubExercise.updateOne({
+      exerciseId: req.body.exerciseId,
+      
+    },{
+      $set: { 
+        studentExercise : req.body.studentExercise
+        } 
+    }).then(()=>{
+      res.json("Đã thêm điểm");
+    });
+
+  }
+);
+
 
 // @route   POST api/exercise/add-exercise
 // @desc    add exercise
@@ -138,6 +184,18 @@ router.get('/exercise/:id', (req, res) => {
     // console.log(exercise)
   })
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy exercise' }));
+
+});
+// @route   Get api/exercises/exercisePoint/:id
+// @desc    Get exercise points
+// @access  Private
+router.get('/exercisePoint/:id', (req, res) => {
+  console.log('req.params.id')
+  SubExercise.find({exerciseId: req.params.id}, { studentExercise: 1 }).then(studentExercise => {
+    res.json(studentExercise)
+    console.log(studentExercise)
+  })
+  .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy điểm của bài tập' }));
 
 });
 // @route   POST api/exercises/:exerciseId/submit

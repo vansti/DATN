@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table,InputGroupAddon,NavLink,  InputGroup, InputGroupText, Input, FormGroup, Label,Button } from 'reactstrap';
-import { getExercise, getSubmission,getSubmissionExer, download } from '../../actions/exerciseActions';
+import { getExercisePoint,getExercise, getSubmission,getSubmissionExer, download, addPoint } from '../../actions/exerciseActions';
 import {getUsers} from '../../actions/userActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -21,6 +21,8 @@ const styles = {
     }
   }
   const line = {
+
+
     labels: ['1', '2', '3', '4', '5', '6', '7','8','9','10'],
     datasets: [
       {
@@ -59,6 +61,7 @@ class ScoreExercise extends Component {
     constructor(props) {
         super(props);
         this.state = {
+          studentExercise :[],
           title:'',
           students:'',
           submission:'',
@@ -73,14 +76,21 @@ class ScoreExercise extends Component {
       }
     componentDidMount(){
         this.props.getExercise(this.props.match.params.exerciseId);
+        this.props.getExercisePoint(this.props.match.params.exerciseId);
         this.props.getUsers(this.props.match.params.courseId);
         //this.props.getSubmission(this.props.match.params.exerciseId);
         this.props.getSubmissionExer(this.props.match.params.exerciseId)
-
+        console.log(this.state)
     }
 
     componentWillReceiveProps(nextProps) {
-        //console.log(nextProps);
+        console.log(nextProps);
+        if (nextProps.studentExercise) {
+          this.setState({
+            studentExercise: nextProps.studentExercise,
+
+          })
+      }
         if (nextProps.exercises) {
             this.setState({
                 title: nextProps.exercises.exercise.title,
@@ -102,8 +112,14 @@ class ScoreExercise extends Component {
             })
 
         }
+        if (nextProps.submission.submission) {
+          this.setState({
+              submission: nextProps.submission.submission
+          })
+
+      }
         
-        //console.log(this.state.submission);
+        console.log(this.state);
     }
     download = (e) => {
         e.preventDefault();
@@ -128,29 +144,47 @@ class ScoreExercise extends Component {
         students: this.state.students
       })
       console.log(this.state.students)
+      // var newPoint = {
+      //   exerciseId: this.props.match.params.exerciseId,
+        
+      //   studentExercise: []
+      // };
+  
+      // newPoint.studentExercise = JSON.parse(JSON.stringify(this.state.students));
+      // newPoint.studentExercise.map(student => {
+      //   student.userId = student._id
+      //   delete student._id
+      //   delete student.name
+      //   delete student.photo
+      //   return student
+      // })
+   
+      // this.props.addPoint(newPoint);
+      //this.setState({isLoading: true})
       
     }
-    // submit = () => {
-  
-    //   var newAttendance = {
-    //     courseId: this.state.courseId,
+    submit = () => {
+      
+      var newPoint = {
+        exerciseId: this.props.match.params.exerciseId,
         
-    //     students: []
-    //   };
+        studentExercise: []
+      };
   
-    //   newAttendance.students = JSON.parse(JSON.stringify(this.state.user));
-    //   newAttendance.students.map(student => {
-    //     student.userId = student._id
-    //     delete student._id
-    //     delete student.name
-    //     delete student.photo
-    //     return student
-    //   })
+      newPoint.studentExercise = JSON.parse(JSON.stringify(this.state.students));
+      newPoint.studentExercise.map(student => {
+        student.userId = student._id
+        delete student._id
+        delete student.name
+        delete student.photo
+        return student
+      })
    
-    //   this.props.addAttendance(newAttendance);
-    //   this.setState({isLoading: true})
+      this.props.addPoint(newPoint);
+      //this.setState({isLoading: true})
+      this.setState({isShowSuccess: true})
   
-    // }
+    }
     
     hideAlertSuccess(){
         this.setState({
@@ -232,7 +266,7 @@ class ScoreExercise extends Component {
             
             </tbody>
         </Table>
-        <Button color="primary" onClick={this.onSubmit}>Thay đổi</Button>{' '}
+        <Button color="primary" onClick={this.submit}>Thay đổi</Button>{' '}
         <SweetAlert
           	success
           	confirmBtnText="OK"
@@ -267,9 +301,12 @@ class ScoreExercise extends Component {
 ScoreExercise.propTypes = {
     
     getExercise: PropTypes.func.isRequired,
+    getExercisePoint: PropTypes.func.isRequired,
     exercises: PropTypes.object.isRequired,
     users: PropTypes.object.isRequired,
-    submission: PropTypes.object.isRequired
+    submission: PropTypes.object.isRequired,
+    addPoint: PropTypes.func.isRequired,
+    studentExercise: PropTypes.object.isRequired
 
 };
 
@@ -277,9 +314,9 @@ const mapStateToProps = state => ({
 
     exercises: state.exercises,
     users: state.users,
-    submission: state.submission
-    
+    submission: state.submission,
+    studentExercise: state.studentExercise
 
 });
 
-export default connect(mapStateToProps, {getExercise,getUsers, getSubmission,getSubmissionExer, download})(ScoreExercise); 
+export default connect(mapStateToProps, {getExercisePoint,getExercise,getUsers, getSubmission,getSubmissionExer, download,addPoint})(ScoreExercise); 

@@ -12,3 +12,4 @@ export const GET_EXER = 'GET_EXER';
 export const GET_SUBMISSION = 'GET_SUBMISSION';
 export const GET_SUBMISSION2 = 'GET_SUBMISSION2';
 export const DEL_SUBMISSION = 'DEL_SUBMISSION';
+export const GET_EXERPOINT = 'GET_EXERPOINT';

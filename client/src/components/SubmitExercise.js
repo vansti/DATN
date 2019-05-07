@@ -66,6 +66,7 @@ class SubmitExercise extends Component {
       isLoading: true
 
     })
+    console.log(this.props);
     // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
     // bấm submit thì cho hiện cái loading
     this.setState({

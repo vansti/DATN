@@ -1,7 +1,25 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST,GET_SUBMISSION2, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS,GET_EXER } from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST,GET_SUBMISSION2, GET_COMMENT, CLEAR_SUCCESS, GET_SUBMISSION, DEL_SUBMISSION, CLEAR_ERRORS,GET_EXER,GET_EXERPOINT } from './types';
 
+
+export const getExercisePoint = (id) => dispatch => {
+  axios
+    .get(`/api/exercises/exercisePoint/${id}`)
+    .then(res =>
+      dispatch({
+        type: GET_EXERPOINT,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_EXERPOINT,
+        payload: {}
+      }
+    ))
+    
+}
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
   axios
@@ -21,6 +39,25 @@ export const addExercise = (exerciseData) => dispatch => {
     );
 };
 
+// Add Point
+export const addPoint= (newPoint) => dispatch => {
+  axios
+    .post('/api/exercises/add-point', newPoint)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: {data: 'Nhập điểm thành công'}
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+//////
 export const getExerciseList = (courseId) => dispatch => {
   axios
     .get(`/api/exercises/${courseId}`)
@@ -94,6 +131,8 @@ export const getExercise = (id) => dispatch => {
       }
     ))
 }
+
+
 
 // Add Submission
 export const addSubmission = (data, exerciseId) => dispatch => {
