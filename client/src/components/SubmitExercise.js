@@ -62,6 +62,12 @@ class SubmitExercise extends Component {
       file: this.state.attachFile,
     }
     this.props.addSubmission(data, this.props.exerciseId);
+    this.setState({
+      isLoading: true
+
+    })
+    console.log(this.props);
+    // ở đây m gọi this.props. cái action m gọi api r truyền vô mấy biến ở trên
     // bấm submit thì cho hiện cái loading
     this.setState({
       isLoading: true,
