@@ -22,6 +22,9 @@ const validateAddCourseInput = require('../../validation/addcourse');
 const Course = require('../../models/Course');
 const CourseDetail = require('../../models/CourseDetail');
 const User = require('../../models/User');
+const SubExercise = require('../../models/SubExercise');
+const SubQuiz = require('../../models/SubQuiz');
+
 router.use(cors());
 router.use(formData.parse())
 
@@ -39,11 +42,11 @@ router.post(
       // Return any errors with 400 status
       return res.status(400).json(errors);
     }
-
     const newCourse = new Course({
       title: req.body.title,
       enrollDeadline: req.body.enrollDeadline,
-      intro: req.body.intro
+      intro: req.body.intro,
+      pointColumns: req.body.pointColumns
     });
 
     const newCourseDetail = new CourseDetail({
@@ -92,7 +95,8 @@ router.post(
             {
               title: req.body.title,
               enrollDeadline: req.body.enrollDeadline,
-              intro: req.body.intro
+              intro: req.body.intro,
+              pointColumns: req.body.pointColumns
             }
           }
         )
@@ -172,7 +176,7 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1}).lean()
 
         var course_detail = await  
         CourseDetail.findOne(
@@ -191,7 +195,6 @@ router.get(
           course: course,
           course_detail: course_detail
         }
-
         if(result.course_detail.enrollStudents === undefined)
           result.isEnroll = false
         else{   
@@ -301,7 +304,6 @@ router.post(
 
     async function run() {
       try {
-
         await 
         CourseDetail.findOneAndUpdate(
           { 'courseId' : req.params.courseId },
@@ -387,6 +389,95 @@ router.post(
 
           res.json("Đã tham gia vào khóa học này")
         }
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   GET api/courses/get-point-columns/:courseId
+// @desc    lấy cột điểm trong khóa học
+// @access  Private
+router.get(
+  '/get-point-columns/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Course.findById(
+      req.params.courseId,
+      {pointColumns: 1}
+    )
+    .populate('pointColumns.test','title')
+    .then(course => res.json(course))
+    .catch(err => console.log(err));
+  }
+);
+
+// @route   GET api/courses/set-point-colums-exercise/:courseId/:pointColumnsId/:exerciseId
+// @desc    gán bài cho cột điểm
+// @access  Private
+router.get(
+  '/set-point-colums-exercise/:courseId/:pointColumnsId/:exerciseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const subexerciseId = await SubExercise.findOne({ 'exerciseId' : req.params.exerciseId }, { _id : 1 })
+
+        await Course.updateOne(
+          { _id: req.params.courseId, "pointColumns._id": req.params.pointColumnsId },
+          { 
+            $set: 
+            { 
+              "pointColumns.$.test" :  req.params.exerciseId,
+              "pointColumns.$.testModel" :  'exercises',
+              "pointColumns.$.submit" :  subexerciseId._id,
+              "pointColumns.$.submitModel" :  'subexcercise',              
+            } 
+          }
+        )
+        .catch(err => console.log(err));
+
+        res.json({ mes: "Chọn bài tập thành công" })
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   GET api/courses/set-point-colums-quiz/:courseId/:pointColumnsId/:quizId
+// @desc    gán bài cho cột điểm
+// @access  Private
+router.get(
+  '/set-point-colums-quiz/:courseId/:pointColumnsId/:quizId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        const subquizId = await SubQuiz.findOne({ 'quizId' : req.params.quizId }, { _id : 1 })
+
+        await Course.updateOne(
+          { _id: req.params.courseId, "pointColumns._id": req.params.pointColumnsId },
+          { 
+            $set: 
+            { 
+              "pointColumns.$.test" :  req.params.quizId,
+              "pointColumns.$.testModel" :  'quizzes',
+              "pointColumns.$.submit" :  subquizId._id,
+              "pointColumns.$.submitModel" :  'subquiz',              
+            } 
+          }
+        )
+        .catch(err => console.log(err));
+
+        res.json({ mes: "Chọn trắc nghiệm thành công" })
       }catch (err) {
         console.log(err)
       }

@@ -3,12 +3,13 @@ import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, F
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
+// import PointColumnsForm from '../../components/PointsColumn/Add/index'
 import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
 import CKEditor from 'ckeditor4-react';
-import DateTimePicker from 'react-datetime-picker';
+// import DateTimePicker from 'react-datetime-picker';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
@@ -19,6 +20,9 @@ const styles = {
     margin: 'auto',
     border: '1px solid #ddd',
     borderRadius: 5
+  },
+  buttonDanger: {
+    margin: '0 0 0 10px'
   }
 }
 
@@ -40,6 +44,15 @@ class AddCourse extends Component {
       errors:{},
       isLoading: false,
       invalidImg: false,
+      pointColumns: [{
+        pointName: 'Điểm giữa kỳ',
+        pointRate: '30',
+      },
+      {
+        pointName: 'Điểm cuối kỳ',
+        pointRate: '70',
+      }
+    ],
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -72,7 +85,6 @@ class AddCourse extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false});
     }
@@ -88,6 +100,9 @@ class AddCourse extends Component {
 
   onSubmit = e => {
     e.preventDefault();
+    // let formInputs = document.getElementsByClassName('form-control');
+    // let pointColumns = formInputs.splice(3, formInputs.length);
+   
     const courseData = {
       title: this.state.title,
       intro: this.state.intro,
@@ -95,8 +110,10 @@ class AddCourse extends Component {
       studyTime: this.state.studyTime,
       openingDay: this.state.openingDay,
       fee: this.state.fee,
-      info: this.state.info
+      info: this.state.info,
+      pointColumns: this.state.pointColumns
     };
+    // console.log(courseData)
     this.props.clearErrors();
     this.props.addCourse(courseData, this.state.file);
     this.setState({isLoading: true});
@@ -107,6 +124,15 @@ class AddCourse extends Component {
       title:'',
       intro: '',
       coursePhoto: '',
+      pointColumns: [{
+          pointName: 'Điểm giữa kỳ',
+          pointRate: '30',
+        },
+        {
+          pointName: 'Điểm cuối kỳ',
+          pointRate: '70',
+        }
+      ],
       enrollDeadline: null,
       studyTime: '',
       openingDay: null,
@@ -130,6 +156,36 @@ class AddCourse extends Component {
 
   onChangeOpeningDay = openingDay => this.setState({ openingDay })
 
+  handlePointColumnNameChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointName: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handlePointColumnPointRateChange = idx => evt => {
+    const newpointColumns = this.state.pointColumns.map((column, sidx) => {
+      if (idx !== sidx) return column;
+      return { ...column, pointRate: evt.target.value };
+    });
+
+    this.setState({ pointColumns: newpointColumns });
+  };
+
+  handleAddPointColumn = () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.concat([{ pointName: "", pointRate: ""}])
+    });
+  };
+
+  handleRemovePointColumn = idx => () => {
+    this.setState({
+      pointColumns: this.state.pointColumns.filter((s, sidx) => idx !== sidx)
+    });
+  };
+
   render() {
     const { errors } = this.state;
     return (
@@ -150,6 +206,37 @@ class AddCourse extends Component {
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
                 {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
+                {this.state.pointColumns.map((pointColumn, idx) => (
+                <FormGroup key={idx}>
+                  <div className="point-columns form-row">
+                    <div className="col form-row">
+                      <Label className="col-3">Tên cột điểm: </Label>
+                      <input
+                        className="form-control col"
+                        type="text"
+                        placeholder={`Tên cột điểm`}
+                        value={pointColumn.pointName}
+                        onChange={this.handlePointColumnNameChange(idx)}
+                      />
+                    </div>
+                    <div className="col form-row">
+                      <Label className="col-3">Tỉ lệ điểm (%): </Label>
+                      <input
+                        className="form-control col"
+                        type="number"
+                        placeholder={`Tỉ lệ điểm`}
+                        value={pointColumn.pointRate}
+                        onChange={this.handlePointColumnPointRateChange(idx)}
+                      />
+                    </div>
+                    <button style={styles.buttonDanger} type="button" className="btn btn-danger" onClick={this.handleRemovePointColumn(idx)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                  </div>
+                </FormGroup>
+                ))}
+                <FormGroup>
+                  <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
+                  {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
+                </FormGroup>
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>
@@ -178,7 +265,17 @@ class AddCourse extends Component {
               </FormGroup>
               <FormGroup>
                 <Label>Hạn chót ghi danh</Label> <br/>
-                <DateTimePicker value={this.state.enrollDeadline} onChange={this.onChangeDeadline} />
+                <DatePicker
+                  selected={this.state.enrollDeadline}
+                  onChange={this.onChangeDeadline}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  isClearable={true}
+                  dateFormat="dd/MM/yyyy HH:mm aa"
+                  customInput={<Input />}
+                  timeCaption="time"
+                />
                 {errors.enrollDeadline && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
             </CardBody>

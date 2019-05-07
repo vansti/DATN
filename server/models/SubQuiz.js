@@ -5,25 +5,15 @@ require('dotenv').config();
 //Create schema
 const SubQuizSchema = new Schema({
   quizId:{type: mongoose.Schema.ObjectId, ref: 'quizzes'},
-  studenQuiz:[
+  studentSubmission: [
     {
-      userId: {
-        type: mongoose.Schema.ObjectId, ref: 'users'
-      },
-      listAnswer:[{
-        
-      }],
+      userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
       point:{
         type: Number,
-      }
+      },
+      answer: []
     }
-  ],
-  date: {
-    type: Date
-  },
-  isLate:{
-    type: Boolean
-  }
+  ]
 })
 
 module.exports = SubQuiz = mongoose.model('subquiz', SubQuizSchema)

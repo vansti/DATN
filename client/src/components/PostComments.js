@@ -95,7 +95,6 @@ class PostComments extends Component {
   render() {
     const { comments, loading } = this.state
     const { exercise } = this.props
-
     return (
       <Fragment>
         <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>

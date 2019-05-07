@@ -9,6 +9,9 @@ const ExerciseSchema = new Schema({
   text: {
     type: String
   },
+  pointColumn: {
+      type: mongoose.Schema.ObjectId, ref: 'courses'
+  },  
   attachFiles: [
     {      
       id: {

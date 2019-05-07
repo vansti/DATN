@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form'
 import authReducer from './authReducer';
 import errorReducer from './errorReducer';
 import profileReducer from './profileReducer';
@@ -10,6 +11,8 @@ import commentReducer from './commentReducer';
 import attendanceReducer from './attendanceReducer';
 import scheduleReducer from './scheduleReducer';
 import submissionReducer from './submissionReducer';
+import testQuizReducer from './testQuizReducer';
+import pointReducer from './pointReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -20,7 +23,11 @@ export default combineReducers({
   users: usersReducer,
   exercises: exerciseReducer,
   comments: commentReducer,
+  form: formReducer,
   attendance: attendanceReducer,
   schedule: scheduleReducer,
-  submission: submissionReducer
+  testQuiz: testQuizReducer,
+  submission: submissionReducer,
+  point: pointReducer
 });
+

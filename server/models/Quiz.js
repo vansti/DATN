@@ -6,8 +6,12 @@ const QuizSchema = new Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String,
+    required: true
+  },
   courseId: {
-    type: mongoose.Schema.ObjectId, 
+    type: mongoose.Schema.ObjectId,
     ref: 'courses'
   },
   listQuiz: [
@@ -15,14 +19,26 @@ const QuizSchema = new Schema({
       question: {
         type: String
       },
-      answers: [{}],
-      correctAnswer: [{}],
-      time: {},
       questionType: {
+        type: String
+      },
+      answers: [{
+        required: true,
+        type: String
+      }],
+      correctAnswer: [{
+        required: true,
+        type: String
+      }],
+      explanation: {
         type: String
       }
     }
   ],
+  time: {
+    type: String,
+    required: true
+  },
   deadline:{
     type: Date,
     required: true
@@ -33,5 +49,5 @@ const QuizSchema = new Schema({
   }
 })
 
-module.exports = Quiz = mongoose.model('quiz', QuizSchema)
+module.exports = Quiz = mongoose.model('quizzes', QuizSchema)
 

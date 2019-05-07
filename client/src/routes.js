@@ -40,19 +40,22 @@ const EditProfile = React.lazy(() => import('./views/EditProfile/EditProfile'));
 const AddCourse = React.lazy(() => import('./views/Courses/AddCourse'));
 const CourseList = React.lazy(() => import('./views/Courses/CourseList'));
 const CourseDetail = React.lazy(() => import('./views/Courses/CourseDetail'));
+const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
+const QuizList = React.lazy(() => import('./views/Quiz/QuizList'));
+const QuizExercise = React.lazy(() => import('./views/Quiz/QuizExcercise'));
+const QuizTest = React.lazy(() => import('./views/Quiz/QuizTest'));
+const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
 const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
 const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
-const AddQuiz = React.lazy(() => import('./views/Quiz/AddQuiz/AddQuiz'));
-const QuizList = React.lazy(() => import('./views/Quiz/QuizList/QuizList'));
-const QuizDetail = React.lazy(() => import('./views/Quiz/QuizDetail/QuizDetail'));
 const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
 const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
 const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
+const PointList = React.lazy(() => import('./views/PointList/PointList'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -101,19 +104,22 @@ const routes = [
   { path: '/add-course', exact: true, name: 'Thêm khóa học', component: AddCourse },
   { path: '/courses', exact: true, name: 'Khóa học của tôi', component: CourseList },
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
+  { path: '/quiz', exact: true, name: 'Danh sách bài trắc nghiệm', component: QuizList },
+  { path: '/quiz/test/:id', exact: true, name: 'Nội dung kiểm tra trắc nghiệm', component: QuizTest },
+  { path: '/quiz/excercise/:id', exact: true, name: 'Nội dung bài bài tập trắc nghiệm', component: QuizExercise },
+  { path: '/quiz/add', exact: true, name: 'Thêm bài kiểm tra trắc nghiệm', component: QuizAdd },
+  { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
   { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
-  { path: '/add-quiz', exact: true, name: 'Thêm quiz', component: AddQuiz },
-  { path: '/quiz', exact: true, name: 'Danh sách khóa học', component: QuizList },
-  { path: '/quiz/:id', exact: true, name: 'Nội dung khóa học', component: QuizDetail },
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
   { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
+  { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
 
 ];
 
