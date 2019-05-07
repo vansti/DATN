@@ -6,13 +6,33 @@ import {
   GET_EXERCISE_LIST, 
   GET_COMMENT, 
   CLEAR_SUCCESS, 
-  GET_SUBMISSION, 
+  GET_SUBMISSION,
+  GET_SUBMISSION2,
   DEL_SUBMISSION, 
   CLEAR_ERRORS,
   EXERCISE_LOADING, 
-  COMMENT_LOADING
+  COMMENT_LOADING,
+  GET_EXER,GET_EXERPOINT 
 } from './types';
 
+
+export const getExercisePoint = (id) => dispatch => {
+  axios
+    .get(`/api/exercises/exercisePoint/${id}`)
+    .then(res =>
+      dispatch({
+        type: GET_EXERPOINT,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_EXERPOINT,
+        payload: {}
+      }
+    ))
+    
+}
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
   axios
@@ -38,6 +58,25 @@ export const setExercisesLoading = () => {
   };
 };
 
+// Add Point
+export const addPoint= (newPoint) => dispatch => {
+  axios
+    .post('/api/exercises/add-point', newPoint)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: {data: 'Nhập điểm thành công'}
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+//////
 export const getExerciseList = (courseId) => dispatch => {
   dispatch(setExercisesLoading());
   axios
@@ -99,6 +138,25 @@ export const setCommentsLoading = () => {
     type: COMMENT_LOADING
   };
 };
+// get 1 exercise
+export const getExercise = (id) => dispatch => {
+  axios
+    .get(`/api/exercises/exercise/${id}`)
+    .then(res =>
+      dispatch({
+        type: GET_EXER,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_EXER,
+        payload: {}
+      }
+    ))
+}
+
+
 
 // Add Submission
 export const addSubmission = (data, exerciseId) => dispatch => {
@@ -133,6 +191,21 @@ export const getSubmission = (exerciseId) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUBMISSION,
+        payload: res.data
+      })
+    }
+    )
+    .catch(err =>{
+
+    });
+};
+export const getSubmissionExer = (exerciseId) => dispatch => {
+  
+  axios
+    .get(`/api/exercises/${exerciseId}/get-submissionTai`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUBMISSION2,
         payload: res.data
       })
     }

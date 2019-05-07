@@ -38,7 +38,7 @@ router.post(
             deadline: '2019-06-01',
         });
         const newSubQuiz = new SubQuiz({
-            studentExercise: []
+            studentSubmission: []
         });
         async function run() {
             try {

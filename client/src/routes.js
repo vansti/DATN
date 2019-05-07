@@ -56,7 +56,7 @@ const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 const PointList = React.lazy(() => import('./views/PointList/PointList'));
-
+const ScoreExercise = React.lazy(() => import('./views/ScoreExercise/ScoreExercise'));
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Trang chủ', component: DefaultLayout },
@@ -117,6 +117,7 @@ const routes = [
   { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
+  { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
   { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
   { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
@@ -124,3 +125,4 @@ const routes = [
 ];
 
 export default routes;
+
