@@ -487,4 +487,32 @@ router.get(
   }
 );
 
+// @route   GET api/courses/get-point-columns-student/:courseId/:studentId
+// @desc    lấy cột điểm trong khóa học
+// @access  Private
+router.get(
+  '/get-point-columns-student/:courseId/:studentId',
+  // passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Course.findById(
+      req.params.courseId,
+      {pointColumns: 1}
+    )
+    .populate({
+      path: 'pointColumns.submit',
+      match: { 'studentSubmission.userId': req.params.studentId },
+      select: { 
+        studentSubmission:  
+        {
+          $elemMatch: {
+            'userId': req.params.studentId 
+          }
+        }
+      }
+    })
+    .then(course => res.json(course))
+    .catch(err => console.log(err));
+  }
+);
+
 module.exports = router;
