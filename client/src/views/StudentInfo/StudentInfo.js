@@ -235,8 +235,8 @@ class StudentIfo extends Component {
                 )
               }
               <tr>
-                <td colSpan='3' bgcolor="grey">
-                  <font color="white"><b>Tổng điểm</b></font>
+                <td colSpan='3' bgcolor="grey" align="center">
+                  <font color="white"><b>Tổng điểm :</b></font>
                 </td>
                 <td>
                   {this.caculateTotalPoint(student_point.pointColumns)}

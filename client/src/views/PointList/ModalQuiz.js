@@ -1,5 +1,5 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, Button, Table } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Button, ListGroup, ListGroupItem } from 'reactstrap';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -81,19 +81,13 @@ class ModalQuiz extends Component {
               ?
               <b>Chưa có bài trắc nghiệm</b>
               :
-              <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
-                <tbody>
-                {
-                  quizzes.map(quiz=>
-                    <tr key={quiz._id} className="changeCursor" onClick={this.handleClickQuiz.bind(this, quiz._id)}>
-                      <td>
-                        {quiz.title}
-                      </td>
-                    </tr>
-                  )
-                }
-                </tbody>
-              </Table>
+              <ListGroup>
+              {
+                quizzes.map(quiz=>
+                  <ListGroupItem key={quiz._id} tag="button" onClick={this.handleClickQuiz.bind(this, quiz._id)} action>{quiz.title}</ListGroupItem>
+                )
+              }
+              </ListGroup>
             }
             </Fragment>
           }

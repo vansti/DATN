@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Nav, NavItem, NavLink, Progress, TabContent, TabPane, ListGroup, ListGroupItem } from 'reactstrap';
+// import { Nav, NavItem, NavLink, Progress, TabContent, TabPane, ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { AppSwitch } from '@coreui/react'
+// import classNames from 'classnames';
+// import { AppSwitch } from '@coreui/react'
 
 const propTypes = {
   children: PropTypes.node,
@@ -36,7 +36,7 @@ class DefaultAside extends Component {
 
     return (
       <React.Fragment>
-        <Nav tabs>
+        {/* <Nav tabs>
           <NavItem>
             <NavLink className={classNames({ active: this.state.activeTab === '1' })}
                      onClick={() => {
@@ -305,7 +305,7 @@ class DefaultAside extends Component {
             <Progress className="progress-xs" color="success" value="10" />
             <small className="text-muted">25GB/256GB</small>
           </TabPane>
-        </TabContent>
+        </TabContent> */}
       </React.Fragment>
     );
   }
