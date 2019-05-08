@@ -57,6 +57,27 @@ export default {
           icon: 'fa fa-calendar',
         },
       ]
+    },
+    {
+      name: 'Kiểm tra trắc nghiệm',
+      icon: 'fa fa-question-circle',
+      children: [
+        {
+          name: 'Danh sách',
+          url: '/quiz',
+          icon: 'icon-list',
+        },
+        {
+          name: 'Thêm bài kiểm tra',
+          url: '/quiz/add',
+          icon: 'icon-plus',
+        },
+      ]
+    },
+    {
+      name: 'Quản lý cột điểm',
+      url: '/point-list',
+      icon: 'fa fa-bars',
     }
   ],
 };

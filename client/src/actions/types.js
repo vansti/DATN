@@ -24,6 +24,8 @@ export const CLEAR_USER = 'CLEAR_USER';
 //Point
 export const GET_POINT_COLUMNS = 'GET_POINT_COLUMNS';
 export const POINT_LOADING = 'POINT_LOADING';
+export const GET_STUDENT_POINT = 'GET_STUDENT_POINT';
+
 //Schedule
 export const GET_SCHEDULE = 'GET_SCHEDULE';
 export const GET_EXER = 'GET_EXER';

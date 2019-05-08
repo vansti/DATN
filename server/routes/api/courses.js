@@ -510,6 +510,7 @@ router.get(
         }
       }
     })
+    .populate('pointColumns.test','title')
     .then(course => res.json(course))
     .catch(err => console.log(err));
   }

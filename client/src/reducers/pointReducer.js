@@ -1,9 +1,13 @@
 import {
   POINT_LOADING, 
-  GET_POINT_COLUMNS
+  GET_POINT_COLUMNS,
+  GET_STUDENT_POINT
 } from '../actions/types';
 
 const initialState = {
+  student_point: {
+    pointColumns: []
+  },
   point_columns: {
     pointColumns: []
   },
@@ -16,6 +20,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         point_columns: action.payload,
+        loading: false
+      };
+    case GET_STUDENT_POINT:
+      return {
+        ...state,
+        student_point: action.payload,
         loading: false
       };
     case POINT_LOADING:
