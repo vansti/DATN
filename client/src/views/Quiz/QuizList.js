@@ -58,7 +58,11 @@ class QuizListPage extends Component {
               </td>
               <td className="text-right">
                 <Button className="ml-2 mr-2" onClick={this.jumpToQuizExcercise.bind(this, testQuiz._id)} color="primary">Làm bài tập</Button>
-                <Button className="ml-2 mr-2" onClick={this.jumpToQuizTest.bind(this, testQuiz._id)} color="primary">Làm Kiểm tra</Button>
+                {
+                  testQuiz.hasSubQuiz ? 
+                  (<Button className="ml-2 mr-2" onClick={this.jumpToQuizTest.bind(this, testQuiz._id)} color="primary">Làm Kiểm tra</Button>) 
+                  :(<Button className="ml-2 mr-2" onClick={this.jumpToQuizTest.bind(this, testQuiz._id)} color="danger">Coi lại bài làm</Button>) 
+                }
               </td>
             </tr>
           )

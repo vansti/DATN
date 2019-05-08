@@ -16,6 +16,8 @@ class QuizTestPage extends Component {
       timeout: 300,
       isShowSuccess: false,
       isLoading: false,
+      alert: '',
+      typeAlert: '',
     };
   }
 
@@ -24,16 +26,31 @@ class QuizTestPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps.success.data)
-    // if (!nextProps.success.data) {
-    //   this.setState({isShowSuccess: true, isLoading: false})
-    // }
+    let alert = '';
+    let typeAlert = '';
+    if(nextProps.success.data !== undefined) {
+      console.log()
+      if (nextProps.success.data.message === 'success') {
+        // this.jumpToListQuiz();
+        alert = 'Số điểm của bạn là: ' + 6.7;
+        typeAlert = 'success';
+      } else {
+        typeAlert = 'error';
+        alert = nextProps.success.data.data;
+      }
+      this.setState({isShowSuccess: true, isLoading: false, alert: alert, typeAlert: typeAlert});
+    }
+  }
+
+  jumpToListQuiz = () => {
+    this.props.history.push('/quiz');
   }
 
   hideAlertSuccess(){
     this.setState({
       isShowSuccess: false
     })
+    this.jumpToListQuiz();
   }
 
   render(){
@@ -44,15 +61,30 @@ class QuizTestPage extends Component {
       return  (
         <div>
           <QuizTest quizTest={testQuiz} shuffle={true}/>
-          <SweetAlert
-            success
-            confirmBtnText="OK"
-            confirmBtnBsStyle="success"
-            title="Thêm bài kiểm tra thành công!"
-            show={this.state.isShowSuccess}
-            onConfirm={this.hideAlertSuccess.bind(this)}
-            onCancel={this.hideAlertSuccess.bind(this)}>
-          </SweetAlert>
+          {
+            this.state.typeAlert === 'success' ?
+            (<SweetAlert
+              success
+              confirmBtnText="Quay lại danh sách câu hỏi"
+              confirmBtnBsStyle='success'
+              title={ this.state.alert }
+              show={this.state.isShowSuccess}
+              onConfirm={this.hideAlertSuccess.bind(this)}
+              >
+            </SweetAlert>) : 
+            (
+              <SweetAlert
+                error
+                confirmBtnText="Quay lại danh sách câu hỏi"
+                confirmBtnBsStyle='error'
+                title={ this.state.alert }
+                show={this.state.isShowSuccess}
+                onConfirm={this.hideAlertSuccess.bind(this)}
+                >
+              </SweetAlert>
+            )
+          }
+          
           <Modal isOpen={this.state.isLoading} className='modal-sm' >
             <ModalBody className="text-center">
               <h3>Đang thêm bài kiểm tra</h3>

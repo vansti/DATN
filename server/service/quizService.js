@@ -14,7 +14,6 @@ const quizService = {
     let result = -1;
     arr.forEach((element, index) => {
         if(JSON.stringify(element[key]) === JSON.stringify(value)) {
-          console.log('ok');
             result = index;
         }
     });
