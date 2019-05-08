@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
 const path = require('path');
-require('dotenv').config()
+const socketIO = require("socket.io");
+
+require('dotenv').config();
 
 const users = require('./routes/api/users');
 
@@ -77,4 +79,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, ()=> console.log(`Server starting on ${port}`));
+server = app.listen(port, ()=> console.log(`Server starting on ${port}`));
+
+const io = socketIO(server);
+
+const socketEvents = require('./socketEvents')(io);
