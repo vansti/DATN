@@ -74,16 +74,16 @@ export default {
       url: '/point-list',
       icon: 'fa fa-bars',
     },
-    {
-      name: 'Example',
-      icon: 'fa fa-question-circle',
-      children: [
-        {
-          name: 'Demo react form',
-          url: '/example/react-form',
-          icon: 'icon-plus',
-        },
-      ]
-    },
+    // {
+    //   name: 'Example',
+    //   icon: 'fa fa-question-circle',
+    //   children: [
+    //     {
+    //       name: 'Demo react form',
+    //       url: '/example/react-form',
+    //       icon: 'icon-plus',
+    //     },
+    //   ]
+    // },
   ],
 };
