@@ -3,7 +3,6 @@ import {Input } from 'reactstrap';
 import { Bar, Line } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import ModalEnroll from '../../components/ModalEnroll';
 import { getCurentCourse } from '../../actions/courseActions';
 import { getUsers } from '../../actions/userActions';
 
@@ -541,7 +540,6 @@ class Dashboard extends Component {
             </Table>
           </CardBody>
           <CardFooter>
-           <ModalEnroll/>
           </CardFooter>
         </Card>
         

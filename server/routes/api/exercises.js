@@ -19,10 +19,6 @@ const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
 const SubExercise = require('../../models/SubExercise');
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 router.use(cors());
 
 router.use(fileUpload());

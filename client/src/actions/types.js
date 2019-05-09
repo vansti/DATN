@@ -8,9 +8,7 @@ export const GET_CURRENT_COURSES = 'GET_CURRENT_COURSES';
 export const GET_USERS = 'GET_USERS';
 export const GET_EXERCISE_LIST = 'GET_EXERCISE_LIST';
 export const GET_COMMENT = 'GET_COMMENT';
-<<<<<<< HEAD
 export const CHECK_POINT = 'CHECK_POINT';
-=======
 export const GET_ATTENDANCE = 'GET_ATTENDANCE';
 export const CLEAR_ATTENDANCE = 'CLEAR_ATTENDANCE';
 export const CLEAR_USER = 'CLEAR_USER';
@@ -30,4 +28,3 @@ export const COMMENT_LOADING = 'COMMENT_LOADING';
 export const ATTENDANCE_LOADING = 'ATTENDANCE_LOADING';
 export const GET_TODAY_ATTENDANCE = 'GET_TODAY_ATTENDANCE';
 export const ALLCOURSE_LOADING = 'ALLCOURSE_LOADING';
->>>>>>> master

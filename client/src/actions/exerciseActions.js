@@ -1,15 +1,12 @@
 import axios from 'axios';
 
-<<<<<<< HEAD
-import { GET_SUCCESS, GET_ERRORS, GET_EXERCISE_LIST, GET_COMMENT, CLEAR_SUCCESS, CHECK_POINT} from './types';
-=======
 import { GET_SUCCESS, GET_ERRORS, 
   GET_EXERCISE_LIST, GET_COMMENT, 
   CLEAR_SUCCESS, GET_SUBMISSION, 
   DEL_SUBMISSION, CLEAR_ERRORS,
-  EXERCISE_LOADING, COMMENT_LOADING
+  EXERCISE_LOADING, COMMENT_LOADING,CHECK_POINT
 } from './types';
->>>>>>> master
+
 
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
@@ -94,7 +91,6 @@ export const getComments = (exerciseId) => dispatch => {
     );
 };
 
-<<<<<<< HEAD
 //check point
 export const checkPoints = (exerciseId) => dispatch => {
   dispatch(clearSuccess());
@@ -114,7 +110,6 @@ export const checkPoints = (exerciseId) => dispatch => {
     );
 };
 
-=======
 export const setCommentsLoading = () => {
   return {
     type: COMMENT_LOADING
@@ -193,7 +188,7 @@ export const deleteSubmission = (exerciseId, submission) => dispatch => {
     .catch(err =>{
     });
 };
->>>>>>> master
+
 
 export const clearSuccess = () => {
   return {

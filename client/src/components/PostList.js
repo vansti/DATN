@@ -14,12 +14,9 @@ import isEmptyObj from '../validation/is-empty';
 import ReactLoading from 'react-loading';
 import Moment from 'react-moment'; 
 import PostComments from './PostComments';
-<<<<<<< HEAD
 import PostPoint from './PostPoint.js';
-=======
 import SubmitExercise from './SubmitExercise';
 import NoImg from '../assets/img/NoImg.png';
->>>>>>> master
 
 class PostList extends Component {
   constructor(props) {
@@ -60,7 +57,6 @@ class PostList extends Component {
   }
 
   render() {
-<<<<<<< HEAD
     const exercises = this.props.exercises.exercises;
     var ExerciseCard = '';
     if(exercises === null)
@@ -128,9 +124,7 @@ class PostList extends Component {
       }
     }
 
-=======
-    const { exercises, loading } = this.state;
->>>>>>> master
+    const { exercise, loading } = this.state;
     return (
       <Fragment>
         <div id="accordion">
