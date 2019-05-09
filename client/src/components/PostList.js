@@ -60,6 +60,8 @@ class PostList extends Component {
   }
   render() {
     const { exercises, loading } = this.state;
+    const { role } = this.props.auth.user
+
     return (
       <Fragment>
         <div id="accordion">
@@ -125,14 +127,18 @@ class PostList extends Component {
                         }
                       </ListGroup>
                       <br/>
-                      <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
+                      {
+                        role === 'student'
+                        ?
+                        null
+                        :
+                        <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
+                      }
                       <SubmitExercise exerciseId={exercise._id}/>
                     </CardBody>
                     <CardFooter>
                       <PostComments exercise={exercise}/>
-                      
-                    </CardFooter>
-      
+                    </CardFooter>     
                   </Collapse>
                 </Card>
               )
@@ -152,6 +158,7 @@ PostList.propTypes = {
 
 const mapStateToProps = state => ({
   exercises: state.exercises,
+  auth: state.auth
 });
 
 export default  withRouter(connect(mapStateToProps, { getExerciseList })(PostList));  
