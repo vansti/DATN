@@ -4,7 +4,8 @@ import {
   POINT_LOADING,
   GET_POINT_COLUMNS,
   GET_SUCCESS,
-  GET_ERRORS
+  GET_ERRORS,
+  GET_STUDENT_POINT
 } from './types';
 
 
@@ -65,6 +66,25 @@ export const setPointColumnsQuiz = ( courseId, pointColumnsId, quizId ) => dispa
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
+      })
+    );
+};
+
+// get point columns of a course
+export const getPointColumnsStudent = (courseId, studentId) => dispatch => {
+  dispatch(setPointLoading())
+  axios
+    .get(`/api/courses/get-point-columns-student/${courseId}/${studentId}`)
+    .then(res =>
+      dispatch({
+        type: GET_STUDENT_POINT,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_STUDENT_POINT,
+        payload: {}
       })
     );
 };

@@ -12,17 +12,15 @@ const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Quiz = require('../../models/Quiz');
 const SubQuiz = require('../../models/SubQuiz');
+//service
+const quizService = require('../../service/quizService');
 router.use(cors());
 
 
 // @route   POST api/test/add-quiz
 // @desc    teachcer create test quiz
 // @access  Private
-router.post(
-    '/add-quiz', passport.authenticate('jwt', {
-        session: false
-    }),
-    (req, res) => {
+router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, res) => {
         const { errors, isValid } = validateAddTestQuizInput(req.body);
         // Check Validation
         if (!isValid) {
@@ -62,15 +60,37 @@ router.post(
 // @route   get api/test/quiz
 // @desc    get all quizes
 // @access  Private
-router.get(
-    '/quiz',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
-        Quiz.find((err, quizes) => {
-            res.json(quizes);
-        });
+router.get('/quiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+    const userId = req.user._id;
+    async function run() {
+        try {
+            let result = [];
+            let quizs = await Quiz.find();
+            const subquizs = await SubQuiz.find();
+            await quizs.forEach((quiz, index) => {
+                let subQuiz = subquizs.find(
+                    object => JSON.stringify(object.quizId) == JSON.stringify(quiz._id)
+                )
+                temp = {
+                    '_id': quiz._id,
+                    'title': quiz.title,
+                    'description': quiz.description,
+                    'courseId': quiz.courseId,
+                    'listQuiz': quiz.listQuiz,
+                    'time': quiz.time,
+                    'deadline': quiz.deadline,
+                    'created:': quiz.created,
+                    'hasSubQuiz': quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', userId) == -1 ?  1 : 0
+                }
+                result.push(temp);
+            });
+            res.json(result);
+        } catch (err) {
+            console.log(err)
+        }
     }
-);
+    run();
+});
 
 // @route   get api/test/quiz-detail
 // @desc    get one quiz
@@ -81,25 +101,24 @@ router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: f
     }).catch(err => console.log(err));
 });
 
-function checkvalueKeyExist(arr, key, value) {
-    let result = -1;
-    arr.forEach((element, index) => {
-        if(JSON.stringify(element[key]) === JSON.stringify(value)) {
-            result = index;
+// @route   get api/test/sub-quiz
+// @desc    get one quiz
+// @access  Private
+router.get('/sub-quiz/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+    async function run() {
+        try {
+            let subQuiz = await SubQuiz.findOne({'quizId': req.params.idTestQuiz});
+            subQuiz = subQuiz.studentSubmission.find(
+                object => JSON.stringify(object.userId) == JSON.stringify(req.user._id));
+            console.log(subQuiz);
+            res.json(subQuiz);
+        } catch (err) {
+            console.log(err)
         }
-    });
-    return result;
-}
+    }
+    run();
+});
 
-function calPointQuiz(listQuiz, submistionAnswer) {
-    let numberQuizCorrect = 0;
-    listQuiz.forEach((element, index) => {
-        if(element.correctAnswer == submistionAnswer[index]) {
-            numberQuizCorrect++;
-        }
-    });
-    return numberQuizCorrect / listQuiz.length * 10;
-}
 // @route   POST api/test/sub-quiz
 // @desc    get one quiz
 // @access  Private
@@ -114,16 +133,24 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
             const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId});
             const quiz = await Quiz.findById(req.body.quizId);
 
-            submission.point = calPointQuiz(quiz.listQuiz, params.answer);
-            let index = checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId)
-            if(index !== -1) {
+            submission.point = quizService.calPointQuiz(quiz.listQuiz, params.answer);
+            let index = quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId);
+            if(index === -1) {
                 subQuiz.studentSubmission.unshift(submission);
                 const subQuizUpdated = await subQuiz.save();
-                res.json(subQuizUpdated);
+                
+                response = {
+                    data: submission.point,
+                    message: 'success'
+                }
+                res.json(response);
             } else {
-                res.json({error: 'Không thể tiếp tục, bạn đã làm bài kiểm tra này.'});
+                response = {
+                    data: 'Bạn đã làm bài kiểm tra này mời bạn chọn bài kiểm tra khác.',
+                    message: 'failure'
+                }
+                res.json(response);
             }
-
         } catch (err) {
             console.log(err)
         }

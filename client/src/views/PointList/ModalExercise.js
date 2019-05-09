@@ -1,5 +1,5 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, Button, Table } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Button, ListGroup, ListGroupItem } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getExerciseList, clearSuccess } from '../../actions/exerciseActions'; 
 import ReactLoading from 'react-loading';
@@ -81,19 +81,13 @@ class ModalExercise extends Component {
               ?
               <b>Chưa có bài tập</b>
               :
-              <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
-                <tbody>
-                {
-                  exercises.map(exercise=>
-                    <tr key={exercise._id} className="changeCursor" onClick={this.handleClickExercise.bind(this, exercise._id)}>
-                      <td>
-                        {exercise.title}
-                      </td>
-                    </tr>
-                  )
-                }
-                </tbody>
-              </Table>
+              <ListGroup>
+              {
+                exercises.map(exercise=>
+                  <ListGroupItem key={exercise._id} tag="button" onClick={this.handleClickExercise.bind(this, exercise._id)} action>{exercise.title}</ListGroupItem>
+                )
+              }
+              </ListGroup>
             }
             </Fragment>
           }

@@ -12,6 +12,7 @@ export const GET_EXERPOINT = 'GET_EXERPOINT';
 export const GET_CURRENT_TESTQUIZ = 'GET_CURRENT_TESTQUIZ';
 export const GET_DETEAIL_QUIZ = 'GET_CURRENT_TESTQUIZ';
 export const GET_QUIZ_LIST = 'GET_QUIZ_LIST';
+export const GET_QUIZ_SUBMISSTION = 'GET_QUIZ_SUBMISSTION';
 export const QUIZ_LOADING = 'QUIZ_LOADING';
 
 //Attendance
@@ -25,6 +26,8 @@ export const CLEAR_USER = 'CLEAR_USER';
 //Point
 export const GET_POINT_COLUMNS = 'GET_POINT_COLUMNS';
 export const POINT_LOADING = 'POINT_LOADING';
+export const GET_STUDENT_POINT = 'GET_STUDENT_POINT';
+
 //Schedule
 export const GET_SCHEDULE = 'GET_SCHEDULE';
 export const GET_EXER = 'GET_EXER';

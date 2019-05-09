@@ -10,7 +10,8 @@ import {
   CLEAR_SUCCESS,
   GET_CURRENT_TESTQUIZ,
   GET_QUIZ_LIST,
-  QUIZ_LOADING
+  QUIZ_LOADING,
+  GET_QUIZ_SUBMISSTION
 } from './types';
 
 export const addTestQuiz = (testQuizData, history) => dispatch => {
@@ -67,6 +68,27 @@ export const getListQuiz = () => dispatch => {
       })}
     );
 }
+// Get QuizSubmisstion by id
+export const getQuizSubmisstion = (testQuizId) => dispatch => {
+  axios
+    .get(`/api/test/sub-quiz/${testQuizId}`)
+    .then(res =>{
+      console.log(res.data);
+      dispatch({
+        type: GET_QUIZ_SUBMISSTION,
+        payload: res.data
+      })
+    }
+      
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_QUIZ_SUBMISSTION,
+        payload: {}
+      }
+    ))
+}
+
 // Get detail test quiz by id
 export const getDetailQuiz = (testQuizId) => dispatch => {
   axios

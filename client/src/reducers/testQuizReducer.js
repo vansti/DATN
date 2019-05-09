@@ -1,7 +1,8 @@
 import {
   GET_CURRENT_TESTQUIZ,
   GET_QUIZ_LIST,
-  QUIZ_LOADING
+  QUIZ_LOADING,
+  GET_QUIZ_SUBMISSTION
 } from '../actions/types';
 
 const initialState = {
@@ -17,6 +18,11 @@ export default function(state = initialState, action) {
         ...state,
         listTestQuiz: action.payload.data,
         message: action.payload.message
+      };
+    case GET_QUIZ_SUBMISSTION:
+      return {
+        ...state,
+        quizSubmission: action.payload,
       };
     case GET_QUIZ_LIST:
       return {
