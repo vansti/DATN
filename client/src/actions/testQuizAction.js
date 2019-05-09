@@ -35,6 +35,7 @@ export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
   return axios
     .post('/api/test/sub-quiz', submisstionQuiz)
     .then(res => {
+      console.log(res.data);
       dispatch({
         type: GET_SUCCESS,
         payload: {
