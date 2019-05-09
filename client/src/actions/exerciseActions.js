@@ -18,20 +18,19 @@ import {
 
 export const getExercisePoint = (id) => dispatch => {
   axios
-    .get(`/api/exercises/exercisePoint/${id}`)
-    .then(res =>
+    .get(`/api/exercises/exercisePointOP/${id}`)
+    .then(res => {
       dispatch({
         type: GET_EXERPOINT,
         payload: res.data
       })
-    )
+    })
     .catch(err =>
       dispatch({
         type: GET_EXERPOINT,
         payload: {}
       }
     ))
-    
 }
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
