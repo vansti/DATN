@@ -48,6 +48,7 @@ router.get(
     .populate('students.userId', '_id name email photo')
     .then(attendance => res.json(attendance))
     .catch(err => console.log(err));
+    console.log(attendance);
   }
 );
 
