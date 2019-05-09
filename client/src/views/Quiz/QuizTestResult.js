@@ -3,11 +3,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 //action
-import { getListQuiz } from '../../actions/testQuizAction';
+import { getListQuiz, getQuizSubmisstion } from '../../actions/testQuizAction';
 //component
-import SweetAlert from 'react-bootstrap-sweetalert';
-import {Modal, ModalBody} from 'reactstrap';
-import QuizTest from '../../components/Quiz/QuizTest';
+import {Modal, ModalBody, Button} from 'reactstrap';
+import QuizTestResult from '../../components/Quiz/QuizTestResult';
 import ReactLoading from 'react-loading';
 class QuizTestPage extends Component {
   constructor (props) {
@@ -23,6 +22,7 @@ class QuizTestPage extends Component {
 
   componentDidMount = () => {
     this.props.getListQuiz();
+    this.props.getQuizSubmisstion(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,43 +54,16 @@ class QuizTestPage extends Component {
 
   render(){
     var testQuiz = '';
+    var quizSubmission = '';
     if(this.props.testQuiz.listTestQuiz != null)
     {
       testQuiz = this.props.testQuiz.listTestQuiz.find(test => test._id.toString() === this.props.match.params.id);
+      quizSubmission = this.props.testQuiz.quizSubmission;
       return  (
         <div>
-          <QuizTest quizTest={testQuiz} shuffle={true}/>
-          {
-            this.state.typeAlert === 'success' ?
-            (<SweetAlert
-              success
-              confirmBtnText="Quay lại danh sách câu hỏi"
-              confirmBtnBsStyle='success'
-              title={ this.state.alert }
-              show={this.state.isShowSuccess}
-              onConfirm={this.hideAlertSuccess.bind(this)}
-              >
-            </SweetAlert>) : 
-            (
-              <SweetAlert
-                error
-                confirmBtnText="Quay lại danh sách câu hỏi"
-                confirmBtnBsStyle='error'
-                title={ this.state.alert }
-                show={this.state.isShowSuccess}
-                onConfirm={this.hideAlertSuccess.bind(this)}
-                >
-              </SweetAlert>
-            )
-          }
-          
-          <Modal isOpen={this.state.isLoading} className='modal-sm' >
-            <ModalBody className="text-center">
-              <h3>Đang thêm bài kiểm tra</h3>
-              <br/>
-              <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
-            </ModalBody>
-          </Modal>
+          <h3>Số điểm của bạn là: {quizSubmission.point}điểm</h3>
+          <QuizTestResult quizTest={testQuiz} quizSubmission={quizSubmission} shuffle={true}/>
+          <Button color="primary" onClick={this.jumpToListQuiz}>Quay về danh sách Bài thi</Button>
           </div>
       )
     }
@@ -103,16 +76,18 @@ class QuizTestPage extends Component {
 
 QuizTestPage.propTypes = {
   getListQuiz : PropTypes.func.isRequired,
+  getQuizSubmisstion : PropTypes.func.isRequired,
   testQuiz: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
-  getListQuiz: bindActionCreators(getListQuiz, dispatch)
-});
+// const mapDispatchToProps = dispatch => ({
+//   getListQuiz: bindActionCreators(getListQuiz, dispatch),
+//   getQuizSubmisstion: bindActionCreators(getQuizSubmisstion, dispatch)
+// });
 
 const mapStateToProps = state => ({
   testQuiz: state.testQuiz,
   success: state.success, 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuizTestPage);
+export default connect(mapStateToProps, {getListQuiz , getQuizSubmisstion})(QuizTestPage);
