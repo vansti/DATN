@@ -9,15 +9,35 @@ const ScheduleSchema = new Schema({
   },
   events: [
     {
-      id: {
-        type: String
-      },
+      //từ mấy giờ trong ngày
       start: {
         type: String
       },
+      //đến mấy giờ trong ngày
       end: {
         type: String
       },
+      //new
+      // title: {
+      //   type: String,
+      //   required: true
+      // },
+      // content: {
+      //   type: String
+      // },
+      // exercises: [
+      //   {
+      //     type: Schema.Types.ObjectId,
+      //     ref: "exercises"
+      //   }
+      // ],
+      // quizzes: [
+      //   {
+      //     type: Schema.Types.ObjectId,
+      //     ref: "quizzes"
+      //   }
+      // ],
+      //endnew
       text: {
         type: String
       },
