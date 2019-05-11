@@ -63,15 +63,13 @@ class Schedule extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.schedule.schedule)
+    if (nextProps.schedule)
     {
-      this.setState({
-        events: nextProps.schedule.schedule.events
-      })
-    }else{
-      this.setState({
-        events: []
-      })
+      const { schedule, loading } = nextProps.schedule
+      this.setState({ 
+        events: schedule.events,
+        loading 
+      });
     }
   }
 
@@ -162,6 +160,13 @@ class Schedule extends Component {
           <ModalHeader toggle={this.toggleInfo}>Nội dung</ModalHeader>
           <ModalBody className="text-center">
             <div>{this.state.text}</div>
+          </ModalBody>
+        </Modal>
+        <Modal isOpen={this.state.loading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Loading ...</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
       </div>

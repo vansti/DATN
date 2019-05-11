@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_SUCCESS, GET_ERRORS, GET_SCHEDULE} from './types';
+import { GET_SUCCESS, GET_ERRORS, GET_SCHEDULE , SCHEDULE_LOADING, GET_EVENT_SCHEDULE } from './types';
 
 // Add Schedule
 export const addSchedule= (newSchedule) => dispatch => {
@@ -22,6 +22,7 @@ export const addSchedule= (newSchedule) => dispatch => {
 
 // get Schedule
 export const getSchedule= (courseId) => dispatch => {
+  dispatch(setScheduleLoading());
   axios
     .get('/api/schedule/get-schedule/'+ courseId)
     .then(res =>{
@@ -36,4 +37,29 @@ export const getSchedule= (courseId) => dispatch => {
         payload: {}
       })
     );
+};
+
+// get Event Schedule
+export const getEventSchedule = (courseId, eventId) => dispatch => {
+  dispatch(setScheduleLoading());
+  axios
+    .get(`/api/schedule/get-event-schedule/${courseId}/${eventId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_EVENT_SCHEDULE,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_EVENT_SCHEDULE,
+        payload: {}
+      })
+    );
+};
+
+export const setScheduleLoading = () => {
+  return {
+    type: SCHEDULE_LOADING
+  };
 };

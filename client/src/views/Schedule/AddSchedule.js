@@ -24,6 +24,7 @@ class AddSchedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       isLoading:false,
       isShowSuccess: false,
       courseId: '0',
@@ -49,7 +50,7 @@ class AddSchedule extends Component {
       eventDeleteHandling: "Update",
       onEventClick: args => {
         let dp = this.calendar;
-        DayPilot.Modal.prompt("Thay đổi sự kiện:", args.e.text()).then(function(modal) {
+        DayPilot.Modal.prompt("Thay đổi tiêu đề:", args.e.text()).then(function(modal) {
           if (!modal.result) { return; }
           args.e.data.text = modal.result;
           dp.events.update(args.e);
@@ -93,22 +94,28 @@ class AddSchedule extends Component {
       this.setState({isShowSuccess: true, isLoading: false})
     }
 
-    if (nextProps.schedule.schedule)
+    if (nextProps.schedule)
     {
-      this.setState({
-        events: nextProps.schedule.schedule.events
-      })
-    }else{
-      this.setState({
-        events: []
-      })
+      const { schedule, loading } = nextProps.schedule
+      this.setState({ 
+        events: schedule.events,
+        loading 
+      });
     }
   }
 
   submit=()=>{
     var elist = this.calendar.events.list;
-    elist.map(element => {
-      return element.date = element.start.toString().slice(0, 10)
+
+    elist.map(function (doc) {
+      doc.date = doc.start.toString().slice(0, 10);
+      delete doc.id; 
+      delete doc.resource; 
+      return doc; 
+    })
+
+    elist.sort(function(a,b){
+      return new Date(a.start) - new Date(b.start);
     });
 
     var newSchedule = {
@@ -209,6 +216,13 @@ class AddSchedule extends Component {
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
           <ModalBody className="text-center">
             <h3>Đang xử lý</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
+        <Modal isOpen={this.state.loading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Loading ...</h3>
             <br/>
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>

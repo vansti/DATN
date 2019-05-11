@@ -51,14 +51,53 @@ router.get(
   '/get-schedule/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Schedule.findOne({ courseId: req.params.courseId }).then(schedule=>{
-      res.json(schedule)
-    })
-    .catch(err => res.status(404))
+
+    async function run() {
+      try {
+        const schedule = await 
+        Schedule.findOne(
+          { courseId: req.params.courseId }
+        ).lean()
+        
+        res.json(schedule)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
 
   }
 );
 
+// @route   GET api/schedule/get-event-schedule/:courseId/:eventId
+// @desc    get event schedule by courseId eventId
+// @access  Private
+router.get(
+  '/get-event-schedule/:courseId/:eventId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    async function run() {
+      try {
+        const schedule = await 
+        Schedule.findOne(
+          { 
+            courseId: req.params.courseId
+          },
+          {
+            events: { $elemMatch: { _id: req.params.eventId }}
+          }
+        )
+        
+        res.json(schedule.events[0])
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
+    run();
+
+  }
+);
 
 module.exports = router;

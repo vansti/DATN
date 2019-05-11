@@ -6,7 +6,8 @@ import classnames from 'classnames';
 import { getUsers } from '../../actions/userActions';
 import { getCourseInfo } from '../../actions/courseActions';
 import PeopleInCourse from '../../components/PeopleInCourse';
-import PostInCourse from '../../components/PostInCourse';
+// import PostInCourse from '../../components/PostInCourse';
+import LessonList from '../Lesson/LessonList';
 import ReactLoading from 'react-loading';
 
 class CourseDetail extends Component {
@@ -66,7 +67,7 @@ class CourseDetail extends Component {
                     className={classnames({ active: this.state.activeTab === '1' })}
                     onClick={() => { this.toggle('1'); }}
                   >
-                    Bài tập
+                    Bài học
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -77,18 +78,10 @@ class CourseDetail extends Component {
                     Mọi người
                   </NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink
-                    className={classnames({ active: this.state.activeTab === '3' })}
-                    onClick={() => { this.toggle('3');}}
-                  >
-                    Câu hỏi
-                  </NavLink>
-                </NavItem>
               </Nav>
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                  <PostInCourse />
+                  <LessonList />
                 </TabPane>
                 <TabPane tabId="2">
                   <PeopleInCourse />
