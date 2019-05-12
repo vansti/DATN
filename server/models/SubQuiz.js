@@ -4,7 +4,8 @@ require('dotenv').config();
 
 //Create schema
 const SubQuizSchema = new Schema({
-  quizId:{type: mongoose.Schema.ObjectId, ref: 'quizzes'},
+  quizId: {type: mongoose.Schema.ObjectId, ref: 'quizzes'},
+  courseId: {type: mongoose.Schema.ObjectId, ref: 'courses'},
   studentSubmission: [
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},

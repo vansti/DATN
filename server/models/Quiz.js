@@ -10,10 +10,10 @@ const QuizSchema = new Schema({
     type: String,
     required: true
   },
-  courseId: {
+  courseId: [{
     type: mongoose.Schema.ObjectId,
     ref: 'courses'
-  },
+  }],
   listQuiz: [
     {      
       question: {
