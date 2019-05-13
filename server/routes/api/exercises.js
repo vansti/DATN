@@ -19,6 +19,7 @@ const Course = require('../../models/Course');
 const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
 const SubExercise = require('../../models/SubExercise');
+const Schedule = require('../../models/Schedule');
 
 router.use(cors());
 
@@ -84,7 +85,6 @@ router.post(
       // Return any errors with 400 status
       return res.status(400).json(errors);
     }
-
     const newExercise = new Exercise({
       title: req.body.title,
       text: req.body.text,
@@ -104,7 +104,17 @@ router.post(
                     exercises: exercise._id
                   }
                 }
-              ) 
+              )
+
+        await Schedule.updateOne(
+                { courseId: req.body.courseId, "events._id": req.body.eventId },
+                { 
+                  $push: 
+                  { 
+                    "events.$.exercises" : exercise._id
+                  }
+                }
+              )
 
         const subExercise = new SubExercise({
           exerciseId: exercise._id,
@@ -213,14 +223,10 @@ router.get('/exercisePointOP/:id', (req, res) => {
 router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false }), (req, res) => {
   
   let uploadedFile = req.files.file;
-  // if(!uploadedFile.name.endWith(".txt") && !uploadedFile.name.endWith(".pdf") 
-  //   && !uploadedFile.name.endWith(".docx") && !uploadedFile.name.endWith(".doc")){
-  //   return res.send('.txt/.pdf/.docx/.doc extension only');
-  // }
   let errors = {};
 
-  if(uploadedFile.size > 5 * 1024 * 1024){
-    errors.file = 'File quá lớn !'
+  if(uploadedFile.size > 20 * 1024 * 1024){
+    errors.file = 'File phải nhỏ hơn 20 MB!'
     return res.status(404).json(errors);
   }
 

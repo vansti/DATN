@@ -19,6 +19,9 @@ module.exports = function validateAddCourseInput(data) {
   if (data.openingDay === null) 
     errors.openingDay = 'Hãy chọn ngày khai giảng';
   
+  if (data.endDay === null) 
+    errors.endDay = 'Hãy chọn ngày kết thúc';
+
   if (Validator.isEmpty(data.fee)) 
     errors.fee = 'Hãy điền học phí';  
   
@@ -39,7 +42,6 @@ module.exports = function validateAddCourseInput(data) {
       errors.pointColumns = 'Tỉ lệ điểm phải bằng 100%'; 
     }
   }
-  console.log(data.pointColumns);
   return {
     errors,
     isValid: isEmpty(errors)

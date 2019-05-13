@@ -3,15 +3,15 @@ import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, F
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
-// import PointColumnsForm from '../../components/PointsColumn/Add/index'
 import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
 import CKEditor from 'ckeditor4-react';
-// import DateTimePicker from 'react-datetime-picker';
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+var moment = require('moment');
 
 const styles = {
   bigAvatar: {
@@ -31,12 +31,14 @@ class AddCourse extends Component {
     super(props);
 
     this.state = {
+      days: [],
       title:'',
       intro: '',
       coursePhoto: '',
       enrollDeadline: null,
       studyTime: '',
       openingDay: null,
+      endDay: null,
       fee: '',
       info: '',
       file: null,
@@ -60,6 +62,32 @@ class AddCourse extends Component {
   handleChange = name => event => {
     const value = event.target.value
     this.setState({ [name]: value })
+  }
+
+  handleDayChange = event => {
+    var a = {
+      dayName: event.target.value,
+      time: ['19:00','21:00']
+    }
+
+    var daysArr = this.state.days.slice(0);
+
+    var found = daysArr.find(function(day) {
+      return event.target.value === day.dayName;
+    });
+
+    if(found)
+    {
+      this.setState({
+        days: this.state.days.filter(j => j.dayName !== event.target.value)
+      })
+    }
+    else
+    {
+      this.setState({
+        days: [...this.state.days, a]
+      })
+    }
   }
 
   onDrop = (files) => {
@@ -98,29 +126,89 @@ class AddCourse extends Component {
     }
   }
 
+  getDaysBetweenDates(start, end, days) {
+    var result = [];
+    for(var i=0; i< days.length; i++)
+    {
+      var current = new Date(start);
+      current.setDate(current.getDate() + (days[i].dayName - current.getDay() + 7) % 7);
+      while (current < end) {
+        var a = {};
+        a.date = moment(+current).format('YYYY-MM-DD')
+        a.start = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[0] + ':00'
+        a.end = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[1] + ':00'
+        result.push(a);
+        current.setDate(current.getDate() + 7);
+      }
+    }
+
+    result.sort(function(a,b){
+      return new Date(a.start) - new Date(b.start);
+    });
+
+    result.map((obj, id) => obj.text = 'Bài học ' + Number(id + 1))
+    return result;  
+  }
+
+  getStudyTime(days) {
+    var result = '';
+    var objdays = { 1: 'Thứ Hai',2: 'Thứ Ba',3: 'Thứ Tư',4: 'Thứ Năm',5: 'Thứ Sáu',6: 'Thứ Bảy',0: 'Chủ Nhật'};
+    for(var i=0; i< days.length; i++)
+    {
+      var day = objdays[days[i].dayName];
+      if(i === days.length - 1)
+      {
+        result = result + day + ' từ ' + days[i].time[0] + ' đến ' + days[i].time[1]
+      }
+      else{
+        result = result + day + ' từ ' + days[i].time[0] + ' đến ' + days[i].time[1] + ', '
+      }
+    }
+    return result;  
+  }
+
+  toDayName(dayName) {
+    var objdays = { 1: 'Thứ Hai',2: 'Thứ Ba',3: 'Thứ Tư',4: 'Thứ Năm',5: 'Thứ Sáu',6: 'Thứ Bảy',0: 'Chủ Nhật'};
+    var result = objdays[dayName]
+    return result;  
+  }
+
   onSubmit = e => {
     e.preventDefault();
-    // let formInputs = document.getElementsByClassName('form-control');
-    // let pointColumns = formInputs.splice(3, formInputs.length);
-   
-    const courseData = {
-      title: this.state.title,
-      intro: this.state.intro,
-      enrollDeadline: this.state.enrollDeadline,
-      studyTime: this.state.studyTime,
-      openingDay: this.state.openingDay,
-      fee: this.state.fee,
-      info: this.state.info,
-      pointColumns: this.state.pointColumns
-    };
-    // console.log(courseData)
-    this.props.clearErrors();
-    this.props.addCourse(courseData, this.state.file);
-    this.setState({isLoading: true});
+
+    if(this.state.days.length === 0)
+    {
+      this.setState(prevState => ({
+        errors: {
+            ...prevState.errors,
+            days: 'Hãy chọn buổi học trong tuần'
+        }
+      }))
+    }
+    else{
+      const courseData = {
+        title: this.state.title,
+        intro: this.state.intro,
+        enrollDeadline: this.state.enrollDeadline,
+        studyTime: this.getStudyTime(this.state.days),
+        openingDay: this.state.openingDay,
+        endDay: this.state.endDay,
+        fee: this.state.fee,
+        info: this.state.info,
+        pointColumns: this.state.pointColumns,
+        events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days)
+      };
+      // console.log(courseData)
+      this.props.clearErrors();
+      // console.log(courseData)
+      this.props.addCourse(courseData, this.state.file);
+      this.setState({isLoading: true});
+    }
   }
 
   hideAlertSuccess(){
     this.setState({
+      days: [],
       title:'',
       intro: '',
       coursePhoto: '',
@@ -156,6 +244,20 @@ class AddCourse extends Component {
 
   onChangeOpeningDay = openingDay => this.setState({ openingDay })
 
+  onChangeEndDay = endDay => this.setState({ endDay })
+
+  onChangeTime = (dayName, time) => 
+  {
+    var daysArr = this.state.days.slice(0);
+
+    daysArr.map(function(day) {
+      if(dayName === day.dayName)
+        return day.time = time
+      return day
+    });
+    this.setState({days: daysArr})
+  }
+
   handlePointColumnNameChange = idx => evt => {
     const newpointColumns = this.state.pointColumns.map((column, sidx) => {
       if (idx !== sidx) return column;
@@ -187,7 +289,7 @@ class AddCourse extends Component {
   };
 
   render() {
-    const { errors } = this.state;
+    const { errors, days } = this.state;
     return (
       <div className="animated fadeIn">
         <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
@@ -199,13 +301,13 @@ class AddCourse extends Component {
               <FormGroup>
                 <Label>Tên khóa học</Label>
                 <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>
-                {errors.title && <Alert color="danger">{errors.title}</Alert>}
               </FormGroup>
+              {errors.title && <Alert color="danger">{errors.title}</Alert>}
               <FormGroup>
                 <Label>Giới thiệu ngắn về khóa học</Label>
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
-                {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
+              {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
                 {this.state.pointColumns.map((pointColumn, idx) => (
                 <FormGroup key={idx}>
                   <div className="point-columns form-row">
@@ -235,8 +337,8 @@ class AddCourse extends Component {
                 ))}
                 <FormGroup>
                   <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
-                  {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
                 </FormGroup>
+              {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
               <FormGroup>
                 <Label>Hình đại diện khóa học</Label>
                 <Row>
@@ -257,12 +359,12 @@ class AddCourse extends Component {
                     </ReactDropzone>
                   </Col>
                 </Row>
-                {
-                  this.state.invalidImg === true
-                  ? <div> <br/> <Alert color="danger">Hình ảnh không hợp lệ</Alert> </div> 
-                  : null
-                }
               </FormGroup>
+              {
+                this.state.invalidImg === true
+                ? <Alert color="danger">Hình ảnh không hợp lệ</Alert>
+                : null
+              }
               <FormGroup>
                 <Label>Hạn chót ghi danh</Label> <br/>
                 <DatePicker
@@ -276,8 +378,8 @@ class AddCourse extends Component {
                   customInput={<Input />}
                   timeCaption="time"
                 />
-                {errors.enrollDeadline && <Alert color="danger">{errors.intro}</Alert>}
               </FormGroup>
+              {errors.enrollDeadline && <Alert color="danger">{errors.enrollDeadline}</Alert>}
             </CardBody>
           </Card>
 
@@ -286,11 +388,6 @@ class AddCourse extends Component {
               <i className="fa fa-info-circle" aria-hidden="true"></i>Chi tiết khóa học
             </CardHeader>
             <CardBody>
-              <FormGroup>
-                <Label>Thời gian học</Label>
-                <Input type="text" value={this.state.studyTime} onChange={this.handleChange('studyTime')}/>
-                {errors.studyTime && <Alert color="danger">{errors.studyTime}</Alert>}
-              </FormGroup>
               <FormGroup>
                 <Label>Ngày khai giảng</Label> <br/>
                 <DatePicker
@@ -301,6 +398,65 @@ class AddCourse extends Component {
                   customInput={<Input />}
                 />
               </FormGroup>
+              {errors.openingDay && <Alert color="danger">{errors.openingDay}</Alert>}
+              <FormGroup>
+                <Label>Ngày kết thúc</Label> <br/>
+                <DatePicker
+                  selected={this.state.endDay}
+                  onChange={this.onChangeEndDay}
+                  isClearable={true}
+                  dateFormat="dd/MM/yyyy"
+                  customInput={<Input />}
+                />
+              </FormGroup>
+              {errors.endDay && <Alert color="danger">{errors.endDay}</Alert>}
+              <FormGroup row>
+                <Col md="3">
+                  <Label>Buổi học trong tuần</Label>
+                </Col>
+                <Col md="9">
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox1" name="inline-checkbox1" value="1" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox1">Thứ 2</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox2" name="inline-checkbox2" value="2" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox2">Thứ 3</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox3" name="inline-checkbox3" value="3" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox3">Thứ 4</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox4" name="inline-checkbox4" value="4" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox4">Thứ 5</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox5" name="inline-checkbox5" value="5" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox5">Thứ 6</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox6" name="inline-checkbox6" value="6" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox6">Thứ 7</Label>
+                  </FormGroup>
+                  <FormGroup check inline>
+                    <Input onChange={this.handleDayChange} className="form-check-input" type="checkbox" id="inline-checkbox7" name="inline-checkbox7" value="0" />
+                    <Label className="form-check-label" check htmlFor="inline-checkbox7">Chủ Nhật</Label>
+                  </FormGroup>
+                </Col>
+              </FormGroup>
+              {
+                days.map(day => 
+                  <FormGroup key={day.dayName}>
+                    <Label>Thời gian học {this.toDayName(day.dayName)}</Label> <br/>
+                    <TimeRangePicker
+                      onChange={this.onChangeTime.bind(this, day.dayName)}
+                      value={day.time}
+                    />
+                  </FormGroup>
+                )
+              }
+              {errors.days && <Alert color="danger">{errors.days}</Alert>}
               <FormGroup>
                 <Label>Học phí</Label>
                 <InputGroup>
@@ -309,10 +465,11 @@ class AddCourse extends Component {
                     <InputGroupText>VND</InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
-                {errors.fee && <Alert color="danger">{errors.fee}</Alert>}
               </FormGroup>
+              {errors.fee && <Alert color="danger">{errors.fee}</Alert>}
               <Label>Giới thiệu nội dung khóa học</Label>
               <CKEditor data={this.state.info} onChange={this.onEditorChange} />
+              {errors.info && <Alert color="danger">{errors.info}</Alert>}
             </CardBody>
           </Card>
         </Form>

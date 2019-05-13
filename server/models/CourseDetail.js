@@ -14,6 +14,9 @@ const CourseDetailSchema = new Schema({
   openingDay:{
     type: Date
   },
+  endDay:{
+    type: Date
+  },
   fee:{
     type: String
   },

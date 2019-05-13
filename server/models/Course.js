@@ -30,7 +30,6 @@ const CourseSchema = new Schema({
     },
     testModel: {
       type: String,
-      required: true,
       enum: ['exercises', 'quizzes']
     },
     submit:{
@@ -39,7 +38,6 @@ const CourseSchema = new Schema({
     },
     submitModel: {
       type: String,
-      required: true,
       enum: ['subexcercise', 'subquiz']
     }
   }],

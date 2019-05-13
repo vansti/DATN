@@ -18,16 +18,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
-import { addExercise, clearSuccess, clearErrors } from '../actions/exerciseActions';
-import { getEventSchedule } from '../actions/scheduleActions';
-import isEmptyObj from '../validation/is-empty';
+import { addExercise, clearSuccess, clearErrors } from '../../../actions/exerciseActions';
+import { getEventSchedule } from '../../../actions/scheduleActions';
+import isEmptyObj from '../../../validation/is-empty';
 import { withRouter } from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
-import config from '../config'
-import NoImg from '../assets/img/NoImg.png';
+import config from '../../../config'
+import NoImg from '../../../assets/img/NoImg.png';
 
-class PostBox extends Component {
+class ExerciseBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -245,7 +245,7 @@ class PostBox extends Component {
   }
 }
 
-PostBox.propTypes = {
+ExerciseBox.propTypes = {
   addExercise: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   success: PropTypes.object.isRequired,
@@ -256,4 +256,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { addExercise, clearSuccess, clearErrors, getEventSchedule })(PostBox));  
+export default withRouter(connect(mapStateToProps, { addExercise, clearSuccess, clearErrors, getEventSchedule })(ExerciseBox));  

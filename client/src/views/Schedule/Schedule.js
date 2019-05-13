@@ -7,6 +7,7 @@ import ReactLoading from 'react-loading';
 import { getCurentCourse } from '../../actions/courseActions';
 import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
+import isEmptyObj from '../../validation/is-empty';
 
 const styles = {
   left: {
@@ -22,6 +23,8 @@ class Schedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
+      events: [],
       courseId: '0',
       isShowModal: false,
       text: '',
@@ -32,10 +35,7 @@ class Schedule extends Component {
       durationBarVisible: false,
       timeRangeSelectedHandling: "Disabled",
       onEventClick: args => {
-        this.setState({
-          text: args.e.data.text,
-          isShowModal: true
-        })
+        this.props.history.push(`/courses/${this.state.courseId}/lesson/${args.e.data._id}`);
       },
     };
   }
@@ -63,15 +63,20 @@ class Schedule extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.schedule.schedule)
+    if (nextProps.schedule)
     {
-      this.setState({
-        events: nextProps.schedule.schedule.events
-      })
-    }else{
-      this.setState({
-        events: []
-      })
+      const { schedule, loading } = nextProps.schedule
+
+      if(!isEmptyObj(schedule))
+      {
+        this.setState({ 
+          events: schedule.events,
+          loading 
+        });
+      }
+      this.setState({ 
+        loading 
+      });
     }
   }
 
@@ -162,6 +167,13 @@ class Schedule extends Component {
           <ModalHeader toggle={this.toggleInfo}>Nội dung</ModalHeader>
           <ModalBody className="text-center">
             <div>{this.state.text}</div>
+          </ModalBody>
+        </Modal>
+        <Modal isOpen={this.state.loading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Loading ...</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
       </div>
