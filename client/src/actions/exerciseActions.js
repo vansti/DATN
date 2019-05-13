@@ -170,7 +170,7 @@ export const addSubmission = (data, exerciseId) => dispatch => {
   }).then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Bài nộp của bạn đã được gửi'}
+        payload: res.data
       })
       //gọi cái này để cập nhật tên file vừa upload
       dispatch(getSubmission(exerciseId))
@@ -240,7 +240,7 @@ export const download = (exerciseId, submission) => dispatch => {
     );
 };
 
-export const deleteSubmission = (exerciseId, submission) => dispatch => {
+export const deleteSubmission = (exerciseId) => dispatch => {
   axios
     .delete(`/api/exercises/${exerciseId}/delete`)
     .then(res =>

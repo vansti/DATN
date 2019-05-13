@@ -23,7 +23,7 @@ export const addCourse = (courseData, fileData) => dispatch => {
       {
         let fd = new FormData();
         fd.append('image', fileData, fileData.name)
-        axios.post('/api/courses/add-course-avatar/' + res.data.course, fd)
+        axios.post('/api/courses/add-course-avatar/' + res.data.courseId, fd)
         .then(data  => {
           dispatch({
             type: GET_SUCCESS,

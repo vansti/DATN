@@ -93,7 +93,7 @@ class LessonList extends Component {
             {
               events.length === 0
               ?
-              <h3>Chưa có bài học</h3>
+              null
               :
               <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
                 <thead>

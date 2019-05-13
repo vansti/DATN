@@ -115,10 +115,19 @@ router.post(
                   }
                 }
               )
+        
+        const students = await Course.findById(req.body.courseId, { students: 1, _id: 0 }).lean()
+        
+        const studentSubmission = students.students.map(e => { 
+          var a = e;
+          e = {};
+          e.userId = a;
+          return e
+        })
 
         const subExercise = new SubExercise({
           exerciseId: exercise._id,
-          studenExercise: []
+          studentSubmission: studentSubmission
         });
 
         await subExercise.save()
@@ -235,48 +244,103 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
   if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, {recursive: true}, err=>{});
   }
-  //Path /file_upload/:userId/:exerciseId
-  uploadedFile.mv(dir + uploadedFile.name, function(err) {
-    if (err)
-      return res.status(500).send(err);
-  });
-  const submission = {
-        name: uploadedFile.name,
-        url: dir + uploadedFile.name,
-    }
-  SubExercise.findOne({exerciseId: req.params.exerciseId}).then((data)=>{
-    if(data != null){
-      if(!data.studentSubmission.find(submission => submission.userId.toString() === req.user._id)){
-        SubExercise.updateOne({
-          exerciseId: req.params.exerciseId
-        },{
-          $push: { 
-            studenExercise: {
-              userId: req.user._id,
-              attachFile: submission,
-          }} 
-        }).then(()=>{
-          res.json("Đã nộp");
-        });
+
+  async function run() {
+    try {      
+      const find = 
+      await SubExercise.findOne(
+        { 'exerciseId' : req.params.exerciseId },
+        {
+          studentSubmission:
+          {
+            $elemMatch: {
+              'userId': req.user.id
+            }
+          }
+        }
+      )
+ 
+      // ko tìm thấy học viên trong SubExercise
+      if(find.studentSubmission.length === 0)
+      {
+        uploadedFile.mv(dir + uploadedFile.name, function(err) {
+          if (err)
+          {
+            errors.file = 'Upload lỗi!'
+            return res.status(404).json(errors);
+          }
+        });   
+        const submission = {
+                name: uploadedFile.name,
+                url: dir + uploadedFile.name,
+              }
+        
+        await
+        SubExercise.findOneAndUpdate(
+          {
+            exerciseId: req.params.exerciseId
+          },
+          {
+            $push: {
+              studentSubmission: {
+                userId: req.user.id,
+                attachFile: submission,
+                isSubmit: true,
+                submitTime: Date.now()
+              }
+            }
+          }
+        )
+
+        res.json({"mes":"Nộp bài tập thành công!"})
+
       }else{
-        res.json("Đã có bài tập, hãy xóa bài cũ");
+        // đã nộp bài
+        if(find.studentSubmission[0].isSubmit === true)
+        {
+          errors.file = 'Hãy xóa bài cũ trước khi nộp!'
+          return res.status(404).json(errors);
+
+        }else{
+
+          uploadedFile.mv(dir + uploadedFile.name, function(err) {
+            if (err)
+            {
+              errors.file = 'Upload lỗi!'
+              return res.status(404).json(errors);
+            }
+          });   
+          const submission = {
+                  name: uploadedFile.name,
+                  url: dir + uploadedFile.name
+                }
+
+          await
+          SubExercise.updateOne(
+            {
+              exerciseId: req.params.exerciseId,  "studentSubmission.userId": req.user.id
+            },
+            {
+              $set:         
+              { 
+                "studentSubmission.$.isSubmit" : true,
+                "studentSubmission.$.attachFile" : submission,
+                "studentSubmission.$.submitTime" : Date.now()
+              }
+            }
+          )
+
+          res.json({"mes":"Nộp bài tập thành công!"})
+        }
+
       }
       
-    }else{
-      const subExercise = new SubExercise({
-        exerciseId: req.params.exerciseId,
-        studenExercise:[
-          {
-            userId: req.user._id,
-            attachFile:submission
-          }
-        ]
-      });
-      subExercise.save().then(()=>{
-        res.json("Đã nộp");
-      })
+    } catch (err) {
+      console.log(err)
     }
-  })
+  }
+
+  run();
 });
 
 // @route   POST api/exercises/:exerciseId/download
@@ -326,13 +390,36 @@ router.get('/:exerciseId/get-submissionTai', passport.authenticate('jwt', { sess
 });
 
 router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: false }), (req, res) => {
-  try{
-    rimraf.sync('./file_upload/' + req.params.exerciseId + '/' + req.user.id);
-    res.json("Đã xóa");
-  }catch(e){
-    console.log(e);
-    res.json("Không thể xóa");
+  async function run() {
+    try{
+      await rimraf.sync('./file_upload/' + req.params.exerciseId + '/' + req.user.id);
+
+      await
+      SubExercise.updateOne(
+        {
+          exerciseId: req.params.exerciseId, "studentSubmission.userId": req.user.id
+        },
+        {
+          $set:         
+          { 
+            "studentSubmission.$.isSubmit" : false
+          },
+          $unset:
+          {
+            "studentSubmission.$.attachFile" : '',
+            "studentSubmission.$.submitTime" : ''
+          }
+        }
+      )
+
+      res.json("Đã xóa");
+    }catch(e){
+      console.log(e);
+      res.json("Không thể xóa");
+    }
   }
+
+  run();
 });
 
 module.exports = router;

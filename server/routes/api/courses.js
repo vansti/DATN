@@ -122,17 +122,26 @@ router.post(
             }
           }
         )
+        
+        const find = await Schedule.findOne({ 'courseId' : req.params.courseId })
 
-        await 
-        Schedule.findOneAndUpdate(
-          { 'courseId' : req.params.courseId },
-          {
-            $set: 
+        if(find)
+          Schedule.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
             {
-              events: req.body.events
+              $set: 
+              {
+                events: req.body.events
+              }
             }
-          }
-        )
+          )
+        else{
+          const newSchedule = new Schedule({
+            courseId: req.params.courseId,
+            events: req.body.events
+          });
+          newSchedule.save();
+        }
 
         res.json("Chỉnh sửa khóa học thành công")
       } catch (err) {
