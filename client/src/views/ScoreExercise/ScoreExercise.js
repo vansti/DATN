@@ -9,52 +9,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { Line } from 'react-chartjs-2';
 import { Card, CardBody, CardHeader } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-const styles = {
-    styleSub: {
-        flexDirection: 'row' ,
-        justifyContent: 'flex-end',
-        width:50
 
-    },
-    styleInfo:{
-        width: 50,
-    }
-  }
-  const line = {
-
-
-    labels: ['1', '2', '3', '4', '5', '6', '7','8','9','10'],
-    datasets: [
-      {
-        label: 'Điểm',
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderCapStyle: 'butt',
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: 'miter',
-        pointBorderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: '#fff',
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-        pointHoverBorderColor: 'rgba(220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        data: [65, 59, 80, 81, 56, 55, 40,30,55,78],
-      },
-    ],
-  };
-  const options = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
-    maintainAspectRatio: false
-  }
   
 
 class ScoreExercise extends Component {
@@ -69,6 +24,7 @@ class ScoreExercise extends Component {
             isLoading: false
         };
     }
+    
     toggle() {
         this.setState({
           modal: !this.state.modal,
@@ -79,15 +35,14 @@ class ScoreExercise extends Component {
         this.props.getExercisePoint(this.props.match.params.exerciseId);
         this.props.getUsers(this.props.match.params.courseId);
         //this.props.getSubmission(this.props.match.params.exerciseId);
-        this.props.getSubmissionExer(this.props.match.params.exerciseId)
-        //console.log(this.state)
+        this.props.getSubmissionExer(this.props.match.params.exerciseId);
     }
 
     componentWillReceiveProps(nextProps) {
-        //console.log(nextProps);
-        if (nextProps.studentSubmission) {
+        console.log(nextProps.exercises.studentSubmission);
+        if (nextProps.exercises.studentSubmission) {
           this.setState({
-            studentSubmission: nextProps.studentSubmission,
+            studentSubmission: nextProps.exercises.studentSubmission[0],
 
           })
        }
@@ -133,7 +88,59 @@ class ScoreExercise extends Component {
         this.setState({isLoading: true});
         this.setState({isShowSuccess: true});
       }
+    statistical(){
+      var mot=0;
+      var hai=0;
+      var ba=0;
+      var bon=0;
+      var nam=0;
+      var sau=0;
+      var bay=0;
+      var tam=0;
+      var chin=0;
+      var muoi=0;
+      if(this.state.studentSubmission.studentSubmission){
+        var a=[];
+        a=this.state.studentSubmission.studentSubmission;
+       console.log(a)
+        a.map(sub => {
+        
+        switch (sub.point) {
+          case 1: mot+=1;break;
+          case 2: hai+=1;break;
+          case 3: ba+=1;break;
+          case 4: bon+=1;break;
+          case 5: nam+=1;break;
+          case 6: sau+=1;break;
+          case 7: bay+=1;break;
+          case 8: tam+=1;break;
+          case 9: chin+=1;break;
+          case 10: muoi+=1;     
+            break;       
+          default:
+            break;
+        }
+      }
+    )
+      }
+      
+    var thongke=[];
+    thongke.push(mot);
+    thongke.push(hai);
+    thongke.push(ba);
+    thongke.push(bon);
+    thongke.push(nam);
+    thongke.push(sau);
+    thongke.push(bay);
+    thongke.push(tam);
+    thongke.push(chin);
+    thongke.push(muoi);
+    console.log('nè');
+    console.log(thongke)
+    return thongke;
 
+    
+    }
     onChangePoint(userId,e){
       this.state.students.map(user => {
         if(user._id.toString() === userId.toString())
@@ -145,25 +152,7 @@ class ScoreExercise extends Component {
       this.setState({
         students: this.state.students
       })
-      //console.log(this.state.students)
-      // var newPoint = {
-      //   exerciseId: this.props.match.params.exerciseId,
-        
-      //   studentSubmission: []
-      // };
-  
-      // newPoint.studentSubmission = JSON.parse(JSON.stringify(this.state.students));
-      // newPoint.studentSubmission.map(student => {
-      //   student.userId = student._id
-      //   delete student._id
-      //   delete student.name
-      //   delete student.photo
-      //   return student
-      // })
-   
-      // this.props.addPoint(newPoint);
-      //this.setState({isLoading: true})
-      
+
     }
     submit = () => {
       
@@ -185,6 +174,7 @@ class ScoreExercise extends Component {
       this.props.addPoint(newPoint);
       //this.setState({isLoading: true})
       this.setState({isShowSuccess: true})
+      
   
     }
     
@@ -195,6 +185,50 @@ class ScoreExercise extends Component {
         })
       }
     render() {
+      const styles = {
+        styleSub: {
+            flexDirection: 'row' ,
+            justifyContent: 'flex-end',
+            width:50
+    
+        },
+        styleInfo:{
+            width: 50,
+        }
+      }
+      const line = {
+        labels: ['1', '2', '3', '4', '5', '6', '7','8','9','10'],
+        datasets: [
+          {
+            label: 'Điểm',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: 'rgba(75,192,192,0.4)',
+            borderColor: 'rgba(75,192,192,1)',
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: 'rgba(75,192,192,1)',
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: this.statistical(),
+          },
+        ],
+      };
+      const options = {
+        tooltips: {
+          enabled: false,
+          custom: CustomTooltips
+        },
+        maintainAspectRatio: false
+      }
         //console.log(this.props.match.params.courseId)
         var StudentList = '';
         var ListSubmission='';
@@ -205,7 +239,7 @@ class ScoreExercise extends Component {
              StudentList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
         }
         else{
-            //console.log(this.state.students);
+            console.log(this.state.students);
             StudentList = this.state.students.map((user, index) =>
             <tr key={user._id}>
             
@@ -281,7 +315,7 @@ class ScoreExercise extends Component {
         <div></div>
         <Card>
             <CardHeader>
-              Biểu đồ điểm
+              Biểu đồ điểm tuần này
               <div className="card-header-actions">
                 <a href="http://www.chartjs.org" className="card-header-action">
                   <small className="text-muted">docs</small>

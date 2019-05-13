@@ -101,6 +101,24 @@ router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: f
     }).catch(err => console.log(err));
 });
 
+// @route   get api/test/sub-quiz
+// @desc    get one quiz
+// @access  Private
+router.get('/sub-quiz/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+    async function run() {
+        try {
+            let subQuiz = await SubQuiz.findOne({'quizId': req.params.idTestQuiz});
+            subQuiz = subQuiz.studentSubmission.find(
+                object => JSON.stringify(object.userId) == JSON.stringify(req.user._id));
+            console.log(subQuiz);
+            res.json(subQuiz);
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    run();
+});
+
 // @route   POST api/test/sub-quiz
 // @desc    get one quiz
 // @access  Private
@@ -120,8 +138,9 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
             if(index === -1) {
                 subQuiz.studentSubmission.unshift(submission);
                 const subQuizUpdated = await subQuiz.save();
+                
                 response = {
-                    data: subQuizUpdated,
+                    data: submission.point,
                     message: 'success'
                 }
                 res.json(response);

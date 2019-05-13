@@ -44,6 +44,7 @@ const QuizAdd = React.lazy(() => import('./views/Quiz/AddQuiz'));
 const QuizList = React.lazy(() => import('./views/Quiz/QuizList'));
 const QuizExercise = React.lazy(() => import('./views/Quiz/QuizExcercise'));
 const QuizTest = React.lazy(() => import('./views/Quiz/QuizTest'));
+const QuizTestResult = React.lazy(() => import('./views/Quiz/QuizTestResult'));
 const ExampleReactForm = React.lazy(() => import('./views/Example/ReactForm'));
 const CheckAttendance = React.lazy(() => import('./views/Attendance/CheckAttendance'));
 const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendance'));
@@ -110,6 +111,7 @@ const routes = [
   { path: '/courses/:id', exact: true, name: 'Nội dung khóa học', component: CourseDetail },
   { path: '/quiz', exact: true, name: 'Danh sách bài trắc nghiệm', component: QuizList },
   { path: '/quiz/test/:id', exact: true, name: 'Nội dung kiểm tra trắc nghiệm', component: QuizTest },
+  { path: '/quiz/test-result/:id', exact: true, name: 'Kết quả kiểm tra trắc nghiệm', component: QuizTestResult },
   { path: '/quiz/excercise/:id', exact: true, name: 'Nội dung bài bài tập trắc nghiệm', component: QuizExercise },
   { path: '/quiz/add', exact: true, name: 'Thêm bài kiểm tra trắc nghiệm', component: QuizAdd },
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
