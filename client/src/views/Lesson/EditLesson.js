@@ -15,14 +15,20 @@ import {
   Row, 
   Col, 
   Card,
+  CardHeader,
   CardBody,
-  CardFooter
+  CardFooter,
+  Collapse
 } from 'reactstrap';
-import { getEventSchedule } from '../../actions/scheduleActions';
+import { getEventSchedule, editEvent, clearSuccess } from '../../actions/scheduleActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import config from '../../config';
-// import PostInCourse from '../../components/PostInCourse';
+import SweetAlert from 'react-bootstrap-sweetalert';
+import ExerciseBox from './Exercise/ExerciseBox';
+import NoImg from '../../assets/img/NoImg.png';
+import Moment from 'react-moment'; 
+import QuizModal from './Quiz/QuizModal';
 
 import 'moment/locale/vi';
 var moment = require('moment');
@@ -32,11 +38,16 @@ class EditLesson extends Component {
     super(props);
 
     this.state = {
+      accordion: [],
+      isShowSuccess: false,
+      isLoading: false,
       loading: true,
       date: '',
       text: '',
       content: '',
-      files: []
+      files: [],
+      exercises: [],
+      quizzes: []
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -56,16 +67,26 @@ class EditLesson extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
+    if (nextProps.success.mes === 'Thay đổi nội dung bài học thành công') {
+      this.setState({isShowSuccess: true, isLoading: false})
+    }
+    
     const { event, loading } = nextProps.schedule
     if(!isEmptyObj(event))
     {
-      var { date, text, content, files } = event
+      var { date, text, content, files, exercises, quizzes } = event
+
+      var accordion = [];
+      exercises.map(()=>accordion.push(false))
+
       this.setState({ 
         date,
         text,
         content,
         files,
+        exercises,
+        accordion,
+        quizzes,
         loading 
       });
     }
@@ -73,6 +94,15 @@ class EditLesson extends Component {
       loading
     });
 
+  }
+
+  toggleAccordion(tab) {
+    const prevState = this.state.accordion;
+    const state = prevState.map((x, index) => tab === index ? !x : false);
+
+    this.setState({
+      accordion: state,
+    });
   }
 
   handleChange = name => event => {
@@ -90,7 +120,8 @@ class EditLesson extends Component {
         const file = {
           id: result.info.public_id,
           name: result.info.original_filename,
-          url: result.info.secure_url
+          url: result.info.secure_url,
+          thumbnail: result.info.thumbnail_url
         } 
         this.setState(prevState => ({
           files: [...prevState.files, file]
@@ -106,7 +137,22 @@ class EditLesson extends Component {
   }
 
   submitChange=()=>{
+    const eventData ={
+      text: this.state.text,
+      content: this.state.content,
+      files: this.state.files
+    }
+    this.props.editEvent(this.props.match.params.id, this.props.match.params.lessonId, eventData)
+    this.setState({isLoading: true});
+  }
 
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false,
+      isLoading: false
+    })
+    this.props.clearSuccess();
+    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId)
   }
 
   render() {
@@ -115,7 +161,9 @@ class EditLesson extends Component {
       date, 
       text, 
       loading,
-      files 
+      files,
+      exercises,
+      quizzes 
     } = this.state;
     return (
       <div className="animated fadeIn">
@@ -160,7 +208,14 @@ class EditLesson extends Component {
                     files.map(file=>
                       <ListGroupItem key={file.id}>
                         <Row style={{alignContent: 'center'}}>
-                          <Col xs="10">
+                          <Col xs="11">
+                            {
+                              file.thumbnail
+                              ?
+                              <img src={file.thumbnail} alt=""/> 
+                              :
+                              <img src={NoImg} style={{width:47}} alt=""/> 
+                            }  
                             <a href={file.url} style={{marginLeft:10}}> {file.name} </a>
                           </Col>
                           <Col >
@@ -182,9 +237,117 @@ class EditLesson extends Component {
         </Card>
         <Card>
           <CardBody>
-            {/* <PostInCourse/> */}
+            <ExerciseBox/>
+            {
+              exercises.length === 0
+              ?
+              <ListGroup style={{marginTop:10}}>
+                <ListGroupItem>Chưa có bài tập</ListGroupItem>
+              </ListGroup>
+              :
+              exercises.map((exercise,index) => 
+                <Card className="mb-0" key={index} style={{marginTop:10}}>
+                  <CardHeader style={{backgroundColor: 'lightblue'}}>
+                    <Row>
+                      <Col xs="10">
+                        <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(index)} aria-expanded={this.state.accordion[index]} aria-controls="collapseOne">
+                          <h5 className="m-0 p-0" style={{color: 'black'}}>{exercise.title}</h5>
+                        </Button>
+                        <small>  
+                          <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
+                            {exercise.created}
+                          </Moment>
+                        </small>
+                      </Col>
+                      <Col >
+                        <small>                  
+                          Hạn
+                          <Moment format=" HH:mm ngày DD/MM/YYYY">
+                            {exercise.deadline}
+                          </Moment>
+                        </small>
+                      </Col>
+                    </Row>
+                  </CardHeader>
+                  <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne">
+                    <CardBody>
+                      {
+                        exercise.text.split('\n').map((itemChild, key) => {
+                          return <span key={key}>{itemChild}<br/></span>
+                        })
+                      }
+                      <br/>
+                      <ListGroup>
+                        {
+                          exercise.attachFiles.map(file=>
+                            <ListGroupItem key={file.id} action tag="a" href={file.url}>
+                              {
+                                file.thumbnail
+                                ?
+                                <img src={file.thumbnail} alt=""/> 
+                                :
+                                <img src={NoImg} style={{width:47}} alt=""/> 
+                              }  
+                              <span style={{marginLeft:10}}>{file.name}</span>
+                            </ListGroupItem>
+                          )
+                        }
+                      </ListGroup>
+                    </CardBody>
+                  </Collapse>
+                </Card>
+              )
+            }
           </CardBody>
         </Card>
+
+        <Card>
+          <CardBody>
+            <QuizModal courseId={this.props.match.params.id} eventId={this.props.match.params.lessonId}/>
+            {
+              quizzes.map((quiz,index) => 
+                <Card className="mb-0" key={index} style={{marginTop:10}}>
+                  <CardHeader style={{backgroundColor: 'lightblue'}}>
+                    <Row>
+                      <Col xs="10">
+                        <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.title}</h5>
+                        <small>  
+                          <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
+                            {quiz.created}
+                          </Moment>
+                        </small>
+                      </Col>
+                      <Col >
+                        <small>                  
+                          Hạn
+                          <Moment format=" HH:mm ngày DD/MM/YYYY">
+                            {quiz.deadline}
+                          </Moment>
+                        </small>
+                      </Col>
+                    </Row>
+                  </CardHeader>
+                </Card>
+              )
+            }
+          </CardBody>
+        </Card>
+
+        <SweetAlert
+          	success
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="success"
+          	title="Chỉnh sửa bài học thành công!"
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang lưu thay đổi</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     )
   }
@@ -194,7 +357,8 @@ EditLesson.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  schedule: state.schedule
+  schedule: state.schedule,
+  success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { getEventSchedule })(EditLesson));  
+export default withRouter(connect(mapStateToProps, { getEventSchedule, editEvent, clearSuccess })(EditLesson));  

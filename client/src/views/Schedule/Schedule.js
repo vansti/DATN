@@ -7,6 +7,7 @@ import ReactLoading from 'react-loading';
 import { getCurentCourse } from '../../actions/courseActions';
 import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
+import isEmptyObj from '../../validation/is-empty';
 
 const styles = {
   left: {
@@ -22,6 +23,8 @@ class Schedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
+      events: [],
       courseId: '0',
       isShowModal: false,
       text: '',
@@ -32,10 +35,7 @@ class Schedule extends Component {
       durationBarVisible: false,
       timeRangeSelectedHandling: "Disabled",
       onEventClick: args => {
-        this.setState({
-          text: args.e.data.text,
-          isShowModal: true
-        })
+        this.props.history.push(`/courses/${this.state.courseId}/lesson/${args.e.data._id}`);
       },
     };
   }
@@ -66,8 +66,15 @@ class Schedule extends Component {
     if (nextProps.schedule)
     {
       const { schedule, loading } = nextProps.schedule
+
+      if(!isEmptyObj(schedule))
+      {
+        this.setState({ 
+          events: schedule.events,
+          loading 
+        });
+      }
       this.setState({ 
-        events: schedule.events,
         loading 
       });
     }

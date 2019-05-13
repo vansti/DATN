@@ -31,6 +31,9 @@ const ScheduleSchema = new Schema({
           },
           url: {
             type: String
+          },
+          thumbnail: {
+            type: String
           }
         }
       ],

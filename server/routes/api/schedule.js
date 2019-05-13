@@ -88,7 +88,12 @@ router.get(
             events: { $elemMatch: { _id: req.params.eventId }}
           }
         )
-        
+        .populate({
+          path: 'events.exercises'
+        })
+        .populate({
+          path: 'events.quizzes'
+        })
         res.json(schedule.events[0])
       } catch (err) {
         console.log(err)
@@ -97,6 +102,50 @@ router.get(
 
     run();
 
+  }
+);
+
+// @route   POST api/schedule/edit-event
+// @desc    edit event
+// @access  Private
+router.post(
+  '/edit-event/:courseId/:eventId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Schedule.updateOne(
+      { courseId: req.params.courseId, "events._id": req.params.eventId },
+      { 
+        $set: 
+        { 
+          "events.$.text" : req.body.text ,
+          "events.$.files" : req.body.files ,
+          "events.$.content" : req.body.content
+        }
+      }
+    )
+    .then(res.json({mes: 'Thay đổi nội dung bài học thành công'}))
+    .catch(err => console.log(err));
+  }
+);
+
+// @route   POST api/schedule/add-quiz-event/:courseId/:eventId/:quizId
+// @desc    add quiz event
+// @access  Private
+router.post(
+  '/add-quiz-event/:courseId/:eventId/:quizId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Schedule.updateOne(
+      { courseId: req.params.courseId, "events._id": req.params.eventId },
+      { 
+        $push: 
+        { 
+          "events.$.quizzes" : req.params.quizId 
+        }
+      }
+    )
+    .then(res.json({mes: 'Chọn bài trắc nghiệm cho bài học thành công'}))
+    .catch(err => console.log(err));
   }
 );
 
