@@ -9,7 +9,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { Line } from 'react-chartjs-2';
 import { Card, CardBody, CardHeader } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-
+import isEmpty from '../../validation/is-empty';
   
 
 class ScoreExercise extends Component {
@@ -17,6 +17,7 @@ class ScoreExercise extends Component {
         super(props);
         this.state = {
           studentSubmission :[],
+          listStudent: [],
           title:'',
           students:'',
           submission:'',
@@ -39,15 +40,14 @@ class ScoreExercise extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps.exercises.studentSubmission);
         if (nextProps.exercises.studentSubmission) {
           this.setState({
-            studentSubmission: nextProps.exercises.studentSubmission[0],
+            listStudent: nextProps.exercises.studentSubmission[0],
+            
 
           })
        }
-        //console.log('Chỗ sai:')
-        //console.log(nextProps.exercises.exercise)
+        
         if (nextProps.exercises.exercise) {
             this.setState({
                 title: nextProps.exercises.exercise.title,
@@ -75,8 +75,6 @@ class ScoreExercise extends Component {
           })
 
       }
-        
-        //console.log(this.state);
     }
     download = (e) => {
         e.preventDefault();
@@ -99,10 +97,9 @@ class ScoreExercise extends Component {
       var tam=0;
       var chin=0;
       var muoi=0;
-      if(this.state.studentSubmission.studentSubmission){
+      if(isEmpty(this.state.listStudent.studentSubmission)==0){
         var a=[];
-        a=this.state.studentSubmission.studentSubmission;
-       console.log(a)
+        a=this.state.listStudent.studentSubmission;
         a.map(sub => {
         
         switch (sub.point) {
@@ -135,8 +132,6 @@ class ScoreExercise extends Component {
     thongke.push(tam);
     thongke.push(chin);
     thongke.push(muoi);
-    console.log('nè');
-    console.log(thongke)
     return thongke;
 
     
@@ -229,26 +224,32 @@ class ScoreExercise extends Component {
         },
         maintainAspectRatio: false
       }
-        //console.log(this.props.match.params.courseId)
+        if(isEmpty(this.state.listStudent.studentSubmission))
+        {
+          console.log('Loading...')
+        }else{
+          console.log(this.state.listStudent.studentSubmission)
+        }
+        
         var StudentList = '';
         var ListSubmission='';
         //const {submission} = this.props.submission.submission;
         //console.log(this.props.submission.submission);
-        if(this.state.students === '')
+        if(isEmpty(this.state.listStudent.studentSubmission))
         {
              StudentList = <tr><td></td><td><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td></tr>
         }
         else{
-            console.log(this.state.students);
-            StudentList = this.state.students.map((user, index) =>
-            <tr key={user._id}>
+            
+            StudentList = this.state.listStudent.studentSubmission.map((user, index) =>
+            <tr key={user.userId._id}>
             
             <td style={styles.styleInfo}>                      
                 <div className="avatar">
-                <img src={user.photo} className="img-avatar" alt="" />
+                <img src={user.userId.photo} className="img-avatar" alt="" />
                 </div>
             </td>
-            <td style={styles.styleInfo}>{user.name}</td>
+            <td style={styles.styleInfo}>{user.userId.name}</td>
             <td style={styles.styleInfo}>
             <FormGroup>
                         <Label htmlFor="prependedInput">Điểm bài tập</Label>
@@ -257,9 +258,9 @@ class ScoreExercise extends Component {
                             <InputGroupAddon addonType="prepend">
                               <InputGroupText><i className="icon-pencil"></i></InputGroupText>
                             </InputGroupAddon>
-                            <Input size="1" type="number"
-                            value={user.point}
-                            onChange={this.onChangePoint.bind(this, user._id)}/>
+                            <Input size="1" type="number" 
+                            defaultValue={user.point}
+                            onChange={this.onChangePoint.bind(this, user.userId._id)}/>
                           </InputGroup>
                           
                         </div>
@@ -342,7 +343,8 @@ ScoreExercise.propTypes = {
     users: PropTypes.object.isRequired,
     submission: PropTypes.object.isRequired,
     addPoint: PropTypes.func.isRequired,
-    studentSubmission: PropTypes.object.isRequired
+    studentSubmission: PropTypes.object.isRequired,
+    listStudent: PropTypes.object.isRequired
 
 };
 

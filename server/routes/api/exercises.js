@@ -196,10 +196,8 @@ router.get('/exercise/:id', (req, res) => {
 router.get('/exercisePointOP/:id', (req, res) => {
   console.log('req.params.id')
   SubExercise.find(
-    {exerciseId: req.params.id}, { studentSubmission: 1,_id:0 }
-    
-    
-    ).populate('students.userId', '_id name email photo')
+    {exerciseId: req.params.id}, { studentSubmission: 1, _id:0 }
+    ).populate('studentSubmission.userId', '_id name email photo')
     .then(studentSubmission => {
     res.json(studentSubmission)
     console.log(studentSubmission)
