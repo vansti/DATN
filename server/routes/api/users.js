@@ -254,14 +254,13 @@ router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req
  .then(student => res.json(student));
 });
 
-// @route   GET api/users/aprove-list/:courseId
+// @route   GET api/users/approve-list/student/:courseId
 // @desc    lấy danh sách học viên ghi danh và danh sách học viên dc duyệt của 1 khóa học
 // @access  Private
 router.get(
-  '/approve-list/:courseId',
+  '/approve-list/student/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-
     async function run() {
       try {
         const course = await     
@@ -282,12 +281,47 @@ router.get(
           students: course.students,
           enrollStudents: coursedetail.enrollStudents
         }
+        console.log(result.enrollStudents);
         res.json(result)
       } catch (err) {
         console.log(err)
       }
     }
 
+    run();
+  }
+);
+
+// @route   GET api/users/approve-list/teacher/:courseId
+// @desc    lấy danh sách giáo viên và danh sách giáo viên của 1 khóa học
+// @access  Private
+router.get(
+  '/approve-list/teacher/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    async function run() {
+      try {
+        const teacherInCourse = await     
+          Course.findById(
+            req.params.courseId,
+            { teachers: 1 }
+          )
+          .populate('teachers', '_id name email photo')
+
+        const teachers = await 
+          User.find(
+            { 'role' : 'teacher' } ,
+            '_id name email photo'
+          )
+        const result = {
+          teachers: teachers,
+          teacherInCourse: teacherInCourse.teachers
+        }
+        res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
     run();
   }
 );

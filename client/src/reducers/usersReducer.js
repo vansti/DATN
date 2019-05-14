@@ -1,5 +1,5 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST, USERS_LOADING
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING
 } from '../actions/types';
 
 const initialState = {
@@ -34,10 +34,16 @@ export default function(state = initialState, action) {
         student: action.payload,
         loading: false        
       };
-    case GET_APPROVE_LIST:
+    case GET_APPROVE_LIST_STUDENT:
       return {
         ...state,
         approve_list: action.payload,
+        loading: false        
+      };
+    case GET_APPROVE_LIST_TEACHER:
+      return {
+        ...state,
+        approve_list_teacher: action.payload,
         loading: false        
       };
     case CLEAR_USER:

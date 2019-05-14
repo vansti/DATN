@@ -4,7 +4,8 @@ import {
   GET_USERS, 
   CLEAR_USER, 
   GET_STUDENT, 
-  GET_APPROVE_LIST, 
+  GET_APPROVE_LIST_STUDENT, 
+  GET_APPROVE_LIST_TEACHER,
   GET_SUCCESS, 
   GET_ERRORS, 
   CLEAR_SUCCESS, 
@@ -49,35 +50,52 @@ export const getStudent = (studentId) => dispatch => {
     );
 };
 
-// lấy danh sách học viên ghi danh và danh sách học viên dc duyệt của 1 khóa học
-export const getApproveList = (courseId) => dispatch => {
+// lấy danh sách giáo viên và danh sách giáo viên dc duyệt của 1 khóa học
+export const getApproveListTeacher = (courseId) => dispatch => {
   dispatch(setUsersLoading());
   axios
-    .get('/api/users/approve-list/' + courseId)
+    .get('/api/users/approve-list/teacher/' + courseId)
+    .then(res =>{
+      dispatch({
+        type: GET_APPROVE_LIST_TEACHER,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      dispatch({
+        type: GET_APPROVE_LIST_TEACHER,
+        payload: {}
+      })
+    });
+};
+// lấy danh sách học viên ghi danh và danh sách giáo viên dc duyệt của 1 khóa học
+export const getApproveListStudent = (courseId) => dispatch => {
+  dispatch(setUsersLoading());
+  axios
+    .get('/api/users/approve-list/student/' + courseId)
     .then(res =>
       dispatch({
-        type: GET_APPROVE_LIST,
+        type: GET_APPROVE_LIST_STUDENT,
         payload: res.data
       })
     )
     .catch(err =>
       dispatch({
-        type: GET_APPROVE_LIST,
+        type: GET_APPROVE_LIST_STUDENT,
         payload: {}
       })
     );
 };
-
 // Approve Student to Course
 export const approveStudent = (courseId, studentId) => dispatch => {
   axios
-    .post(`/api/courses/approve/${courseId}/${studentId}`)
+    .post(`/api/courses/approve/student/${courseId}/${studentId}`)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
         payload: res.data
       })
-      dispatch(getApproveList(courseId))
+      dispatch(getApproveListStudent(courseId))
     })
     .catch(err =>
       dispatch({
@@ -86,6 +104,26 @@ export const approveStudent = (courseId, studentId) => dispatch => {
       })
     );
 };
+
+// Approve teacher to Course
+export const approveTeacher = (courseId, teacherId) => dispatch => {
+  axios
+    .post(`/api/courses/approve/teacher/${courseId}/${teacherId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+      dispatch(getApproveListTeacher(courseId))
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 
 export const setUsersLoading = () => {
   return {

@@ -55,6 +55,7 @@ const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
 const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
+const ApproveTeacher = React.lazy(() => import('./views/Courses/ApproveTeacher'));
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 const PointList = React.lazy(() => import('./views/PointList/PointList'));
 const ScoreExercise = React.lazy(() => import('./views/ScoreExercise/ScoreExercise'));
@@ -124,8 +125,9 @@ const routes = [
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
-  { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
+  { path: '/manage-courses/approve/student/:courseId', exact: true, name: 'Quản lý học viên', component: ApproveStudent },
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
+  { path: '/manage-courses/approve/teacher/:courseId', exact: true, name: 'Quản lý giáo viên', component: ApproveTeacher },
   { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
   { path: '/courses/:id/edit-lesson/:lessonId', exact: true, name: 'Chỉnh sửa nội dung bài học', component: EditLesson },
   { path: '/courses/:id/lesson/:lessonId', exact: true, name: 'Nội dung bài học', component: Lesson },

@@ -103,8 +103,11 @@ class ManageCourses extends Component {
     this.props.history.push('/manage-courses/edit-course/' + courseId)
   } 
 
+  handelManageTeacher(courseId) {
+    this.props.history.push('/manage-courses/approve/teacher/' + courseId)
+  }
   handleClickApprove(courseId){
-    this.props.history.push('/manage-courses/approve/' + courseId)
+    this.props.history.push('/manage-courses/approve/student/' + courseId)
   } 
 
   handleJoinCourse(courseId){
@@ -185,9 +188,14 @@ class ManageCourses extends Component {
                             </Fragment>
                             :
                             <Fragment>
-                            <td>
+                              <td>
                                 <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
                                   Chỉnh sửa
+                                </Button>
+                              </td>
+                              <td>
+                                <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
+                                  Quản lý giáo viên
                                 </Button>
                               </td>
                               <td>

@@ -313,11 +313,11 @@ router.post(
   }
 );
 
-// @route   POST api/courses/approve/:courseId/:studentId
+// @route   POST api/courses/approve/student/:courseId/:studentId
 // @desc    approve student
 // @access  Private
 router.post(
-  '/approve/:courseId/:studentId',
+  '/approve/student/:courseId/:studentId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
@@ -348,6 +348,58 @@ router.post(
         await
         User.findByIdAndUpdate(
           req.params.studentId ,
+          { 
+            $push: {
+              courses: req.params.courseId
+            }
+          }
+        )
+
+        res.json("Duyệt thành công")
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   POST api/courses/approve/teacher/:courseId/:teacherId
+// @desc    approve teacher
+// @access  Private
+router.post(
+  '/approve/teacher/:courseId/:teacherId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        await 
+        CourseDetail.findOneAndUpdate(
+          { 'courseId' : req.params.courseId },
+          { 
+            $pull: {
+              enrollStudents: {
+                student: req.params.teacherId
+              }
+            }
+          }
+        )
+
+        await 
+        Course.findByIdAndUpdate(
+          req.params.courseId ,
+          { 
+            $push: {
+              teachers: req.params.teacherId
+            }
+          }
+        )
+        
+        await
+        User.findByIdAndUpdate(
+          req.params.teacherId ,
           { 
             $push: {
               courses: req.params.courseId

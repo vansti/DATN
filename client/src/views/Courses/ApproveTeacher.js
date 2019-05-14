@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import {Card, CardBody, Table, Button, CardHeader, Modal, ModalBody} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getApproveListStudent, approveStudent, clearSuccess } from '../../actions/userActions';
+import { getApproveListTeacher, approveTeacher, clearSuccess } from '../../actions/userActions';
 import Moment from 'react-moment'; 
 import ReactLoading from 'react-loading';
 
 
-class ApproveStudent extends Component {
+class ApproveTeacher extends Component {
   constructor() {
     super();
     this.state = {
-      approve_list: {
-        enrollStudents: [],
-        students: []
+      approve_list_teacher: {
+        teacherInCourse: [],
+        teachers: []
       },
       courseId: null,
       loading: true,
@@ -24,9 +24,9 @@ class ApproveStudent extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.users) {
-      const { approve_list, loading } = nextProps.users
+      const { approve_list_teacher, loading } = nextProps.users
       this.setState({ 
-        approve_list, 
+        approve_list_teacher, 
         loading 
       });
     }
@@ -38,17 +38,17 @@ class ApproveStudent extends Component {
   }
 
   componentDidMount = () => {
-    this.props.getApproveListStudent(this.props.match.params.courseId);
+    this.props.getApproveListTeacher(this.props.match.params.courseId);
   }
 
-  handleClickApprove(studentId){
+  handleClickApprove(teacherId){
     this.setState({isLoading: true})
-    this.props.approveStudent(this.props.match.params.courseId, studentId)
+    this.props.approveTeacher(this.props.match.params.courseId, teacherId)
   } 
 
   render() {
-    const { approve_list, loading } = this.state;
-    console.log(approve_list.enrollStudents)
+    const { approve_list_teacher, loading } = this.state;
+    console.log(approve_list_teacher);
     return (
       <div className="animated fadeIn">
         <Card>
@@ -63,8 +63,8 @@ class ApproveStudent extends Component {
               :
               <div className="animated fadeIn">
                 {
-                  approve_list.enrollStudents.length === 0
-                  ? <h2> không có học viên</h2>
+                  approve_list_teacher.teacherInCourse.length === 0
+                  ? <h2> Không có giáo viên</h2>
                   :
                   <Table bordered striped responsive size="sm">
                     <thead>
@@ -78,27 +78,22 @@ class ApproveStudent extends Component {
                     </thead>
                     <tbody>
                       {
-                        approve_list.enrollStudents.map((elem, index) =>
-                        {
-                          console.log(elem);
-                          return (
-                            <tr key={elem._id}>
+                        approve_list_teacher.teachers.map((elem, index) =>
+                          <tr key={elem._id}>
                             <th>                      
                               <div className="avatar">
-                                <img src={elem.student.photo} className="img-avatar" alt="" />
+                                <img src={elem.photo} className="img-avatar" alt="" />
                               </div>
                             </th>
-                            <td>{elem.student.email}</td>
-                            <td>{elem.student.name}</td>
+                            <td>{elem.email}</td>
+                            <td>{elem.name}</td>
                             <td>
                               <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
                                 {elem.enrollDate}
                               </Moment>
                             </td>
-                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem.student._id)}> Duyệt </Button></td>
+                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Duyệt </Button></td>
                           </tr>
-                          )
-                        }
                         )
                       }
                     </tbody>
@@ -121,7 +116,7 @@ class ApproveStudent extends Component {
               :
               <div className="animated fadeIn">
                 {
-                  approve_list.students.length === 0
+                  approve_list_teacher.teacherInCourse.length === 0
                   ? <h2> không có học viên</h2>
                   :
                   <Table bordered striped responsive size="sm">
@@ -134,7 +129,7 @@ class ApproveStudent extends Component {
                     </thead>
                     <tbody>
                       {
-                        approve_list.students.map((elem, index) =>
+                        approve_list_teacher.teacherInCourse.map((elem, index) =>
                           <tr key={elem._id}>
                             <th>                      
                               <div className="avatar">
@@ -165,9 +160,9 @@ class ApproveStudent extends Component {
   }
 }
 
-ApproveStudent.propTypes = {
-  getApproveListStudent: PropTypes.func.isRequired,
-  approveStudent: PropTypes.func.isRequired,
+ApproveTeacher.propTypes = {
+  getApproveListTeacher: PropTypes.func.isRequired,
+  approveTeacher: PropTypes.func.isRequired,
   users: PropTypes.object.isRequired
 };
 
@@ -175,4 +170,4 @@ const mapStateToProps = state => ({
   users: state.users,
   success: state.success
 });
-export default connect(mapStateToProps, { getApproveListStudent, approveStudent, clearSuccess })(ApproveStudent); 
+export default connect(mapStateToProps, { getApproveListTeacher, approveTeacher, clearSuccess })(ApproveTeacher); 
