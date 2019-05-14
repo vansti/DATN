@@ -7,28 +7,26 @@ const SubExerciseSchema = new Schema({
   studentSubmission:[
     {
       userId:{type: mongoose.Schema.ObjectId, ref: 'users'},
-      attachFile: 
-        {
-          name: {
-              type: String
-            },
-          url: {
-            type: String
-            },
-          thumbnail: {
-            type: String
-          }
+      attachFile: {
+        name: {
+          type: String
         },
+        url: {
+          type: String
+        }
+      },
       point:{
-        type: Number,
+        type: Number
       },
-      created: {
-        type: Date,
-        default: Date.now
+      isSubmit:{
+        type: Boolean,
+        default: false
       },
+      submitTime: {
+        type: Date
+      }
     }
-  ],
-  
+  ]
 })
 
 module.exports = SubExercise = mongoose.model('subexcercise', SubExerciseSchema)

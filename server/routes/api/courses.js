@@ -3,9 +3,8 @@ const router = express.Router();
 const cors = require('cors');
 const passport = require('passport');
 var cloudinary = require('cloudinary');
-require('dotenv').config()
-const Validator = require('validator');
-const formData = require('express-form-data')
+require('dotenv').config();
+const formData = require('express-form-data');
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -24,6 +23,7 @@ const CourseDetail = require('../../models/CourseDetail');
 const User = require('../../models/User');
 const SubExercise = require('../../models/SubExercise');
 const SubQuiz = require('../../models/SubQuiz');
+const Schedule = require('../../models/Schedule');
 
 router.use(cors());
 router.use(formData.parse())
@@ -52,15 +52,22 @@ router.post(
     const newCourseDetail = new CourseDetail({
       studyTime: req.body.studyTime,
       openingDay: req.body.openingDay,
+      endDay: req.body.endDay,
       fee: req.body.fee,
       info: req.body.info
+    });
+
+    const newSchedule = new Schedule({
+      events: req.body.events
     });
 
     async function run() {
       try {
         const course = await newCourse.save()
         newCourseDetail.courseId = course._id
-        const coursedetail = await newCourseDetail.save()
+        newSchedule.courseId = course._id
+        await newSchedule.save();
+        const coursedetail = await newCourseDetail.save() 
         res.json(coursedetail)
       } catch (err) {
         console.log(err)
@@ -109,11 +116,32 @@ router.post(
             {
               studyTime: req.body.studyTime,
               openingDay: req.body.openingDay,
+              endDay: req.body.endDay,
               fee: req.body.fee,
               info: req.body.info
             }
           }
         )
+        
+        const find = await Schedule.findOne({ 'courseId' : req.params.courseId })
+
+        if(find)
+          Schedule.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            {
+              $set: 
+              {
+                events: req.body.events
+              }
+            }
+          )
+        else{
+          const newSchedule = new Schedule({
+            courseId: req.params.courseId,
+            events: req.body.events
+          });
+          newSchedule.save();
+        }
 
         res.json("Chỉnh sửa khóa học thành công")
       } catch (err) {
@@ -181,7 +209,7 @@ router.get(
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, fee: 1, info: 1, 
+          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1, 
             enrollStudents:  
             {
               $elemMatch: {

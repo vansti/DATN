@@ -126,7 +126,7 @@ class StudentIfo extends Component {
       loadingPoint,
       isShowPointList
     } = this.state
-
+    console.log(student_point)
     var AbsentList = null;
 
     if(isShowAbsentList === true){
@@ -220,7 +220,13 @@ class StudentIfo extends Component {
                       {element.pointRate}
                     </td>
                     <td>
-                      {element.test.title}
+                      {
+                        element.test
+                        ?
+                        element.test.title
+                        :
+                        'Chưa cập nhật'
+                      }
                     </td>
                     <td>
                       {

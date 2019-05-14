@@ -58,6 +58,10 @@ const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent')
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 const PointList = React.lazy(() => import('./views/PointList/PointList'));
 const ScoreExercise = React.lazy(() => import('./views/ScoreExercise/ScoreExercise'));
+const EditLesson = React.lazy(() => import('./views/Lesson/EditLesson'));
+const Lesson = React.lazy(() => import('./views/Lesson/Lesson'));
+const QuizLesson = React.lazy(() => import('./views/Lesson/Quiz/QuizLesson'));
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Trang chủ', component: DefaultLayout },
@@ -123,6 +127,9 @@ const routes = [
   { path: '/manage-courses/approve/:courseId', exact: true, name: 'Phê duyệt', component: ApproveStudent },
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
   { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
+  { path: '/courses/:id/edit-lesson/:lessonId', exact: true, name: 'Chỉnh sửa nội dung bài học', component: EditLesson },
+  { path: '/courses/:id/lesson/:lessonId', exact: true, name: 'Nội dung bài học', component: Lesson },
+  { path: '/courses/:id/lesson/:lessonId/:quizId', exact: true, name: 'Bài trắc nghiệm', component: QuizLesson }
 
 ];
 

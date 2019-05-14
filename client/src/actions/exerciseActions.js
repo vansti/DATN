@@ -12,6 +12,7 @@ import {
   CLEAR_ERRORS,
   EXERCISE_LOADING, 
   COMMENT_LOADING,
+  SUBMIT_LOADING,
   GET_EXER,GET_EXERPOINT 
 } from './types';
 
@@ -159,8 +160,6 @@ export const getExercise = (id) => dispatch => {
 
 // Add Submission
 export const addSubmission = (data, exerciseId) => dispatch => {
-  dispatch(clearErrors());
-  dispatch(clearSuccess());
   let fd = new FormData();
   fd.append('file',data.file)
   axios({
@@ -171,7 +170,7 @@ export const addSubmission = (data, exerciseId) => dispatch => {
   }).then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Bài nộp của bạn đã được gửi'}
+        payload: res.data
       })
       //gọi cái này để cập nhật tên file vừa upload
       dispatch(getSubmission(exerciseId))
@@ -184,7 +183,14 @@ export const addSubmission = (data, exerciseId) => dispatch => {
     );
 };
 
+export const setSubmitLoading = () => {
+  return {
+    type: SUBMIT_LOADING
+  };
+};
+
 export const getSubmission = (exerciseId) => dispatch => {
+  dispatch(setSubmitLoading())
   axios
     .get(`/api/exercises/${exerciseId}/get-submission`)
     .then(res =>{
@@ -198,6 +204,7 @@ export const getSubmission = (exerciseId) => dispatch => {
 
     });
 };
+
 export const getSubmissionExer = (exerciseId) => dispatch => {
   
   axios
@@ -233,7 +240,7 @@ export const download = (exerciseId, submission) => dispatch => {
     );
 };
 
-export const deleteSubmission = (exerciseId, submission) => dispatch => {
+export const deleteSubmission = (exerciseId) => dispatch => {
   axios
     .delete(`/api/exercises/${exerciseId}/delete`)
     .then(res =>

@@ -9,9 +9,6 @@ const ScheduleSchema = new Schema({
   },
   events: [
     {
-      id: {
-        type: String
-      },
       start: {
         type: String
       },
@@ -19,8 +16,39 @@ const ScheduleSchema = new Schema({
         type: String
       },
       text: {
+        type: String,
+      },
+      content: {
         type: String
       },
+      files: [
+        {
+          id:{
+            type: String
+          },
+          name: {
+            type: String
+          },
+          url: {
+            type: String
+          },
+          thumbnail: {
+            type: String
+          }
+        }
+      ],
+      exercises: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "exercises"
+        }
+      ],
+      quizzes: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "quizzes"
+        }
+      ],
       date:{
         type: String
       }

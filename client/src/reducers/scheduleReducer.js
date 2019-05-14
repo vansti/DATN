@@ -1,9 +1,13 @@
 import {
-  GET_SCHEDULE
+  GET_SCHEDULE, SCHEDULE_LOADING, GET_EVENT_SCHEDULE
 } from '../actions/types';
 
 const initialState = {
-  schedule: null
+  loading: false,
+  schedule: {
+    events:[]
+  },
+  event: {}
 };
 
 export default function(state = initialState, action) {
@@ -11,6 +15,17 @@ export default function(state = initialState, action) {
     case GET_SCHEDULE:
       return {
         schedule: action.payload,
+        loading: false
+      };
+    case GET_EVENT_SCHEDULE:
+      return {
+        event: action.payload,
+        loading: false
+      };
+    case SCHEDULE_LOADING:
+      return {
+        ...state,
+        loading: true
       };
     default:
       return state;
