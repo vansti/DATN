@@ -32,45 +32,27 @@ router.post(
   '/add-point',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const newPoint = new SubExercise({
-      exerciseId: req.body.exerciseId,
-      studentSubmission: req.body.studentSubmission,
-      
-    });
-
-
-
-    // SubExercise.updateOne({
-    //   exerciseId: req.params.exerciseId
-    // },{
-    //   $push: { 
-    //     studenExercise: {
-    //       userId: req.user._id,
-    //       attachFile: submission,
-    //   }} 
-    // }).then(()=>{
-    //   res.json("Đã nộp");
-    // });
-    // newPoint
-    // .save()
-    // .then(point => {
-    //   res.json(point)
-    // })
-    //console.log(req.body)
-    SubExercise.updateOne({
-      exerciseId: req.body.exerciseId,
-      
-    },{
-      $set: { 
-        studentSubmission : req.body.studentSubmission
-        } 
-    }).then(()=>{
-      res.json("Đã thêm điểm");
-    });
-
+    SubExercise.updateOne(
+      {
+        exerciseId: req.body.exerciseId,
+      },
+      {
+        $set: { 
+          studentSubmission : req.body.studentSubmission
+        }
+      } 
+    ).then(
+      res.json({mes:"Nhập điểm thành công"})
+    );
   }
 );
 
+// @route   post api/exercises/download-submission
+// @desc    download student submission
+// @access  Private
+router.post('/get-file-submission', passport.authenticate('jwt', { session: false }), (req, res) => {
+  return res.download(req.body.urlFile);
+});
 
 // @route   POST api/exercise/add-exercise
 // @desc    add exercise
@@ -213,13 +195,13 @@ router.get('/exercise/:id', (req, res) => {
 // @desc    Get exercise points
 // @access  Private
 router.get('/exercisePointOP/:id', (req, res) => {
-  console.log('req.params.id')
-  SubExercise.find(
-    {exerciseId: req.params.id}, { studentSubmission: 1, _id:0 }
-    ).populate('studentSubmission.userId', '_id name email photo')
-    .then(studentSubmission => {
+  SubExercise.findOne(
+    { exerciseId: req.params.id }, 
+    { studentSubmission: 1, _id:0 }
+    
+  ).populate('studentSubmission.userId', '_id name email photo')
+  .then(studentSubmission => {
     res.json(studentSubmission)
-    console.log(studentSubmission)
   })
   .catch(err => res.status(404).json({ exercisenotfound: 'Không tìm thấy điểm của bài tập' }));
 
