@@ -197,7 +197,7 @@ class ScoreExercise extends Component {
             <ReactLoading type='bars' color='#05386B'/>
             :
             <Table bordered responsive>
-              <thead>
+              <thead className="thead-light">
                 <tr>
                   <th>Học viên</th>
                   <th>Thời gian nộp</th>
@@ -233,7 +233,9 @@ class ScoreExercise extends Component {
                           {e.submitTime}
                         </Moment>
                         :
-                        'Chưa nộp bài'
+                        <span style={{color:'#A8A8A8'}}>
+                          Chưa nộp bài
+                        </span>
                       }
                     </td>
                     <td>
@@ -242,7 +244,9 @@ class ScoreExercise extends Component {
                         ?
                         <NavLink href="#" onClick={this.downloadExercise.bind(this, e.attachFile.url, e.attachFile.name)}>{e.attachFile.name} </NavLink>
                         :
-                        'Chưa nộp bài'
+                        <span style={{color:'#A8A8A8'}}>
+                          Chưa nộp bài
+                        </span>
                       }
                     </td>
                     <td>
