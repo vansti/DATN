@@ -7,8 +7,11 @@ import {
 } from '../actions/types';
 
 const initialState = {
+  studentSubmission:{
+    studentSubmission: []
+  },
   exercises: [],
-  exercise: null,
+  exercise: {},
   loading: false
 };
 
@@ -28,7 +31,8 @@ export default function(state = initialState, action) {
     case GET_EXERPOINT:
       return { 
         ...state,
-        studentSubmission: action.payload
+        studentSubmission: action.payload,
+        loading: false
       };
     case GET_EXER:
       return {

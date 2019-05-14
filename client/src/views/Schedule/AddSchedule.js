@@ -9,6 +9,7 @@ import { getCurentCourse } from '../../actions/courseActions';
 import { addSchedule, getSchedule } from '../../actions/scheduleActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { clearSuccess } from '../../actions/courseActions';
+import isEmptyObj from '../../validation/is-empty';
 
 const styles = {
   left: {
@@ -97,8 +98,15 @@ class AddSchedule extends Component {
     if (nextProps.schedule)
     {
       const { schedule, loading } = nextProps.schedule
+
+      if(!isEmptyObj(schedule))
+      {
+        this.setState({ 
+          events: schedule.events,
+          loading 
+        });
+      }
       this.setState({ 
-        events: schedule.events,
         loading 
       });
     }

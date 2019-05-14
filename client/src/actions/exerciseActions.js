@@ -13,11 +13,13 @@ import {
   EXERCISE_LOADING, 
   COMMENT_LOADING,
   SUBMIT_LOADING,
-  GET_EXER,GET_EXERPOINT 
+  GET_EXER,
+  GET_EXERPOINT 
 } from './types';
 
 
 export const getExercisePoint = (id) => dispatch => {
+  dispatch(setExercisesLoading());
   axios
     .get(`/api/exercises/exercisePointOP/${id}`)
     .then(res => {
@@ -65,7 +67,7 @@ export const addPoint= (newPoint) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Nhập điểm thành công'}
+        payload: res.data
       })
     })
     .catch(err =>
@@ -156,8 +158,6 @@ export const getExercise = (id) => dispatch => {
     ))
 }
 
-
-
 // Add Submission
 export const addSubmission = (data, exerciseId) => dispatch => {
   let fd = new FormData();
@@ -170,7 +170,7 @@ export const addSubmission = (data, exerciseId) => dispatch => {
   }).then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Bài nộp của bạn đã được gửi'}
+        payload: res.data
       })
       //gọi cái này để cập nhật tên file vừa upload
       dispatch(getSubmission(exerciseId))
@@ -240,7 +240,23 @@ export const download = (exerciseId, submission) => dispatch => {
     );
 };
 
-export const deleteSubmission = (exerciseId, submission) => dispatch => {
+export const downloadSubmission = (data, fileName) => dispatch => {
+  axios
+    .post(`/api/exercises/get-file-submission`, data)
+    .then(res =>{
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch(err =>{
+
+    });
+};
+
+export const deleteSubmission = (exerciseId) => dispatch => {
   axios
     .delete(`/api/exercises/${exerciseId}/delete`)
     .then(res =>

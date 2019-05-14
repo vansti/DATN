@@ -108,7 +108,8 @@ router.get(
         const data = {};
         data.attendanceNumber = count
         data.absentlist = []
-        
+        data.courseId = req.params.courseId
+
         return Promise.all(absentlist.map(element=>{
         return Schedule.find(
           {

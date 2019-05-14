@@ -166,32 +166,40 @@ class Lesson extends Component {
           </CardHeader>
           <CardBody>
           {
-            quizzes.map((quiz,index) => 
-              <Card className="mb-0" key={index} style={{marginTop:10}}>
-                <CardHeader style={{backgroundColor: 'lightblue'}}>
-                  <Row>
-                    <Col xs="10">
-                      <Button block color="link" className="text-left m-0 p-0" onClick={() => this.jumpToQuizLesson(quiz._id)}>
-                        <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.title}</h5>
-                      </Button>
-                      <small>  
-                        <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
-                          {quiz.created}
-                        </Moment>
-                      </small>
-                    </Col>
-                    <Col>
-                      <small>                  
-                        Hạn
-                        <Moment format=" HH:mm ngày DD/MM/YYYY">
-                          {quiz.deadline}
-                        </Moment>
-                      </small>
-                    </Col>
-                  </Row>
-                </CardHeader>
-              </Card>
-            )
+            quizzes.length === 0
+            ?
+            <ListGroupItem>Chưa có bài trắc nghiệm</ListGroupItem>
+            :
+            <Fragment>
+            {
+              quizzes.map((quiz,index) => 
+                <Card className="mb-0" key={index} style={{marginTop:10}}>
+                  <CardHeader style={{backgroundColor: 'lightblue'}}>
+                    <Row>
+                      <Col xs="10">
+                        <Button block color="link" className="text-left m-0 p-0" onClick={() => this.jumpToQuizLesson(quiz._id)}>
+                          <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.title}</h5>
+                        </Button>
+                        <small>  
+                          <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
+                            {quiz.created}
+                          </Moment>
+                        </small>
+                      </Col>
+                      <Col>
+                        <small>                  
+                          Hạn
+                          <Moment format=" HH:mm ngày DD/MM/YYYY">
+                            {quiz.deadline}
+                          </Moment>
+                        </small>
+                      </Col>
+                    </Row>
+                  </CardHeader>
+                </Card>
+              )
+            }
+            </Fragment>
           }
           </CardBody>
         </Card>

@@ -36,7 +36,7 @@ class SubmitExercise extends Component {
     }
 
     this.setState({ errors: nextProps.errors});
-    if (nextProps.success.data === "Bài nộp của bạn đã được gửi") {
+    if (nextProps.success.mes === "Nộp bài tập thành công!") {
       this.setState({
         isLoading: false,
         attachFile: null,

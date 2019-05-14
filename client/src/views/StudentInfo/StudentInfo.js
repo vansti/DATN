@@ -5,10 +5,13 @@ import { getStudent } from '../../actions/userActions';
 import { getStudentCourse } from '../../actions/courseActions';
 import { getStudentAbsent } from '../../actions/attendanceActions';
 import { getPointColumnsStudent } from '../../actions/pointActions';
+import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty'; 
 import Moment from 'react-moment'; 
+import 'moment/locale/vi';
+var moment = require('moment');
 
 const styles = {
   Avatar: {
@@ -32,15 +35,21 @@ class StudentIfo extends Component {
     this.state = {
       student: {},
       studentcourses: [],
+      schedule: {
+        events:[]
+      },
+      loadingEvent :true,
       loadingStudent: true,
       loadingStudentCourse: true,
       loadingStudentAbsentList: false,
       loadingPoint: false,
       isShowAbsentList: false,
-      isShowPointList: false
+      isShowPointList: false,
+      isShowLesson: false
     };
     this.handleAbsent = this.handleAbsent.bind(this);
     this.handlePoint = this.handlePoint.bind(this);
+    this.handleLesson = this.handleLesson.bind(this);
   }
 
   componentDidMount(){
@@ -51,7 +60,8 @@ class StudentIfo extends Component {
   handleAbsent(courseId){
     this.setState({
       isShowAbsentList: true,
-      isShowPointList: false
+      isShowPointList: false,
+      isShowLesson: false
     })
     this.props.getStudentAbsent(courseId,this.props.match.params.id)
   }
@@ -59,9 +69,19 @@ class StudentIfo extends Component {
   handlePoint(courseId){
     this.setState({
       isShowPointList: true,
-      isShowAbsentList: false
+      isShowAbsentList: false,
+      isShowLesson: false
     })
     this.props.getPointColumnsStudent( courseId, this.props.match.params.id )
+  }
+
+  handleLesson(courseId){
+    this.setState({
+      isShowLesson: true,
+      isShowPointList: false,
+      isShowAbsentList: false
+    })
+    this.props.getSchedule(courseId)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -101,16 +121,34 @@ class StudentIfo extends Component {
       })
     } 
 
+    const { schedule, loading } = nextProps.schedule
+    if(!isEmptyObj(schedule))
+      this.setState({ 
+        schedule: schedule,
+        loadingEvent: loading
+      });
+    this.setState({
+      loadingEvent: loading
+    }); 
   }
 
   caculateTotalPoint(pointColumns){
     var totalPoint = 0; 
     for(var i=0; i<pointColumns.length; i++)
     {
-      if(!isEmptyObj(pointColumns[i].submit))
-        totalPoint = totalPoint + pointColumns[i].submit.studentSubmission[0].point * pointColumns[i].pointRate / 100
+      if(!isEmptyObj(pointColumns[i].submit) )
+        if(!isEmptyObj(pointColumns[i].submit.studentSubmission[0].point))
+          totalPoint = totalPoint + pointColumns[i].submit.studentSubmission[0].point * pointColumns[i].pointRate / 100
     }
     return totalPoint
+  }
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  handleToLesson(courseId, lessonId){
+    this.props.history.push(`/courses/${courseId}/lesson/${lessonId}`);
   }
 
   render() {
@@ -124,11 +162,13 @@ class StudentIfo extends Component {
       isShowAbsentList,
       student_point,
       loadingPoint,
-      isShowPointList
+      isShowPointList,
+      schedule,
+      loadingEvent,
+      isShowLesson
     } = this.state
-
     var AbsentList = null;
-
+    console.log(student_absent_list)
     if(isShowAbsentList === true){
       AbsentList = 
       <Fragment>
@@ -139,7 +179,7 @@ class StudentIfo extends Component {
           ?
           <h3>Học viên không nghỉ ngày nào</h3>
           :
-          <Table responsive bordered>
+          <Table responsive bordered hover>
             <thead className="thead-light">
               <tr>
                 <th>Ngày nghỉ</th>
@@ -150,7 +190,7 @@ class StudentIfo extends Component {
             <tbody>
               {
                 student_absent_list.absentlist.map(element=>
-                  <tr key={element._id} >
+                  <tr key={element._id} className="changeCursor" onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event._id)}>
                     <td >
                       <Moment format="DD/MM/YYYY">
                         {element.date}
@@ -169,7 +209,9 @@ class StudentIfo extends Component {
                           </Moment>
                         </Fragment>
                         : 
-                        <span>Chưa cập nhật</span>
+                        <small style={{color:'#A8A8A8'}}>
+                          Chưa cập nhật
+                        </small>
                       }
                     </td>
                     <td>
@@ -178,7 +220,9 @@ class StudentIfo extends Component {
                         ? 
                         <span>{element.event.text}</span> 
                         : 
-                        <span>Chưa cập nhật</span>
+                        <small style={{color:'#A8A8A8'}}>
+                          Chưa cập nhật
+                        </small>
                       }
                     </td>
                   </tr>
@@ -220,15 +264,35 @@ class StudentIfo extends Component {
                       {element.pointRate}
                     </td>
                     <td>
-                      {element.test.title}
+                      {
+                        element.test
+                        ?
+                        element.test.title
+                        :
+                        <small style={{color:'#A8A8A8'}}>
+                          Chưa cập nhật
+                        </small>
+                      }
                     </td>
                     <td>
                       {
                         element.submit
                         ?
-                        element.submit.studentSubmission[0].point
+                        <Fragment>
+                        {
+                          element.submit.studentSubmission[0].point
+                          ?
+                          element.submit.studentSubmission[0].point
+                          :
+                          <small style={{color:'#A8A8A8'}}>
+                            Chưa cập nhật
+                          </small>
+                        }
+                        </Fragment>
                         :
-                        'Chưa cập nhật'
+                        <small style={{color:'#A8A8A8'}}>
+                          Chưa cập nhật
+                        </small>
                       }
                     </td>
                   </tr>
@@ -244,6 +308,42 @@ class StudentIfo extends Component {
               </tr>
             </tbody>
           </Table>
+        }
+      </Fragment>
+    }
+
+    var LessonList = null;
+
+    if(isShowLesson === true){
+      LessonList = 
+      <Fragment>
+        {
+          schedule.events.length === 0
+          ?
+          <h3>Chưa có bài học</h3>
+          :
+          <Table responsive bordered hover>
+          <thead className="thead-light">
+            <tr>
+              <th>Ngày học</th>
+              <th>Tiêu đề</th>
+            </tr>
+          </thead>
+          <tbody>
+          {
+            schedule.events.map(e=>
+              <tr key={e._id} className="changeCursor" onClick={this.handleToLesson.bind(this, schedule.courseId, e._id)}>
+                <td>
+                  {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                </td>
+                <td>
+                  {e.text}
+                </td>
+              </tr>
+            )
+          }
+          </tbody>
+        </Table>
         }
       </Fragment>
     }
@@ -287,12 +387,12 @@ class StudentIfo extends Component {
                         studentcourses.map(course=>
                           <Fragment key={course._id} >
                             <tr >
-                              <td rowSpan="2">
+                              <td rowSpan="3">
                                 <div className="text-center">
                                   <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
                                 </div>
                               </td >
-                              <td rowSpan="2">
+                              <td rowSpan="3">
                                 {course.title}
                               </td>
                               <td className="changeCursor" onClick={this.handleAbsent.bind(this, course._id)}>
@@ -302,6 +402,11 @@ class StudentIfo extends Component {
                             <tr>
                               <td className="changeCursor" onClick={this.handlePoint.bind(this, course._id)}>
                                 Xem điểm số
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="changeCursor" onClick={this.handleLesson.bind(this, course._id)}>
+                                Xem buổi học
                               </td>
                             </tr>
                           </Fragment>
@@ -335,15 +440,30 @@ class StudentIfo extends Component {
                   :
                   <Fragment>
                   {
-                    loadingPoint
-                    ? 
-                    <ReactLoading type='bars' color='#05386B' />
+                    isShowLesson
+                    ?
+                    <Fragment>
+                    {
+                      loadingEvent
+                      ? 
+                      <ReactLoading type='bars' color='#05386B' />
+                      :
+                      LessonList
+                    }
+                    </Fragment>
                     :
-                    PointList
+                    <Fragment>
+                    {
+                      loadingPoint
+                      ? 
+                      <ReactLoading type='bars' color='#05386B' />
+                      :
+                      PointList
+                    }
+                    </Fragment>
                   }
                   </Fragment>
                 }
-
               </CardBody>
             </Card>
           </Col>
@@ -363,7 +483,8 @@ const mapStateToProps = state => ({
   users: state.users,
   courses: state.courses,
   attendance: state.attendance,
-  point: state.point
+  point: state.point,
+  schedule: state.schedule
 });
 
-export default connect(mapStateToProps, { getStudent, getStudentCourse, getStudentAbsent, getPointColumnsStudent })(StudentIfo);  
+export default connect(mapStateToProps, { getStudent, getStudentCourse, getStudentAbsent, getPointColumnsStudent, getSchedule })(StudentIfo);  
