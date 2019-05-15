@@ -13,11 +13,6 @@ export default {
           name: 'Khóa học của tôi',
           url: '/courses',
           icon: 'fa fa-book',
-        },
-        {
-          name: 'Quản lý khóa học',
-          url: '/manage-courses',
-          icon: 'fa fa-wrench',
         }
       ]
     },

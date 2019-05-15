@@ -43,9 +43,7 @@ class PeopleInCourse extends Component {
           {
             loading
             ?
-            <div style={{position:'fixed', top:'50%', left: '50%' }}>
-              <ReactLoading type='bars' color='#05386B' height={100} width={50} />
-            </div>
+            <ReactLoading type='bars' color='#05386B' />
             :
             <Col sm="12" md={{ size: 6, offset: 3 }}>
               <h3>Giáo viên</h3>

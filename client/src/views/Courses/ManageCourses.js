@@ -131,7 +131,7 @@ class ManageCourses extends Component {
 
   render() {
     let { managecourses, currentPage, coursesPerPage, loading } = this.state;
-    const { role } = this.props.auth.user
+    // const { role } = this.props.auth.user
 
     // Logic for displaying current courses
     let indexOfLastTodo = currentPage * coursesPerPage;
@@ -173,36 +173,28 @@ class ManageCourses extends Component {
                           <td>
                             {course.title}
                           </td>
-                          {
-                            role === 'teacher'
-                            ?
-                            <Fragment>
-                              <td>
-                                <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Tham gia
-                                </Button>
-                              </td>
-                            </Fragment>
-                            :
-                            <Fragment>
-                              <td>
-                                <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Chỉnh sửa
-                                </Button>
-                              </td>
-                              <td>
-                                <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Quản lý giáo viên
-                                </Button>
-                              </td>
-                              <td>
-                                <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Quản lý học sinh
-                                </Button>
-                              </td>
-                            </Fragment>
-                          }
-
+                          <Fragment>
+                            <td>
+                              <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                Chỉnh sửa
+                              </Button>
+                            </td>
+                            <td>
+                              <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
+                                Quản lý giáo viên
+                              </Button>
+                            </td>
+                            <td>
+                              <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                                Quản lý học sinh
+                              </Button>
+                            </td>
+                            <td>
+                              <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                Tham gia
+                              </Button>
+                            </td>
+                          </Fragment>
                         </tr>
                       )
                     }

@@ -6,6 +6,7 @@ import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import isEmptyObj from '../../validation/is-empty';
+import Moment from 'react-moment'; 
 import 'moment/locale/vi';
 var moment = require('moment');
 
@@ -70,6 +71,7 @@ class LessonList extends Component {
                 <thead>
                   <tr>
                     <th>Ngày học</th>
+                    <th>Giờ học</th>
                     <th>Tiêu đề</th>
                   </tr>
                 </thead>
@@ -79,6 +81,15 @@ class LessonList extends Component {
                     <tr key={e._id} className="changeCursor" onClick={this.handleLesson.bind(this, e._id)}>
                       <td>
                         {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                      </td>
+
+                      <td>
+                        <Moment format="HH:mm - ">
+                          {e.start}
+                        </Moment>
+                        <Moment format="HH:mm">
+                          {e.end}
+                        </Moment>
                       </td>
                       <td>
                         {e.text}
