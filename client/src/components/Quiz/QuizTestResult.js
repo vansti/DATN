@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Col, Button, Form, FormGroup, Label, Input} from 'reactstrap';
-import  validateFormTestQuiz  from '../../validation/validateFormTestQuiz';
+// import { Col, Button, Form, FormGroup, Label, Input} from 'reactstrap';
+// import  validateFormTestQuiz  from '../../validation/validateFormTestQuiz';
 import "./style.css";
 
 class TestQuizResult extends Component {
@@ -21,6 +21,7 @@ class TestQuizResult extends Component {
               question.answers.map( (answer, index) => {
                 return(
                   <div>
+                      {/*eslint-disable-next-line*/}
                       <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
                       <span>{ answer }</span>
                     </button>
@@ -36,7 +37,7 @@ class TestQuizResult extends Component {
   }
   render() {
 
-  const { handleSubmit, quizTest, submitting } = this.props;
+  const { quizTest } = this.props;
     return (
       <div className="react-quiz-container">
         { this.renderQuizResultQuestions(quizTest) }

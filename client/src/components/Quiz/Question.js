@@ -181,6 +181,7 @@ class Question extends Component {
               question.answers.map( (answer, index) => {
                 return(
                   <div>
+                      {/*eslint-disable-next-line*/}
                       <button disabled={true} className={"answerBtn btn" + (index+1 == question.correctAnswer ? ' correct': '')}>
                       <span>{ answer }</span>
                       {/* { question.questionType === 'text' && <span>{ answer }</span> } */}

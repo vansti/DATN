@@ -140,7 +140,7 @@ class AddTestQuizForm extends Component {
   );
   render() {
 
-  const { handleSubmit, courses, pristine, reset, submitting } = this.props;
+  const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
       <Form name="text-form" onSubmit={ handleSubmit(this.submit) } >
         <Field
@@ -155,7 +155,7 @@ class AddTestQuizForm extends Component {
           component={this.renderInputFieldInline}
           label="Tóm tắt bài kiểm tra"
         />
-        <Field
+        {/* <Field
           name="courseId"
           type="text"
           component={this.renderSelectField}
@@ -165,7 +165,7 @@ class AddTestQuizForm extends Component {
              {courses.map((course, index) => (
                <option key={course._id} value={course._id}>{course.title}</option>
              ))}
-        </Field>
+        </Field> */}
 	      <FieldArray name="quizzes" component={this.renderQuizzes} />
 	      <FormGroup>
 	        <Button color="primary" type="submit" disabled={submitting}>Nộp bài</Button>{' '}

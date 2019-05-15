@@ -11,7 +11,8 @@ import {
   GET_CURRENT_TESTQUIZ,
   GET_QUIZ_LIST,
   QUIZ_LOADING,
-  GET_QUIZ_SUBMISSTION
+  GET_QUIZ_SUBMISSTION,
+  GET_QUIZ_DETAIL
 } from './types';
 
 export const addTestQuiz = (testQuizData, history) => dispatch => {
@@ -50,6 +51,7 @@ export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
 
 // Get list test quizzed
 export const getListQuiz = () => dispatch => {
+  dispatch(setQuizzesLoading());
   axios
     .get('/api/test/quiz')
     .then(res => {
@@ -91,20 +93,17 @@ export const getQuizSubmisstion = (testQuizId) => dispatch => {
 
 // Get detail test quiz by id
 export const getDetailQuiz = (testQuizId) => dispatch => {
+  dispatch(setQuizzesLoading());
   axios
-    .get(`/api/test/quiz/${testQuizId}`)
+    .get(`/api/test/quiz-detail/${testQuizId}`)
     .then(res => {
-      let data = formatDataListQuizTest(res.data);
       dispatch({
-        type: GET_CURRENT_TESTQUIZ,
-        payload: {
-          data: data,
-          message: 'Đã nhận data thành công'
-        }
+        type: GET_QUIZ_DETAIL,
+        payload: res.data
       })
     }).catch(err =>{
       dispatch({
-        type: GET_ERRORS,
+        type: GET_QUIZ_DETAIL,
         payload: {}
       })}
     );

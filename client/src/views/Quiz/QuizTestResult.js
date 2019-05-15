@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
+// import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 //action
 import { getListQuiz, getQuizSubmisstion } from '../../actions/testQuizAction';
 //component
-import {Modal, ModalBody, Button} from 'reactstrap';
+import { Button} from 'reactstrap';
 import QuizTestResult from '../../components/Quiz/QuizTestResult';
 import ReactLoading from 'react-loading';
 class QuizTestPage extends Component {

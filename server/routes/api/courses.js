@@ -541,7 +541,7 @@ router.get(
 
     async function run() {
       try {
-        const subquizId = await SubQuiz.findOne({ 'quizId' : req.params.quizId }, { _id : 1 })
+        const subquizId = await SubQuiz.findOne({ 'quizId' : req.params.quizId, 'courseId' : req.params.courseId}, { _id : 1 })
 
         await Course.updateOne(
           { _id: req.params.courseId, "pointColumns._id": req.params.pointColumnsId },

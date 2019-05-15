@@ -1,21 +1,37 @@
 import React, { Component,Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, Button, ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
+import { 
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  Button, 
+  Row, 
+  Col,
+  Card, 
+  CardHeader,
+  CardBody,
+  Collapse,
+  Label,
+  Input
+} from 'reactstrap';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { getQuizListInCourse } from '../../../actions/testQuizAction'; 
+import { getListQuiz } from '../../../actions/testQuizAction'; 
 import { addQuizEvent, getEventSchedule, clearSuccess } from '../../../actions/scheduleActions'; 
-import Moment from 'react-moment'; 
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 class QuizModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quizzes: [],
+      accordion: [],
+      listTestQuiz: [],
       loading: true,
       isOpenModal: false,
       isLoading: false,
-      isShowSuccess: false
+      isShowSuccess: false,
+      isShowError: false
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.handleClickQuiz = this.handleClickQuiz.bind(this);
@@ -30,22 +46,45 @@ class QuizModal extends Component {
   onOpenModal = e => {
     e.preventDefault();
 
-    this.props.getQuizListInCourse(this.props.courseId);
+    this.props.getListQuiz();
     this.setState({
       isOpenModal: !this.state.isOpenModal
     });
   }
 
   handleClickQuiz(quizId){
-    this.props.addQuizEvent(this.props.courseId, this.props.eventId, quizId)
-    this.setState({ isLoading: true })
+    const deadlineData = {}
+
+    this.state.listTestQuiz.forEach(elem => {
+      if(elem._id.toString() === quizId.toString())
+        deadlineData.deadline = elem.deadLine  
+    })
+
+    if(deadlineData.deadline === undefined)
+      this.setState({
+        isShowError: true
+      })
+    else{
+      this.props.addQuizEvent(this.props.courseId, this.props.eventId, quizId, deadlineData)
+      this.setState({ isLoading: true })
+    }
   } 
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.testQuiz) {
-      const { quizzes, loading } = nextProps.testQuiz
+      const { listTestQuiz, loading } = nextProps.testQuiz
+      if(listTestQuiz)
+      {
+        var accordion = [];
+        listTestQuiz.map(()=>accordion.push(false))
+        this.setState({
+          accordion,
+          listTestQuiz,
+          loading
+        })
+      }
+
       this.setState({
-        quizzes,
         loading
       })
     }
@@ -63,14 +102,40 @@ class QuizModal extends Component {
     this.props.getEventSchedule(this.props.courseId, this.props.eventId)
   }
 
+  hideAlertError(){
+    this.setState({
+      isShowError: false
+    })
+  }
+
+  toggleAccordion(tab) {
+    const prevState = this.state.accordion;
+    const state = prevState.map((x, index) => tab === index ? !x : false);
+
+    this.setState({
+      accordion: state,
+    });
+  }
+
+  onChangeDeadline(quizId, time){
+    this.state.listTestQuiz.map(elem => {
+      if(elem._id.toString() === quizId.toString())
+        return elem.deadLine = time;
+      return elem;
+    })
+    this.setState({
+      listTestQuiz: this.state.listTestQuiz
+    })
+  }
+
   render() {
-    const { quizzes, loading } = this.state;
+    const { listTestQuiz, loading } = this.state;
     return (
       <Fragment>
         <Button color="danger" onClick={this.onOpenModal}>Chọn trắc nghiệm</Button>
         <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
           <ModalHeader  toggle={this.toggleModal}>Chọn trắc nghiệm</ModalHeader>
-          <ModalBody style={{overflowY:'scroll', height:400}}>
+          <ModalBody style={{overflowY:'scroll', height:500}}>
           {
             loading
             ?
@@ -78,36 +143,64 @@ class QuizModal extends Component {
             :
             <Fragment>
             {
-              quizzes.length === 0
+              listTestQuiz.length === 0
               ?
               <b>Chưa có bài trắc nghiệm</b>
               :
-              <ListGroup>
+              <Fragment>
               {
-                quizzes.map(quiz=>
-                  <ListGroupItem key={quiz._id} tag="button" onClick={this.handleClickQuiz.bind(this, quiz._id)} action>
-                    <Row>
-                      <Col xs="10">
+                listTestQuiz.map((quiz,index)=>
+                  <Card className="mb-0" key={quiz._id} style={{marginTop:10}}>
+                    <CardHeader style={{backgroundColor: 'lightblue'}}>
+                      <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(index)} aria-expanded={this.state.accordion[index]} aria-controls="collapseOne">
                         <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.title}</h5>
-                        <small>  
-                          <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
-                            {quiz.created}
-                          </Moment>
-                        </small>
-                      </Col>
-                      <Col >
-                        <small>                  
-                          Hạn
-                          <Moment format=" HH:mm ngày DD/MM/YYYY">
-                            {quiz.deadline}
-                          </Moment>
-                        </small>
-                      </Col>
-                    </Row>
-                  </ListGroupItem>
+                      </Button>
+                    </CardHeader>
+                    <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne">
+                      <CardBody>
+                        <Row>
+                          <Col xs="10">
+                            <Label style={{marginRight: 10, fontWeight:'bold'}}>Hạn chót làm bài: </Label> 
+                            {
+                              quiz.deadLine
+                              ?
+                              <DatePicker
+                                selected={quiz.deadLine}
+                                onChange={this.onChangeDeadline.bind(this, quiz._id)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                isClearable={true}
+                                dateFormat="dd/MM/yyyy HH:mm aa"
+                                customInput={<Input />}
+                                timeCaption="time"
+                              />
+                              :
+                              <DatePicker
+                                onChange={this.onChangeDeadline.bind(this, quiz._id)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                isClearable={true}
+                                dateFormat="dd/MM/yyyy HH:mm aa"
+                                customInput={<Input />}
+                                timeCaption="time"
+                              />
+                            }
+
+                          </Col>
+                          <Col >
+                            <Button color="primary" onClick={this.handleClickQuiz.bind(this, quiz._id)}>
+                              Chọn
+                            </Button>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                    </Collapse>
+                  </Card>
                 )
               }
-              </ListGroup>
+              </Fragment>
             }
             </Fragment>
           }
@@ -128,6 +221,14 @@ class QuizModal extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        <SweetAlert
+          	danger
+            confirmBtnText="OK"
+            title='Hãy chọn deadline'            
+          	confirmBtnBsStyle="danger"
+            show={this.state.isShowError}
+            onConfirm={this.hideAlertError.bind(this)}>
+        </SweetAlert>
       </Fragment>
     )
   }
@@ -138,4 +239,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default connect(mapStateToProps, { getQuizListInCourse, addQuizEvent, clearSuccess, getEventSchedule })(QuizModal);  
+export default connect(mapStateToProps, { getListQuiz, addQuizEvent, clearSuccess, getEventSchedule })(QuizModal);  

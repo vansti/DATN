@@ -5,6 +5,8 @@ const passport = require('passport');
 
 // Course Model
 const Schedule = require('../../models/Schedule');
+const Course = require('../../models/Course');
+const SubQuiz = require('../../models/SubQuiz');
 
 
 router.use(cors());
@@ -92,7 +94,7 @@ router.get(
           path: 'events.exercises'
         })
         .populate({
-          path: 'events.quizzes'
+          path: 'events.quizzes.quizId'
         })
         res.json(schedule.events[0])
       } catch (err) {
@@ -135,17 +137,49 @@ router.post(
   '/add-quiz-event/:courseId/:eventId/:quizId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Schedule.updateOne(
-      { courseId: req.params.courseId, "events._id": req.params.eventId },
-      { 
-        $push: 
-        { 
-          "events.$.quizzes" : req.params.quizId 
+
+    const quiz = {
+      quizId: req.params.quizId,
+      deadline: req.body.deadline 
+    }
+
+    const newSubQuiz = new SubQuiz({
+      quizId: req.params.quizId,
+      courseId: req.params.courseId,
+      studentSubmission: []
+    });
+
+    async function run() {
+      try {
+
+        const course = await Course.findById(req.params.courseId);
+        const find = course.quizzes.find(quiz => quiz.toString() === req.params.quizId.toString());
+        if(find === undefined)
+        {
+          course.quizzes.unshift(req.params.quizId);
+          await course.save();
         }
+
+        //create subQuiz
+        await newSubQuiz.save();
+
+        await  
+        Schedule.updateOne(
+          { courseId: req.params.courseId, "events._id": req.params.eventId },
+          { 
+            $push: 
+            { 
+              "events.$.quizzes" : quiz
+            }
+          }
+        )
+
+        res.json({mes: 'Chọn bài trắc nghiệm cho bài học thành công'});
+      } catch (err) {
+        console.log(err)
       }
-    )
-    .then(res.json({mes: 'Chọn bài trắc nghiệm cho bài học thành công'}))
-    .catch(err => console.log(err));
+    }
+    run();
   }
 );
 

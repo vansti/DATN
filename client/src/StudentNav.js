@@ -11,9 +11,9 @@ export default {
       icon: 'fa fa-book',
     },
     {
-      name: 'Làm quiz',
-      url: '/quiz',
-      icon: 'icon-list',
+      name: 'Xem thời khóa biểu',
+      url: '/schedule',
+      icon: 'fa fa-calendar',
     }
   ],
 };

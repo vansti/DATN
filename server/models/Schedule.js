@@ -45,8 +45,13 @@ const ScheduleSchema = new Schema({
       ],
       quizzes: [
         {
-          type: Schema.Types.ObjectId,
-          ref: "quizzes"
+          quizId:{
+            type: Schema.Types.ObjectId,
+            ref: "quizzes"
+          },
+          deadline: {
+            type: Date
+          }
         }
       ],
       date:{
