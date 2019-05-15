@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Card, CardBody, Table, Button, CardHeader, Modal, ModalBody} from 'reactstrap';
+import {Input, Card, CardBody, Table, Button, CardHeader, Modal, ModalBody} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getApproveListTeacher, approveTeacher, clearSuccess } from '../../actions/userActions';
@@ -17,15 +17,17 @@ class ApproveTeacher extends Component {
       },
       courseId: null,
       loading: true,
-      isLoading: false
+      isLoading: false,
+      intialTeacher: []
     };
     this.handleClickApprove = this.handleClickApprove.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.users) {
-      const { approve_list_teacher, loading } = nextProps.users
+      const { approve_list_teacher, loading } = nextProps.users;
       this.setState({ 
+        intialTeacher: approve_list_teacher ? approve_list_teacher.teachers : [],
         approve_list_teacher, 
         loading 
       });
@@ -46,14 +48,21 @@ class ApproveTeacher extends Component {
     this.props.approveTeacher(this.props.match.params.courseId, teacherId)
   } 
 
+  onSearch = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialTeacher));
+    updatedList = updatedList.filter((teacher)=>
+      teacher.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
+    this.setState({approve_list_teacher: {...this.state.approve_list_teacher, teachers: updatedList}});
+  }
+  
   render() {
     const { approve_list_teacher, loading } = this.state;
-    console.log(approve_list_teacher);
     return (
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <b>Danh sách học viên ghi danh</b>
+            <b>Danh sách giáo viên</b>
           </CardHeader>
           <CardBody>
             {
@@ -62,9 +71,14 @@ class ApproveTeacher extends Component {
               <ReactLoading type='bars' color='#05386B'/>
               :
               <div className="animated fadeIn">
+                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên giáo viên . . ."/>
                 {
-                  approve_list_teacher.teacherInCourse.length === 0
-                  ? <h2> Không có giáo viên</h2>
+                  approve_list_teacher.teachers.length === 0
+                  ? 
+                  <Table bordered striped responsive size="sm">
+
+                    <h2> Không có giáo viên</h2>
+                  </Table>
                   :
                   <Table bordered striped responsive size="sm">
                     <thead>
@@ -72,7 +86,7 @@ class ApproveTeacher extends Component {
                         <th>Hình đại diện</th>
                         <th>Email</th>
                         <th>Họ và Tên</th>
-                        <th>Thời gian ghi danh</th>
+                        <th>Thời gian làm việc</th>
                         <th>Phê duyệt</th>
                       </tr>
                     </thead>
@@ -106,7 +120,7 @@ class ApproveTeacher extends Component {
         </Card>
         <Card>
           <CardHeader>
-            <b>Danh sách học viên đã duyệt</b>
+            <b>Danh sách giáo viên trong khóa</b>
           </CardHeader>
           <CardBody>
             {
@@ -117,7 +131,7 @@ class ApproveTeacher extends Component {
               <div className="animated fadeIn">
                 {
                   approve_list_teacher.teacherInCourse.length === 0
-                  ? <h2> không có học viên</h2>
+                  ? <h2> không có giáo viên</h2>
                   :
                   <Table bordered striped responsive size="sm">
                     <thead>
