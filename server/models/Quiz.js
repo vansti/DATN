@@ -10,10 +10,6 @@ const QuizSchema = new Schema({
     type: String,
     required: true
   },
-  courseId: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'courses'
-  },
   listQuiz: [
     {      
       question: {
@@ -37,10 +33,6 @@ const QuizSchema = new Schema({
   ],
   time: {
     type: String,
-    required: true
-  },
-  deadline:{
-    type: Date,
     required: true
   },
   created: {

@@ -5,8 +5,6 @@ module.exports = function validateAddTestQuizInput(data) {
   let errors = {};
   data.testTitle = !isEmpty(data.testTitle) ? data.testTitle : '';
   data.testSynopsis = !isEmpty(data.testSynopsis) ? data.testSynopsis : '';
-  data.courseId = !isEmpty(data.courseId) ? data.courseId : '';
-  data.courseId = !isEmpty(data.courseId) ? data.courseId : '';
 
   if (Validator.isEmpty(data.testTitle)) {
     errors.testTitle = 'Hãy điền tiêu đề bài tập';
@@ -16,9 +14,6 @@ module.exports = function validateAddTestQuizInput(data) {
     errors.testSynopsis = 'Hãy điền hạn chót nộp bài';
   }
 
-  if (Validator.isEmpty(data.courseId)) {
-    errors.courseId = 'Hãy điền nội dung bài tập';
-  }
   if (!data.quizzes || !data.quizzes.length) {
     errors.quizzes = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
   } else {

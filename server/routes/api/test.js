@@ -30,26 +30,16 @@ router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, re
         const newQuiz = new Quiz({
             title: req.body.testTitle,
             description: req.body.testSynopsis,
-            courseId: req.body.courseId,
             listQuiz: req.body.quizzes,
             time: '1600',
             deadline: '2019-06-01',
         });
-        const newSubQuiz = new SubQuiz({
-            studentSubmission: []
-        });
+
         async function run() {
             try {
                 const quiz = await newQuiz.save();
-                //create subQuiz
-                newSubQuiz.quizId = quiz._id;
-                const subQuiz = await newSubQuiz.save();
-                //update array quiz for course
-                const course = await Course.findById(req.body.courseId);
-                course.quizzes.unshift(quiz._id);
-                const courseUpdated = await course.save();
 
-                res.json(courseUpdated);
+                res.json(quiz);
             } catch (err) {
                 console.log(err)
             }
@@ -61,41 +51,42 @@ router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, re
 // @desc    get all quizes
 // @access  Private
 router.get('/quiz', passport.authenticate('jwt', { session: false }), (req, res) => {
-    const userId = req.user._id;
-    async function run() {
-        try {
-            let result = [];
-            let quizs = await Quiz.find();
-            const subquizs = await SubQuiz.find();
-            await quizs.forEach((quiz, index) => {
-                let subQuiz = subquizs.find(
-                    object => JSON.stringify(object.quizId) == JSON.stringify(quiz._id)
-                )
-                temp = {
-                    '_id': quiz._id,
-                    'title': quiz.title,
-                    'description': quiz.description,
-                    'courseId': quiz.courseId,
-                    'listQuiz': quiz.listQuiz,
-                    'time': quiz.time,
-                    'deadline': quiz.deadline,
-                    'created:': quiz.created,
-                    'hasSubQuiz': quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', userId) == -1 ?  1 : 0
-                }
-                result.push(temp);
-            });
-            res.json(result);
-        } catch (err) {
-            console.log(err)
-        }
-    }
-    run();
+    // const userId = req.user._id;
+    // async function run() {
+    //     try {
+    //         let result = [];
+    //         let quizs = await Quiz.find();
+    //         const subquizs = await SubQuiz.find();
+    //         await quizs.forEach((quiz, index) => {
+    //             let subQuiz = subquizs.find(
+    //                 object => JSON.stringify(object.quizId) == JSON.stringify(quiz._id)
+    //             )
+    //             temp = {
+    //                 '_id': quiz._id,
+    //                 'title': quiz.title,
+    //                 'description': quiz.description,
+    //                 'listQuiz': quiz.listQuiz,
+    //                 'time': quiz.time,
+    //                 'created:': quiz.created,
+    //                 // 'hasSubQuiz': quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', userId) == -1 ?  1 : 0
+    //             }
+    //             result.push(temp);
+    //         });
+    //         res.json(result);
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // }
+    // run();
+    Quiz.find()
+    .then(quiz=> res.json(quiz))
+    .catch(err => console.log(err));
 });
 
 // @route   get api/test/quiz-detail
 // @desc    get one quiz
 // @access  Private
-router.get('/quiz/detail/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/quiz-detail/:idTestQuiz', passport.authenticate('jwt', { session: false }), (req, res) => {
     Quiz.findById(req.params.idTestQuiz).then(quiz => {
         res.json(quiz);
     }).catch(err => console.log(err));
@@ -130,7 +121,7 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
     }
     async function run() {
         try {
-            const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId});
+            const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId, 'courseId': req.body.courseId});
             const quiz = await Quiz.findById(req.body.quizId);
 
             submission.point = quizService.calPointQuiz(quiz.listQuiz, params.answer);

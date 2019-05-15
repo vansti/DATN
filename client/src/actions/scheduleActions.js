@@ -76,9 +76,9 @@ export const editEvent = (courseId, eventId, eventData) => dispatch => {
     );
 };
 
-export const addQuizEvent = (courseId, eventId, quizId) => dispatch => {
+export const addQuizEvent = (courseId, eventId, quizId, deadlineData) => dispatch => {
   axios
-    .post(`/api/schedule/add-quiz-event/${courseId}/${eventId}/${quizId}`)
+    .post(`/api/schedule/add-quiz-event/${courseId}/${eventId}/${quizId}`, deadlineData)
     .then(res =>
       dispatch({
         type: GET_SUCCESS,

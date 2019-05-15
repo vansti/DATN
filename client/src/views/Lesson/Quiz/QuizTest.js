@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import { Button, Form, FormGroup, Label, Input} from 'reactstrap';
-import { submitTestQuiz } from '../../actions/testQuizAction';
-import  validateFormTestQuiz  from '../../validation/validateFormTestQuiz';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { submitTestQuiz } from '../../../actions/testQuizAction';
+import  validateFormTestQuiz  from '../../../validation/validateFormTestQuiz';
 import "./style.css";
+import { withRouter } from 'react-router-dom';
 
 class TestQuizForm extends Component {
   submit = (values) => {
+    values.courseId = this.props.match.params.id
     return this.props.submitTestQuiz(values);
   }
   componentDidMount() {
@@ -80,4 +82,4 @@ TestQuizForm = connect(
   { submitTestQuiz }
 )(TestQuizForm)
 
-export default TestQuizForm;
+export default withRouter(TestQuizForm);
