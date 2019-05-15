@@ -68,13 +68,11 @@ class ManageCourses extends Component {
     }
 
     if (nextProps.success === "Tham gia khóa học thành công" || nextProps.success === "Đã tham gia vào khóa học này") {
-
       this.setState({
         isShowSuccess: true, 
         isLoading: false,
         titleSuccess: nextProps.success
       })
-
     }
   }
   
@@ -127,8 +125,7 @@ class ManageCourses extends Component {
   onSearch = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
     updatedList = updatedList.filter((course)=>
-      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1
-    );
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
     this.setState({ managecourses: updatedList });
   }
 
@@ -200,12 +197,7 @@ class ManageCourses extends Component {
                               </td>
                               <td>
                                 <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Phê duyệt
-                                </Button>
-                              </td>
-                              <td>
-                                <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                  Tham gia
+                                  Quản lý học sinh
                                 </Button>
                               </td>
                             </Fragment>
