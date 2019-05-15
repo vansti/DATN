@@ -78,7 +78,7 @@ router.get('/quiz', passport.authenticate('jwt', { session: false }), (req, res)
     //     }
     // }
     // run();
-    Quiz.find()
+    Quiz.find({}, { title: 1, time: 1})
     .then(quiz=> res.json(quiz))
     .catch(err => console.log(err));
 });
