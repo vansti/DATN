@@ -150,6 +150,7 @@ class Schedule extends Component {
                       startDate: args.day
                     });
                   }}
+                  events= {this.state.events}
                 />
               </div>
               <div style={styles.main}>

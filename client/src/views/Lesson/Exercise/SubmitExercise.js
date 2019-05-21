@@ -7,6 +7,7 @@ import ReactLoading from 'react-loading';
 import { withRouter } from 'react-router-dom';
 import ReactDropzone from "react-dropzone";
 import isEmptyObj from '../../../validation/is-empty';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 class SubmitExercise extends Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class SubmitExercise extends Component {
       errors: {},
       isLoading: false,
       loading: false,
-      submission: ''
+      submission: '',
+      isShowFail: false
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
@@ -54,24 +56,43 @@ class SubmitExercise extends Component {
 
 
   onDrop = (files) => {
-    let file = files[0];
-   
-    this.setState({
-      attachFile: file,
-      fileName: file.name
-    });
+    var now = new Date();
+    var deadline = new Date(this.props.exerciseDeadline);
+    if(deadline.getTime() >= now.getTime())
+    {
+      let file = files[0];
+    
+      this.setState({
+        attachFile: file,
+        fileName: file.name
+      });
+    }else{
+      this.setState({
+        isShowFail: true
+      })
+    }
   }
 
   onsubmit = (e) => {
     e.preventDefault();
-    const data = {
-      file: this.state.attachFile,
+    var now = new Date();
+    var deadline = new Date(this.props.exerciseDeadline);
+    if(deadline.getTime() >= now.getTime())
+    {
+      const data = {
+        file: this.state.attachFile,
+      }
+      this.props.clearErrors();
+      this.props.addSubmission(data, this.props.exerciseId);
+      this.setState({
+        isLoading: true,
+      })
+    }else{
+      this.setState({
+        isShowFail: true
+      })
     }
-    this.props.clearErrors();
-    this.props.addSubmission(data, this.props.exerciseId);
-    this.setState({
-      isLoading: true,
-    })
+
   }
 
   download = (e) => {
@@ -81,7 +102,17 @@ class SubmitExercise extends Component {
 
   deleteSubmission = (e) => {
     e.preventDefault();
-    this.props.deleteSubmission(this.props.exerciseId);
+    var now = new Date();
+    var deadline = new Date(this.props.exerciseDeadline);
+    if(deadline.getTime() >= now.getTime())
+    {
+      this.props.deleteSubmission(this.props.exerciseId);
+    }else{
+      this.setState({
+        isShowFail: true
+      })
+    }
+
   }
 
   onOpenModal = e => {
@@ -93,6 +124,12 @@ class SubmitExercise extends Component {
     this.setState({
       large: !this.state.large,
     });
+  }
+
+  hideAlertFail = () =>{
+    this.setState({
+      isShowFail: false
+    })
   }
 
   render() {
@@ -157,6 +194,14 @@ class SubmitExercise extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        <SweetAlert
+          	danger
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="danger"
+          	title="Hết hạn chỉnh sửa bài tập"
+            show={this.state.isShowFail}
+            onConfirm={this.hideAlertFail}>
+        </SweetAlert>
       </Fragment>
     )
   }

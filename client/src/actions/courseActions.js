@@ -64,7 +64,6 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
             type: GET_SUCCESS,
             payload: {data: 'Chỉnh sửa khóa học thành công'}
           })
-          dispatch(getCourseInfo(courseId))
         });
       }
       else
@@ -73,7 +72,6 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
           type: GET_SUCCESS,
           payload: {data: 'Chỉnh sửa khóa học thành công'}
         })
-        dispatch(getCourseInfo(courseId))
       }
 
     })

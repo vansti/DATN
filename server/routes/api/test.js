@@ -21,63 +21,30 @@ router.use(cors());
 // @desc    teachcer create test quiz
 // @access  Private
 router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, res) => {
-        const { errors, isValid } = validateAddTestQuizInput(req.body);
-        // Check Validation
-        if (!isValid) {
-            // Return any errors with 400 status
-            return res.status(400).json(errors);
-        }
-        const newQuiz = new Quiz({
-            title: req.body.testTitle,
-            description: req.body.testSynopsis,
-            listQuiz: req.body.quizzes,
-            time: '1600',
-            deadline: '2019-06-01',
-        });
+    const { errors, isValid } = validateAddTestQuizInput(req.body);
+    // Check Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    
+    const newQuiz = new Quiz({
+      title: req.body.testTitle,
+      description: req.body.testDescription,
+      time: req.body.testTime,
+      listQuiz: req.body.listQuiz
+    });
 
-        async function run() {
-            try {
-                const quiz = await newQuiz.save();
+    newQuiz
+    .save()
+    .then(res.json({mes: 'Thêm bài kiểm tra thành công'}))
+    .catch(err => console.log(err));
 
-                res.json(quiz);
-            } catch (err) {
-                console.log(err)
-            }
-        }
-    run();
 });
 
 // @route   get api/test/quiz
 // @desc    get all quizes
 // @access  Private
 router.get('/quiz', passport.authenticate('jwt', { session: false }), (req, res) => {
-    // const userId = req.user._id;
-    // async function run() {
-    //     try {
-    //         let result = [];
-    //         let quizs = await Quiz.find();
-    //         const subquizs = await SubQuiz.find();
-    //         await quizs.forEach((quiz, index) => {
-    //             let subQuiz = subquizs.find(
-    //                 object => JSON.stringify(object.quizId) == JSON.stringify(quiz._id)
-    //             )
-    //             temp = {
-    //                 '_id': quiz._id,
-    //                 'title': quiz.title,
-    //                 'description': quiz.description,
-    //                 'listQuiz': quiz.listQuiz,
-    //                 'time': quiz.time,
-    //                 'created:': quiz.created,
-    //                 // 'hasSubQuiz': quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', userId) == -1 ?  1 : 0
-    //             }
-    //             result.push(temp);
-    //         });
-    //         res.json(result);
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // }
-    // run();
     Quiz.find({}, { title: 1, time: 1})
     .then(quiz=> res.json(quiz))
     .catch(err => console.log(err));
@@ -123,8 +90,10 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
         try {
             const subQuiz = await SubQuiz.findOne({'quizId': req.body.quizId, 'courseId': req.body.courseId});
             const quiz = await Quiz.findById(req.body.quizId);
-
-            submission.point = quizService.calPointQuiz(quiz.listQuiz, params.answer);
+            if(params.answer.length === 0)
+              submission.point = 0
+            else
+              submission.point = quizService.calPointQuiz(quiz.listQuiz, params.answer);
             let index = quizService.checkvalueKeyExist(subQuiz.studentSubmission, 'userId', submission.userId);
             if(index === -1) {
                 subQuiz.studentSubmission.unshift(submission);
@@ -160,6 +129,28 @@ router.get('/:courseId', passport.authenticate('jwt', { session: false }), (req,
       res.json(quizzes)
     });
   })
+});
+
+// @route   GET api/test/is-do-quiz/:courseId
+// @desc    Kiem tra hoc vien da lam trac nghiem chua
+// @access  Private
+router.get('/is-do-quiz/:courseId/:quizId', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  async function run() {
+    try {
+      const subQuiz = await SubQuiz.findOne({'quizId': req.params.quizId, 'courseId': req.params.courseId}).lean();
+      const find = subQuiz.studentSubmission.find(element => element.userId.toString() ===  req.user._id.toString())
+      if(find)
+        res.json(find)
+      else
+        res.json({})
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
+
 });
 
 module.exports = router;

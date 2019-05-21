@@ -4,6 +4,9 @@ const isEmpty = require('./is-empty');
 module.exports = function validateAddCourseInput(data) {
   let errors = {};
 
+  if (Validator.isEmpty(data.listId)) 
+    errors.listId = 'Hãy chọn danh sách bài học';
+
   if (Validator.isEmpty(data.title)) 
     errors.title = 'Hãy điền tên khóa học';
 

@@ -20,6 +20,8 @@ const attendance = require('./routes/api/attendance');
 
 const schedule = require('./routes/api/schedule');
 
+const lesson = require('./routes/api/lesson');
+
 const app = express();
 
 //Bodyparser Middleware
@@ -66,6 +68,9 @@ app.use('/api/schedule', schedule)
 
 // exercises Route
 app.use('/api/test', test);
+
+// lesson Route
+app.use('/api/lesson', lesson);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

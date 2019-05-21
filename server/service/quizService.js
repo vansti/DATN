@@ -8,7 +8,9 @@ const quizService = {
             numberQuizCorrect++;
         }
     });
-    return numberQuizCorrect / listQuiz.length * 10;
+    var numb = numberQuizCorrect / listQuiz.length * 10;
+    numb = numb.toFixed(1);
+    return numb;
   },
   checkvalueKeyExist: (arr, key, value) => {
     let result = -1;

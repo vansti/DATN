@@ -1,14 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import CKEditor from 'ckeditor4-react';
-import { 
-  FormGroup, 
-  Label, 
-  Alert, 
+import {  
   Modal, 
   ModalBody, 
-  Input, 
   Button, 
   ListGroup, 
   ListGroupItem, 
@@ -18,71 +13,52 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  Collapse
+  Collapse,
+  Alert,
+  Label,
+  Jumbotron
 } from 'reactstrap';
-import { getEventSchedule, editEvent, clearSuccess } from '../../actions/scheduleActions';
+import { getLessonIncourse } from '../../actions/lessonActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
-import config from '../../config';
-import SweetAlert from 'react-bootstrap-sweetalert';
 import ExerciseBox from './Exercise/ExerciseBox';
 import NoImg from '../../assets/img/NoImg.png';
 import Moment from 'react-moment'; 
 import QuizModal from './Quiz/QuizModal';
+import ExerciseComments from './Exercise/ExerciseComments';
 
-import 'moment/locale/vi';
-var moment = require('moment');
-
-class EditLesson extends Component {
+class InLesson extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      accordion: [],
-      isShowSuccess: false,
-      isLoading: false,
-      loading: true,
-      date: '',
       text: '',
       content: '',
       files: [],
+      accordion: [],
+      loading: true,
       exercises: [],
       quizzes: []
     };
-    this.onEditorChange = this.onEditorChange.bind( this );
-  }
-
-  onEditorChange( evt ) {
-    this.setState({
-      content: evt.editor.getData()
-    });
   }
 
   componentDidMount(){
-    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId)
+    this.props.getLessonIncourse(this.props.match.params.id, this.props.match.params.lessonId)
   }
 
-  capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.success.mes === 'Thay đổi nội dung bài học thành công') {
-      this.setState({isShowSuccess: true, isLoading: false})
-    }
-    
-    const { event, loading } = nextProps.schedule
-    if(!isEmptyObj(event))
+    const { lesson_in_course, loading } = nextProps.lesson
+    if(!isEmptyObj(lesson_in_course))
     {
-      var { date, text, content, files, exercises, quizzes } = event
+      var { text, content, files, exercises, quizzes } = lesson_in_course
 
       var accordion = [];
       exercises.map(()=>accordion.push(false))
 
       this.setState({ 
-        date,
-        text,
-        content,
+        text, 
+        content, 
         files,
         exercises,
         accordion,
@@ -105,63 +81,16 @@ class EditLesson extends Component {
     });
   }
 
-  handleChange = name => event => {
-    const value = event.target.value
-    this.setState({ [name]: value })
-  }
-
-  showWidget =()=>{
-    let widget = window.cloudinary.createUploadWidget({
-      cloudName: config.CLOUD_NAME,
-      uploadPreset: config.UPLOAD_PERSET
-    },(err, result)=>
-    {
-      if(result.event === 'success'){
-        const file = {
-          id: result.info.public_id,
-          name: result.info.original_filename,
-          url: result.info.secure_url,
-          thumbnail: result.info.thumbnail_url
-        } 
-        this.setState(prevState => ({
-          files: [...prevState.files, file]
-        }))
-      }
-    })
-    widget.open()
-  }
-
-  delete(file){
-    const files = this.state.files.filter(i => i.id !== file.id)
-    this.setState({files})
-  }
-
-  submitChange=()=>{
-    const eventData ={
-      text: this.state.text,
-      content: this.state.content,
-      files: this.state.files
-    }
-    this.props.editEvent(this.props.match.params.id, this.props.match.params.lessonId, eventData)
-    this.setState({isLoading: true});
-  }
-
-  hideAlertSuccess(){
-    this.setState({
-      isShowSuccess: false,
-      isLoading: false
-    })
-    this.props.clearSuccess();
-    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId)
+  score(exerciseId){
+    this.props.history.push(`/score/${this.props.match.params.id}/${exerciseId}`)
   }
 
   render() {
     const { 
       content, 
-      date, 
+      files, 
       text, 
       loading,
-      files,
       exercises,
       quizzes 
     } = this.state;
@@ -174,68 +103,61 @@ class EditLesson extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
-        <Alert color="dark" style={{textAlign: 'center',fontWeight: 'bold'}}>
-          Bài học {this.capitalizeFirstLetter(moment(date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+
+        <Alert color="dark" style={{textAlign: 'center', fontFamily:'Baloo Bhai, cursive', fontSize: 20}}>
+          {text}
         </Alert>
+
         <Card>
           <CardBody>
-            <FormGroup>
-              <Label style={{fontWeight:'bold'}}>
-                Tiêu đề bài học
-              </Label>
-              <Input type="text" value={text} onChange={this.handleChange('text')}/>
-            </FormGroup>
-            <FormGroup>
-              <Label style={{fontWeight:'bold'}}>
-                Nội dung bài học
-              </Label>
-              <CKEditor data={content} onChange={this.onEditorChange} />
-            </FormGroup>
-            <FormGroup>
-              <Label style={{fontWeight:'bold'}}>
-                Tài liệu học
-              </Label>
-              <br/>
-              <Button color="danger" onClick={this.showWidget}>Đính kèm tài liệu</Button>
-              <ListGroup style={{marginTop:10}}>
-                {
-                  files.length === 0
-                  ?
-                  <ListGroupItem>Chưa có tài liệu</ListGroupItem>
-                  :
-                  <Fragment>
-                  {
-                    files.map(file=>
-                      <ListGroupItem key={file.id}>
-                        <Row style={{alignContent: 'center'}}>
-                          <Col xs="11">
-                            {
-                              file.thumbnail
-                              ?
-                              <img src={file.thumbnail} alt=""/> 
-                              :
-                              <img src={NoImg} style={{width:47}} alt=""/> 
-                            }  
-                            <a href={file.url} style={{marginLeft:10}}> {file.name} </a>
-                          </Col>
-                          <Col >
-                            <Button color="danger" onClick={this.delete.bind(this, file)}><i className="fa fa-trash-o"></i></Button>
-                          </Col>
-                        </Row>
-                      </ListGroupItem>
-                    )
-                  }
-                  </Fragment>
-                }
-              </ListGroup>
+            <Label style={{fontWeight:'bold'}}>
+              Nội dung bài học
+            </Label>
+            <Jumbotron>
+              {
+                !isEmptyObj(content)
+                ?
+                <div dangerouslySetInnerHTML={ { __html: content} }></div>
+                :
+                <b>Chưa cập nhật nội dung bài học</b>
+              }
+            </Jumbotron>
 
-            </FormGroup>
+            <Label style={{fontWeight:'bold'}}>
+              Tài liệu học
+            </Label>
+            <ListGroup style={{marginTop:10}}>
+            {
+              files.length === 0
+              ?
+              <ListGroupItem>Chưa có tài liệu</ListGroupItem>
+              :
+              <Fragment>
+              {
+                files.map(file=>
+                  <ListGroupItem key={file.id} action tag="a" href={file.url}>
+                    {
+                      file.thumbnail
+                      ?
+                      <img src={file.thumbnail} alt=""/> 
+                      :
+                      <img src={NoImg} style={{width:47}} alt=""/> 
+                    }  
+                    <span style={{marginLeft:10}}>{file.name}</span>
+                  </ListGroupItem>
+                )
+              }
+              </Fragment>
+            }
+            </ListGroup>
           </CardBody>
-          <CardFooter>
-            <Button color="primary" onClick={this.submitChange}>Lưu thay đổi</Button>
-          </CardFooter>
         </Card>
+
         <Card>
+          <CardHeader>
+            <i className="fa fa-file-text" aria-hidden="true"></i>
+            <b>Bài tập</b>
+          </CardHeader>
           <CardBody>
             <ExerciseBox/>
             {
@@ -293,7 +215,12 @@ class EditLesson extends Component {
                           )
                         }
                       </ListGroup>
+                      <br/>
+                      <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
                     </CardBody>
+                    <CardFooter>
+                      <ExerciseComments exercise={exercise}/>
+                    </CardFooter>  
                   </Collapse>
                 </Card>
               )
@@ -302,6 +229,10 @@ class EditLesson extends Component {
         </Card>
 
         <Card>
+          <CardHeader>
+            <i className="fa fa-question-circle" aria-hidden="true"></i>
+            <b>Quiz</b>
+          </CardHeader>
           <CardBody>
             <QuizModal courseId={this.props.match.params.id} eventId={this.props.match.params.lessonId}/>
             {
@@ -332,32 +263,13 @@ class EditLesson extends Component {
           </CardBody>
         </Card>
 
-        <SweetAlert
-          	success
-          	confirmBtnText="OK"
-          	confirmBtnBsStyle="success"
-          	title="Chỉnh sửa bài học thành công!"
-            show={this.state.isShowSuccess}
-            onConfirm={this.hideAlertSuccess.bind(this)}>
-        </SweetAlert>
-        <Modal isOpen={this.state.isLoading} className='modal-sm' >
-          <ModalBody className="text-center">
-            <h3>Đang lưu thay đổi</h3>
-            <br/>
-            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
-          </ModalBody>
-        </Modal>
       </div>
     )
   }
 }
 
-EditLesson.propTypes = {
-};
-
 const mapStateToProps = state => ({
-  schedule: state.schedule,
-  success: state.success
+  lesson: state.lesson
 });
 
-export default withRouter(connect(mapStateToProps, { getEventSchedule, editEvent, clearSuccess })(EditLesson));  
+export default withRouter(connect(mapStateToProps, { getLessonIncourse })(InLesson));  

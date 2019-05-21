@@ -1,9 +1,30 @@
-import React, { Component } from 'react';
-import {Modal, ModalBody, Alert, Card, CardBody, CardHeader, Col, Row, Button, Form, FormGroup, Label, Input, InputGroup, InputGroupText, InputGroupAddon} from 'reactstrap';
+import React, { Component, Fragment } from 'react';
+import {
+  Modal, 
+  ModalBody, 
+  Alert, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Col, 
+  Row, 
+  Button, 
+  Form, 
+  FormGroup, 
+  Label, 
+  Input, 
+  InputGroup, 
+  InputGroupText, 
+  InputGroupAddon,
+  ModalHeader,
+  ListGroup,
+  ListGroupItem
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { addCourse, clearErrors, clearSuccess } from '../../actions/courseActions';
+import { getListLessonTotal } from '../../actions/lessonActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
 import ReactDropzone from "react-dropzone";
@@ -46,15 +67,22 @@ class AddCourse extends Component {
       errors:{},
       isLoading: false,
       invalidImg: false,
-      pointColumns: [{
-        pointName: 'Điểm giữa kỳ',
-        pointRate: '30',
-      },
-      {
-        pointName: 'Điểm cuối kỳ',
-        pointRate: '70',
-      }
-    ],
+      pointColumns: [
+        {
+          pointName: 'Điểm giữa kỳ',
+          pointRate: '30',
+        },
+        {
+          pointName: 'Điểm cuối kỳ',
+          pointRate: '70',
+        }
+      ],
+      lesson_total_list: [],
+      lessonTotal: null,
+      loading: true,
+      isOpenModal: false,
+      listId: '',
+      listTitle: ''
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -113,6 +141,15 @@ class AddCourse extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (nextProps.lesson) {
+      const { lesson_total_list, loading } = nextProps.lesson
+      this.setState({
+        lesson_total_list,
+        loading
+      })
+    }
+
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false});
     }
@@ -137,6 +174,7 @@ class AddCourse extends Component {
         a.date = moment(+current).format('YYYY-MM-DD')
         a.start = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[0] + ':00'
         a.end = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[1] + ':00'
+        a.time = days[i].time
         result.push(a);
         current.setDate(current.getDate() + 7);
       }
@@ -145,8 +183,6 @@ class AddCourse extends Component {
     result.sort(function(a,b){
       return new Date(a.start) - new Date(b.start);
     });
-
-    result.map((obj, id) => obj.text = 'Bài học ' + Number(id + 1))
     return result;  
   }
 
@@ -196,11 +232,11 @@ class AddCourse extends Component {
         fee: this.state.fee,
         info: this.state.info,
         pointColumns: this.state.pointColumns,
-        events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days)
+        events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days),
+        listId: this.state.listId
       };
       // console.log(courseData)
       this.props.clearErrors();
-      // console.log(courseData)
       this.props.addCourse(courseData, this.state.file);
       this.setState({isLoading: true});
     }
@@ -212,7 +248,19 @@ class AddCourse extends Component {
       title:'',
       intro: '',
       coursePhoto: '',
-      pointColumns: [{
+      enrollDeadline: null,
+      studyTime: '',
+      openingDay: null,
+      endDay: null,
+      fee: '',
+      info: '',
+      file: null,
+      isShowSuccess: false,
+      errors:{},
+      isLoading: false,
+      invalidImg: false,
+      pointColumns: [
+        {
           pointName: 'Điểm giữa kỳ',
           pointRate: '30',
         },
@@ -221,17 +269,14 @@ class AddCourse extends Component {
           pointRate: '70',
         }
       ],
-      enrollDeadline: null,
-      studyTime: '',
-      openingDay: null,
-      fee: '',
-      info: '',
-      file: null,
-      isShowSuccess: false,
-      errors:{},
-      isLoading: false,
-      invalidImg: false,
+      lesson_total_list: [],
+      lessonTotal: null,
+      loading: true,
+      isOpenModal: false,
+      listId: '',
+      listTitle: ''
     })
+    document.getElementById("add-course-form").reset();
   }
 
   onEditorChange( evt ) {
@@ -288,8 +333,40 @@ class AddCourse extends Component {
     });
   };
 
+  toggleModal = () => {
+    this.setState({
+      isOpenModal: !this.state.isOpenModal,
+    });
+  }
+
+  onOpenModal = e => {
+    e.preventDefault();
+
+    if(this.state.days.length === 0 || this.state.openingDay == null || this.state.endDay == null)
+    {
+      this.setState(prevState => ({
+        errors: {
+          ...prevState.errors,
+          list: 'Hãy chọn ngày khai giảng, ngày kết thúc, buổi học trong tuần'
+        }
+      }))
+    }else{
+      var events = this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days)
+      this.props.getListLessonTotal(events.length);
+      this.setState({
+        isOpenModal: !this.state.isOpenModal,
+        lessonTotal: events.length
+      });
+    }
+
+  }
+
+  handleSelectList(listId, listTitle){
+    this.setState({ listId, listTitle, isOpenModal: false })
+  }
+
   render() {
-    const { errors, days } = this.state;
+    const { errors, days, loading, lesson_total_list, lessonTotal, listTitle } = this.state;
     return (
       <div className="animated fadeIn">
         <Form className="form-horizontal" id="add-course-form" onSubmit={this.onSubmit}>
@@ -299,48 +376,27 @@ class AddCourse extends Component {
             </CardHeader>
             <CardBody>
               <FormGroup>
-                <Label>Tên khóa học</Label>
+                <Label style={{fontWeight: 'bold'}}>Tên khóa học</Label>
                 <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>
               </FormGroup>
               {errors.title && <Alert color="danger">{errors.title}</Alert>}
               <FormGroup>
-                <Label>Giới thiệu ngắn về khóa học</Label>
+                <Label style={{fontWeight: 'bold'}}>Giới thiệu ngắn về khóa học</Label>
                 <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
               </FormGroup>
               {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
-                {this.state.pointColumns.map((pointColumn, idx) => (
-                <FormGroup key={idx}>
-                  <div className="point-columns form-row">
-                    <div className="col form-row">
-                      <Label className="col-3">Tên cột điểm: </Label>
-                      <input
-                        className="form-control col"
-                        type="text"
-                        placeholder={`Tên cột điểm`}
-                        value={pointColumn.pointName}
-                        onChange={this.handlePointColumnNameChange(idx)}
-                      />
-                    </div>
-                    <div className="col form-row">
-                      <Label className="col-3">Tỉ lệ điểm (%): </Label>
-                      <input
-                        className="form-control col"
-                        type="number"
-                        placeholder={`Tỉ lệ điểm`}
-                        value={pointColumn.pointRate}
-                        onChange={this.handlePointColumnPointRateChange(idx)}
-                      />
-                    </div>
-                    <button style={styles.buttonDanger} type="button" className="btn btn-danger" onClick={this.handleRemovePointColumn(idx)}><i className="fa fa-times" aria-hidden="true"></i></button>
-                  </div>
-                </FormGroup>
-                ))}
-                <FormGroup>
-                  <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
-                </FormGroup>
-              {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
               <FormGroup>
-                <Label>Hình đại diện khóa học</Label>
+                <Label style={{fontWeight: 'bold'}}>Học phí</Label>
+                <InputGroup>
+                  <Input type="number" value={this.state.fee} onChange={this.handleChange('fee')}/>
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>VND</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
+              {errors.fee && <Alert color="danger">{errors.fee}</Alert>}
+              <FormGroup>
+                <Label style={{fontWeight: 'bold'}}>Hình đại diện khóa học</Label>
                 <Row>
                   <Col xs="4">
                     <div className="preview-image">
@@ -366,7 +422,7 @@ class AddCourse extends Component {
                 : null
               }
               <FormGroup>
-                <Label>Hạn chót ghi danh</Label> <br/>
+                <Label style={{fontWeight: 'bold'}}>Hạn chót ghi danh</Label> <br/>
                 <DatePicker
                   selected={this.state.enrollDeadline}
                   onChange={this.onChangeDeadline}
@@ -389,7 +445,7 @@ class AddCourse extends Component {
             </CardHeader>
             <CardBody>
               <FormGroup>
-                <Label>Ngày khai giảng</Label> <br/>
+                <Label style={{fontWeight: 'bold'}}>Ngày khai giảng</Label> <br/>
                 <DatePicker
                   selected={this.state.openingDay}
                   onChange={this.onChangeOpeningDay}
@@ -400,7 +456,7 @@ class AddCourse extends Component {
               </FormGroup>
               {errors.openingDay && <Alert color="danger">{errors.openingDay}</Alert>}
               <FormGroup>
-                <Label>Ngày kết thúc</Label> <br/>
+                <Label style={{fontWeight: 'bold'}}>Ngày kết thúc</Label> <br/>
                 <DatePicker
                   selected={this.state.endDay}
                   onChange={this.onChangeEndDay}
@@ -412,7 +468,7 @@ class AddCourse extends Component {
               {errors.endDay && <Alert color="danger">{errors.endDay}</Alert>}
               <FormGroup row>
                 <Col md="3">
-                  <Label>Buổi học trong tuần</Label>
+                  <Label style={{fontWeight: 'bold'}}>Buổi học trong tuần</Label>
                 </Col>
                 <Col md="9">
                   <FormGroup check inline>
@@ -458,16 +514,78 @@ class AddCourse extends Component {
               }
               {errors.days && <Alert color="danger">{errors.days}</Alert>}
               <FormGroup>
-                <Label>Học phí</Label>
-                <InputGroup>
-                  <Input type="number" value={this.state.fee} onChange={this.handleChange('fee')}/>
-                  <InputGroupAddon addonType="append">
-                    <InputGroupText>VND</InputGroupText>
-                  </InputGroupAddon>
-                </InputGroup>
+                <Button color="success" onClick={this.onOpenModal}>Chọn danh sách bài học</Button>
+                <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
+                  <ModalHeader  toggle={this.toggleModal}>Chọn danh sách bài học</ModalHeader>
+                  <ModalBody style={{overflowY:'scroll', height:500}}>
+                  {
+                    loading
+                    ?
+                    <ReactLoading type='bars' color='#05386B' />
+                    :
+                    <Fragment>
+                      <b>Danh sách bài học có {lessonTotal} buổi học:</b>
+                      <ListGroup style={{marginTop:10}}>
+                      {
+                        lesson_total_list.length === 0
+                        ?
+                        <ListGroupItem>Không tìm thấy danh sách bài học</ListGroupItem>
+                        :
+                        <Fragment>
+                        {
+                          lesson_total_list.map(list=>
+                            <ListGroupItem key={list._id} action tag="button" onClick={this.handleSelectList.bind(this, list._id, list.title)}>
+                              {list.title}
+                            </ListGroupItem>
+                          )
+                        }
+                        </Fragment>
+                      }
+                      </ListGroup>
+                    </Fragment>
+                  }
+                  </ModalBody>
+                </Modal>
               </FormGroup>
-              {errors.fee && <Alert color="danger">{errors.fee}</Alert>}
-              <Label>Giới thiệu nội dung khóa học</Label>
+              {listTitle && <Alert color="dark">{listTitle} </Alert>}
+              {errors.list && <Alert color="danger">{errors.list}</Alert>}
+              <FormGroup>
+                <Label style={{fontWeight: 'bold'}}>Cột điểm</Label>
+                {
+                  this.state.pointColumns.map((pointColumn, idx) => 
+                    <FormGroup key={idx}>
+                      <div className="point-columns form-row">
+                        <div className="col form-row">
+                          <Label className="col-3">Tên cột điểm: </Label>
+                          <input
+                            className="form-control col"
+                            type="text"
+                            placeholder={`Tên cột điểm`}
+                            value={pointColumn.pointName}
+                            onChange={this.handlePointColumnNameChange(idx)}
+                          />
+                        </div>
+                        <div className="col form-row">
+                          <Label className="col-3">Tỉ lệ điểm (%): </Label>
+                          <input
+                            className="form-control col"
+                            type="number"
+                            placeholder={`Tỉ lệ điểm`}
+                            value={pointColumn.pointRate}
+                            onChange={this.handlePointColumnPointRateChange(idx)}
+                          />
+                        </div>
+                        <button style={styles.buttonDanger} type="button" className="btn btn-danger" onClick={this.handleRemovePointColumn(idx)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                      </div>
+                    </FormGroup>
+                  )
+                }
+                <FormGroup>
+                  <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
+                </FormGroup>
+              </FormGroup>
+              {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
+              <Label style={{fontWeight: 'bold'}}>Giới thiệu nội dung khóa học</Label>
               <CKEditor data={this.state.info} onChange={this.onEditorChange} />
               {errors.info && <Alert color="danger">{errors.info}</Alert>}
             </CardBody>
@@ -501,7 +619,8 @@ AddCourse.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  lesson: state.lesson,
   errors: state.errors,
   success: state.success
 });
-export default connect(mapStateToProps, { addCourse, clearErrors, clearSuccess })(AddCourse); 
+export default connect(mapStateToProps, { addCourse, clearErrors, clearSuccess, getListLessonTotal })(AddCourse); 

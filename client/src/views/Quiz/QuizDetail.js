@@ -45,19 +45,27 @@ class QuizDetail extends Component {
         :
         <Card>
           <CardHeader>
-            {quizDetail.title}
+            <b>{quizDetail.title}</b>
           </CardHeader>
           <CardBody>
             {
-              quizDetail.listQuiz.map(quiz =>
+              quizDetail.description &&
+              <Alert color="secondary">
+                <span>
+                  {quizDetail.description}
+                </span>
+              </Alert>
+            }
+            {
+              quizDetail.listQuiz.map((quiz,index) =>
                 <FormGroup tag="fieldset" key={quiz._id}>
-                  <legend>{ quiz.question }</legend>
+                   <legend>Câu hỏi {index + 1}: <span>{quiz.question}</span></legend>
                   <ul>
                   {
                     quiz.answers.map((answer, key) => {
                       return (
                         <li key={key}>
-                          {answer}
+                          <span>{answer}</span>
                         </li>
                       )
                     })
@@ -65,6 +73,8 @@ class QuizDetail extends Component {
                   </ul>
                   <Alert color="success">
                     Câu số {quiz.correctAnswer} là câu trả lời đúng !
+                    <br/>
+                    Giải thích: <span>{quiz.explanation}</span>
                   </Alert>
                 </FormGroup>
               )

@@ -59,10 +59,13 @@ const ApproveTeacher = React.lazy(() => import('./views/Courses/ApproveTeacher')
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 const PointList = React.lazy(() => import('./views/PointList/PointList'));
 const ScoreExercise = React.lazy(() => import('./views/ScoreExercise/ScoreExercise'));
-const EditLesson = React.lazy(() => import('./views/Lesson/EditLesson'));
+const InLesson = React.lazy(() => import('./views/Lesson/InLesson'));
 const Lesson = React.lazy(() => import('./views/Lesson/Lesson'));
 const QuizLesson = React.lazy(() => import('./views/Lesson/Quiz/QuizLesson'));
 const QuizDetail= React.lazy(() => import('./views/Quiz/QuizDetail'));
+const LessonList= React.lazy(() => import('./views/LessonList/LessonList'));
+const EditLesson= React.lazy(() => import('./views/LessonList/EditLesson'));
+const MyInfo = React.lazy(() => import('./views/MyInfo/MyInfo'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -119,7 +122,7 @@ const routes = [
   { path: '/example/react-form', exact: true, name: 'Demo react form', component: ExampleReactForm },
   { path: '/check-attendance', exact: true, name: 'Điểm danh', component: CheckAttendance },
   { path: '/list-attendance', exact: true, name: 'Lịch sử điểm danh', component: ListAttendance },
-  { path: '/add-schedule', exact: true, name: 'Thêm thời khóa biểu', component: AddSchedule },
+  { path: '/add-schedule', exact: true, name: 'Chỉnh sửa thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
   { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
@@ -130,10 +133,13 @@ const routes = [
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
   { path: '/manage-courses/approve/teacher/:courseId', exact: true, name: 'Quản lý giáo viên', component: ApproveTeacher },
   { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
-  { path: '/courses/:id/edit-lesson/:lessonId', exact: true, name: 'Chỉnh sửa nội dung bài học', component: EditLesson },
+  { path: '/courses/:id/add-in-lesson/:lessonId', exact: true, name: 'Nội dung bài học', component: InLesson },
   { path: '/courses/:id/lesson/:lessonId', exact: true, name: 'Nội dung bài học', component: Lesson },
   { path: '/courses/:id/lesson/:lessonId/:quizId', exact: true, name: 'Bài trắc nghiệm', component: QuizLesson },
-  { path: '/quiz/quiz-detail/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail }
+  { path: '/quiz/quiz-detail/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail },
+  { path: '/lesson-list', exact: true, name: 'Danh sách bài học', component: LessonList },
+  { path: '/lesson-list/edit-lesson/:listId/:lessonId', exact: true, name: 'Chỉnh sửa nội dung bài học', component: EditLesson },
+  { path: '/my-info', exact: true, name: 'Thông tin cá nhân', component: MyInfo }
 
 ];
 

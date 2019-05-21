@@ -1,16 +1,9 @@
-import React, { Component } from 'react'
-import SubmitValidationForm from '../../components/Quiz/Add/index'
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import SubmitValidationForm from '../../components/Quiz/Add/index';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
-import {Modal, ModalBody} from 'reactstrap';
-
-import { getCurentCourse } from '../../actions/courseActions';
-// import isEmptyObj from '../../validation/is-empty';
-
-import {
-  connect
-} from 'react-redux';
+import { Modal, ModalBody } from 'reactstrap';
+import { connect } from 'react-redux';
 
 class QuizAddPage extends Component {
   constructor(props) {
@@ -21,10 +14,6 @@ class QuizAddPage extends Component {
       isLoading: false,
       errors: {}
     };
-  }
-
-  componentDidMount = () => {
-    this.props.getCurentCourse();
   }
 
   hideAlertSuccess(){
@@ -39,27 +28,10 @@ class QuizAddPage extends Component {
     }
   }
   
-
   render() {
-    let form = '';
-    if(this.props.courses.currentcourses === null)
-    {
-      form = <tr><td></td><td></td><td ><ReactLoading type='bars' color='#05386B' height={100} width={50} /></td><td></td></tr>
-    }
-    else {
-      if(this.props.courses.currentcourses.length === 0)
-      {
-        form = <tr><td></td><td></td><td >Hiện không có khóa học nào</td><td></td></tr>
-      }
-      else {
-        form = (
-          <SubmitValidationForm courses={this.props.courses.currentcourses}/>
-        )
-      }
-    }
     return (
       <div>
-        {form}
+        <SubmitValidationForm/>
         <SweetAlert
           success
           confirmBtnText="OK"
@@ -82,15 +54,9 @@ class QuizAddPage extends Component {
     
 }
 
-QuizAddPage.propTypes = {
-  getCurentCourse: PropTypes.func.isRequired,
-  courses: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = (state) => ({
   errors: state.errors,
-  success: state.success, 
-  courses: state.courses
+  success: state.success
 });
 
-export default connect(mapStateToProps, { getCurentCourse })(QuizAddPage);
+export default connect(mapStateToProps, { })(QuizAddPage);

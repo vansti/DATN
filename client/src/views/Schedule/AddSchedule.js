@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Table } from 'reactstrap';
 import {DayPilot, DayPilotCalendar, DayPilotNavigator} from "daypilot-pro-react";
 import "./CalendarStyles.css";
 import ReactLoading from 'react-loading';
@@ -10,6 +10,10 @@ import { addSchedule, getSchedule } from '../../actions/scheduleActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { clearSuccess } from '../../actions/courseActions';
 import isEmptyObj from '../../validation/is-empty';
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+var moment = require('moment');
 
 const styles = {
   left: {
@@ -25,6 +29,7 @@ class AddSchedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      events: [],
       loading: false,
       isLoading:false,
       isShowSuccess: false,
@@ -33,30 +38,8 @@ class AddSchedule extends Component {
       headerHeight: 30,
       hourWidth: 60,
       cellHeight: 30,
-      durationBarVisible: false,
-      timeRangeSelectedHandling: "Enabled",
-      onTimeRangeSelected: args => {
-        let dp = this.calendar;
-        DayPilot.Modal.prompt("Thêm sự kiện:", "").then(function(modal) {
-          dp.clearSelection();
-          if (!modal.result) { return; }
-          dp.events.add(new DayPilot.Event({
-            start: args.start.value,
-            end: args.end.value,
-            id: DayPilot.guid(),
-            text: modal.result
-          }));
-        });
-      },
-      eventDeleteHandling: "Update",
-      onEventClick: args => {
-        let dp = this.calendar;
-        DayPilot.Modal.prompt("Thay đổi tiêu đề:", args.e.text()).then(function(modal) {
-          if (!modal.result) { return; }
-          args.e.data.text = modal.result;
-          dp.events.update(args.e);
-        });
-      },
+      timeRangeSelectedHandling: "Disabled",
+      durationBarVisible: false
     };
   }
 
@@ -91,7 +74,7 @@ class AddSchedule extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.success.data === "Lưu thành công") {
+    if (nextProps.success.mes === "Lưu thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
     }
 
@@ -113,27 +96,49 @@ class AddSchedule extends Component {
   }
 
   submit=()=>{
-    var elist = this.calendar.events.list;
-
-    elist.map(function (doc) {
-      doc.date = doc.start.toString().slice(0, 10);
-      delete doc.id; 
-      delete doc.resource; 
-      return doc; 
-    })
-
-    elist.sort(function(a,b){
-      return new Date(a.start) - new Date(b.start);
-    });
 
     var newSchedule = {
       courseId: this.state.courseId,
-      events: elist
+      events: this.state.events
     };
+    // console.log(newSchedule)
+
     this.props.addSchedule(newSchedule)
     this.setState({isLoading: true})
   }
 
+  onChangeTime = (eventId, time) => 
+  {
+    var Arr = this.state.events.slice(0);
+
+    Arr.map(function(e) {
+      if(eventId === e._id)
+      {
+        e.time = time
+        e.start = moment(e.date).format('YYYY-MM-DD') + 'T' + time[0] + ':00'
+        e.end = moment(e.date).format('YYYY-MM-DD') + 'T' + time[1] + ':00'
+      }
+      return e
+    });
+    this.setState({events: Arr})
+  }
+
+  onChangeDate = (eventId, date) => 
+  {
+    var Arr = this.state.events.slice(0);
+
+    Arr.map(function(e) {
+      if(eventId === e._id)
+      {
+        e.date = moment(date).format('YYYY-MM-DD')
+        e.start = moment(date).format('YYYY-MM-DD') + 'T' + e.time[0] + ':00'
+        e.end = moment(date).format('YYYY-MM-DD') + 'T' + e.time[1] + ':00'
+      }
+      return e
+    });
+    this.setState({events: Arr})
+  }
+  
   render() {
     var {...config} = this.state;
     const {currentcourses} = this.props.courses;
@@ -176,7 +181,7 @@ class AddSchedule extends Component {
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <strong>Tạo thời khóa biểu</strong>
+            <strong>Sửa thời khóa biểu</strong>
             {SelectCourse}
           </CardHeader>
           <CardBody >
@@ -185,6 +190,46 @@ class AddSchedule extends Component {
               <Button color="danger" onClick={this.submit}> Lưu </Button>
               <br/>
               <br/>
+              {
+                this.state.events.length === 0
+                ?
+                null
+                :
+                <Table responsive bordered>
+                  <thead className="thead-light">
+                    <tr>
+                      <th>Ngày học</th>
+                      <th>Giờ học</th>
+                      <th>Bài học</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {
+                    this.state.events.map(e=>
+                      <tr key={e._id}>
+                        <td>
+                          <DatePicker
+                            selected={new Date(e.date)}
+                            onChange={this.onChangeDate.bind(this, e._id)}
+                            dateFormat="dd/MM/yyyy"
+                            customInput={<Input />}
+                          />
+                        </td>
+                        <td>
+                          <TimeRangePicker
+                            onChange={this.onChangeTime.bind(this, e._id)}
+                            value={e.time}
+                          />
+                        </td>
+                        <td>
+                          {e.text}
+                        </td>
+                      </tr>
+                    )
+                  }
+                  </tbody>
+                </Table>
+              }
               <div style={styles.left}>
                 <DayPilotNavigator
                   selectMode={"week"}
@@ -199,6 +244,7 @@ class AddSchedule extends Component {
                       startDate: args.day
                     });
                   }}
+                  events= {this.state.events}
                 />
               </div>
               <div style={styles.main}>

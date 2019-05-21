@@ -6,6 +6,11 @@ export default {
       icon: 'fa fa-home',
     },
     {
+      name: 'Danh sách bài học',
+      url: '/lesson-list',
+      icon: 'icon-list',
+    },
+    {
       name: 'Khóa học',
       icon: 'fa fa-book',
       children: [
@@ -25,7 +30,7 @@ export default {
           icon: 'fa fa-wrench',
         }
       ]
-    },
+    },    
     {
       name: 'Điểm danh',
       icon: 'fa fa-clock-o',
@@ -47,7 +52,7 @@ export default {
       icon: 'fa fa-calendar',
       children: [
         {
-          name: 'Thêm thời khóa biểu',
+          name: 'Sửa thời khóa biểu',
           url: '/add-schedule',
           icon: 'icon-calendar',
         },

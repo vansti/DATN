@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { SubmissionError } from 'redux-form';
-// import moment from 'moment';
-// import { format_date } from '../constants/format';
 import isEmpty from '../validation/is-empty';
 import {
   GET_ERRORS,
@@ -12,12 +10,12 @@ import {
   GET_QUIZ_LIST,
   QUIZ_LOADING,
   GET_QUIZ_SUBMISSTION,
-  GET_QUIZ_DETAIL
+  GET_QUIZ_DETAIL,
+  IS_DO_QUIZ_LOADING,
+  GET_QUIZ_DONE
 } from './types';
 
-export const addTestQuiz = (testQuizData, history) => dispatch => {
-  dispatch(clearErrors());
-  dispatch(clearSuccess());
+export const addTestQuiz = (testQuizData) => dispatch => {
   return axios
     .post('/api/test/add-quiz', testQuizData)
     .then(res => {
@@ -131,6 +129,30 @@ export const getQuizListInCourse = (courseId) => dispatch => {
         payload: {}
       })
     );
+};
+
+export const isDoQuiz = (courseId, quizId) => dispatch => {
+  dispatch(setIsDoQuizzesLoading());
+  axios
+    .get(`/api/test/is-do-quiz/${courseId}/${quizId}`)
+    .then(res =>
+      dispatch({
+        type: GET_QUIZ_DONE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_QUIZ_DONE,
+        payload: {}
+      })
+    );
+};
+
+export const setIsDoQuizzesLoading = () => {
+  return {
+    type: IS_DO_QUIZ_LOADING
+  };
 };
 
 // Clear errors

@@ -7,7 +7,7 @@ package-lock.json
 /client/node_modules
 /client/package-lock.json
 
-/file_upload
+# /file_upload
 # testing
 /coverage
 
@@ -18,7 +18,7 @@ package-lock.json
 # misc
 .DS_Store
 .idea
-.env
+# .env
 .env.local
 .env.development.local
 .env.test.local

@@ -168,7 +168,7 @@ class StudentIfo extends Component {
       isShowLesson
     } = this.state
     var AbsentList = null;
-    console.log(student_absent_list)
+    
     if(isShowAbsentList === true){
       AbsentList = 
       <Fragment>
@@ -190,7 +190,7 @@ class StudentIfo extends Component {
             <tbody>
               {
                 student_absent_list.absentlist.map(element=>
-                  <tr key={element._id} className="changeCursor" onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event._id)}>
+                  <tr key={element._id} className="changeCursor"  onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
                     <td >
                       <Moment format="DD/MM/YYYY">
                         {element.date}
@@ -218,7 +218,7 @@ class StudentIfo extends Component {
                       {
                         element.event
                         ? 
-                        <span>{element.event.text}</span> 
+                        <span>{element.event.lessonId.text}</span> 
                         : 
                         <small style={{color:'#A8A8A8'}}>
                           Chưa cập nhật

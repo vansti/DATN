@@ -9,60 +9,22 @@ const ScheduleSchema = new Schema({
   },
   events: [
     {
+      lessonId: {
+        type: Schema.Types.ObjectId,
+        ref: "lesson"
+      },
       start: {
         type: String
       },
       end: {
         type: String
       },
-      text: {
-        type: String,
-      },
-      content: {
+      date: {
         type: String
       },
-      files: [
-        {
-          id:{
-            type: String
-          },
-          name: {
-            type: String
-          },
-          url: {
-            type: String
-          },
-          thumbnail: {
-            type: String
-          }
-        }
-      ],
-      exercises: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "exercises"
-        }
-      ],
-      quizzes: [
-        {
-          quizId:{
-            type: Schema.Types.ObjectId,
-            ref: "quizzes"
-          },
-          deadline: {
-            type: Date
-          }
-        }
-      ],
-      date:{
-        type: String
-      }
+      time: [{ type: String }]
     }
-  ],
-  created:{
-    type: Date,
-    default : Date.now
-  }
+  ]
 });
 
 module.exports = Schedule = mongoose.model('schedule', ScheduleSchema)

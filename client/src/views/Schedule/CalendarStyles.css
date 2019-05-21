@@ -20,6 +20,6 @@
     opacity: 0.8;
 }
 
-/* .calendar_default_corner{
-  display: none
-} */
+.navigator_default_busy {
+  text-shadow: 0.5px 0.5px;
+}

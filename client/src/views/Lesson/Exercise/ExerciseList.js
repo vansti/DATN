@@ -40,7 +40,6 @@ class ExerciseList extends Component {
     this.setState({
       accordion: state,
     });
-    this.score = this.score.bind(this);
   }
 
   score(exerciseId){
@@ -113,9 +112,9 @@ class ExerciseList extends Component {
                     {
                       role === 'student'
                       ?
-                      <SubmitExercise exerciseId={exercise._id}/>
+                      <SubmitExercise exerciseId={exercise._id} exerciseDeadline={exercise.deadline} />
                       :
-                      <Button block color="success" onClick={this.score.bind(this, exercise._id)} >Chấm điểm</Button>
+                      null
                     }
                   </CardBody>
                   <CardFooter>

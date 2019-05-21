@@ -3,18 +3,33 @@ import {
   GET_QUIZ_LIST,
   QUIZ_LOADING,
   GET_QUIZ_SUBMISSTION,
-  GET_QUIZ_DETAIL
+  GET_QUIZ_DETAIL,
+  IS_DO_QUIZ_LOADING,
+  GET_QUIZ_DONE
 } from '../actions/types';
 
 const initialState = {
   quizDetail: {},
   listTestQuiz: null,
   quizzes: [],
-  loading: false
+  loading: false,
+  loadingQuizDone: false,
+  quizDone: {}
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_QUIZ_DONE:
+      return {
+        ...state,
+        quizDone: action.payload,
+        loadingQuizDone: false
+      };
+    case IS_DO_QUIZ_LOADING:
+      return {
+        ...state,
+        loadingQuizDone: true
+      };
     case GET_CURRENT_TESTQUIZ:
       return {
         ...state,

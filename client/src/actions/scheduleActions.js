@@ -9,7 +9,7 @@ export const addSchedule= (newSchedule) => dispatch => {
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
-        payload: {data: 'Lưu thành công'}
+        payload: res.data
       })
     })
     .catch(err =>

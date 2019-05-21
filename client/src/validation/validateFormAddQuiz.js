@@ -6,9 +6,6 @@ const validateFormAddQuiz = values => {
   if(!values.testSynopsis) {
     errors.testSynopsis = 'Yêu cầu';
   }
-  if(!values.courseId) {
-    errors.testTitle = 'Yêu cầu';
-  }
   if (!values.quizzes || !values.quizzes.length) {
     errors.quizzes = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
   } else {

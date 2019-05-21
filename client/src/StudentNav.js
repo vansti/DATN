@@ -14,6 +14,11 @@ export default {
       name: 'Xem thời khóa biểu',
       url: '/schedule',
       icon: 'fa fa-calendar',
+    },
+    {
+      name: 'Thông tin cá nhân',
+      url: '/my-info',
+      icon: 'fa fa-user-circle',
     }
   ],
 };

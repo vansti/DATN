@@ -12,3 +12,7 @@ tr.changeCursor:hover {
   position: fixed;
   left: 50%;
 }
+
+span {
+  white-space: pre;
+}

@@ -189,11 +189,11 @@ class ManageCourses extends Component {
                                 Quản lý học sinh
                               </Button>
                             </td>
-                            <td>
+                            {/* <td>
                               <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
                                 Tham gia
                               </Button>
-                            </td>
+                            </td> */}
                           </Fragment>
                         </tr>
                       )

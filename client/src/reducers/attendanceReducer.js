@@ -4,7 +4,9 @@ import {
 
 const initialState = {
   loading: false,
-  today_attendance: {},
+  today_attendance: {
+    students:[]
+  },
   attendance: [],
   student_absent_list: {
     absentlist: [],

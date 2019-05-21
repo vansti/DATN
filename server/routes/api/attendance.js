@@ -54,16 +54,15 @@ router.get(
 // @route   GET api/attendance/get-today-attendance/:courseId
 // @desc    get today attendance by courseId
 // @access  Private
-router.get(
+router.post(
   '/get-today-attendance/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    var today = moment().format('YYYY-MM-DD');
 
     Attendance.findOne(
       { 
         'courseId' : req.params.courseId,
-        'date' : today
+        'date' : req.body.selectDate
       }
     )
     .populate('students.userId', '_id name email photo')
@@ -124,6 +123,7 @@ router.get(
               }
             }
           })
+          .populate('events.lessonId','text')
           .then(schedule => {
             var temp = {};
             if(schedule[0] != null )

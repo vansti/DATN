@@ -34,6 +34,7 @@ class DefaultHeader extends Component {
 
   componentDidMount
   render() {
+    const { role } = this.props.auth.user;
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -44,23 +45,22 @@ class DefaultHeader extends Component {
           <NavItem className="px-3">
             <Link to="/">Dashboard</Link>
           </NavItem>
-          <NavItem className="px-3">
-            <Link to="/edit-profile">Thông tin cá nhân</Link>
-          </NavItem>
+          {
+            role === 'student'
+            ?
+            <NavItem className="px-3">
+              <Link to="/my-info">Thông tin cá nhân</Link>
+            </NavItem>
+            :
+            <NavItem className="px-3">
+              <Link to="/edit-profile">Thông tin cá nhân</Link>
+            </NavItem>
+          }
           <NavItem className="px-3">
             <Link to="/course-info">Danh sách tất cả khóa học</Link>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
-          {/* <NavItem className="d-md-down-none">
-            <NavLink href="#"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
-          </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#"><i className="icon-list"></i></NavLink>
-          </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#"><i className="icon-location-pin"></i></NavLink>
-          </NavItem> */}
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
               <img src={this.state.photo} className="img-avatar" alt="ava" />
@@ -86,7 +86,8 @@ DefaultHeader.propTypes = {
 DefaultHeader.defaultProps = defaultProps;
 
 const mapStateToProps = state => ({
-  profile: state.profile
+  profile: state.profile,
+  auth: state.auth
 });
 
 

@@ -1,21 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {  Card, CardHeader, CardBody, Input, Table, Button, ModalBody, Modal, Badge } from 'reactstrap';
 import { connect } from 'react-redux';
 import Moment from 'react-moment'; 
 import { getCurentCourse, clearSuccess } from '../../actions/courseActions';
 import { getUsers, clearUsers } from '../../actions/userActions';
 import { addAttendance, getTodayAttendance, editAttendance, clearAttendance } from '../../actions/attendanceActions';
+import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
 import isEmptyObj from '../../validation/is-empty';
 import { AppSwitch } from '@coreui/react'
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
+import 'moment/locale/vi';
 var moment = require('moment');
 
 class CheckAttendance extends Component {
   constructor() {
     super();
     this.state = {
+      currentcourses: [], 
+      loadingCurrentcourses: true,
+      events: [],
+      loadingEvent :true,
+      selectDate: '',
       user:[],
       userAttendance:[],
       attendanceId:'',
@@ -25,7 +32,11 @@ class CheckAttendance extends Component {
       loadingUserAttendance: true
     };
   }
- 
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   componentDidMount = () => {
     this.props.clearUsers();
     this.props.clearAttendance();
@@ -35,18 +46,38 @@ class CheckAttendance extends Component {
   onChangeSelectCourse = e => {
     if(e.target.value !== '0')
     {
-      this.props.getTodayAttendance(e.target.value);
-      this.props.getUsers(e.target.value);
+      this.props.getSchedule(e.target.value);
     }
     
     this.setState({ 
       courseId: e.target.value, 
       user:[],
-      userAttendance:[]
+      userAttendance:[],
+      events: [],
+      selectDate: ''
     });
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (nextProps.courses) {
+      const { currentcourses, loading } = nextProps.courses
+      this.setState({ 
+        currentcourses, 
+        loadingCurrentcourses: loading
+      });
+    }
+
+    const { schedule, loading } = nextProps.schedule
+    if(!isEmptyObj(schedule))
+      this.setState({ 
+        events: schedule.events,
+        loadingEvent: loading
+      });
+    this.setState({
+      loadingEvent: loading 
+    });  
+
     if (!isEmptyObj(nextProps.users)) {
       const { users, loading } = nextProps.users
 
@@ -101,11 +132,10 @@ class CheckAttendance extends Component {
   }
 
   submit = () => {
-    var today = moment().format('YYYY-MM-DD');
 
     var newAttendance = {
       courseId: this.state.courseId,
-      date: today,
+      date: this.state.selectDate,
       students: []
     };
 
@@ -144,42 +174,45 @@ class CheckAttendance extends Component {
     this.setState({
       isShowSuccess: false
     })
-    this.props.clearSuccess()
-    this.props.getTodayAttendance(this.state.courseId);
+    this.props.clearSuccess();
+    var date = {
+      selectDate: this.state.selectDate
+    };
+    this.props.getTodayAttendance(this.state.courseId, date);
   }
 
-  render() {
-    const {currentcourses} = this.props.courses;
-    const { users } = this.props.users;
-    const { loadingUser, loadingUserAttendance, user, userAttendance, courseId } = this.state
-    var SelectCourse = 
-                <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
-                  <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
-                </div>
+  handleSelectDate(selectDate){
+    var date = {
+      selectDate
+    };
 
-    if(currentcourses !== null)
-    {
-      if(currentcourses.length === 0)
-        SelectCourse = 
-                  <div className="card-header-actions" style={{marginRight:10}} >
-                      <Input  type="select">
-                        <option value="0">Chưa tham gia khóa học</option>
-                      </Input>
-                  </div>
-      else{
-        SelectCourse = 
-        <div className="card-header-actions" style={{marginRight:10}}>
-          <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-            <option value="0">Hãy chọn khóa học</option>
-              { 
-                currentcourses.map(course=>
-                  <option key={course._id} value={course._id}>{course.title}</option>
-                )
-              }
-          </Input>
-        </div>
-      }
-    }
+    this.props.getTodayAttendance(this.state.courseId, date);
+    this.props.getUsers(this.state.courseId);
+    this.setState({selectDate})
+  }
+
+  back=()=>{
+    this.setState({
+      selectDate: '',
+      user:[],
+      userAttendance:[]
+    })
+  }
+  
+  render() {
+    const { users } = this.props.users;
+    const { 
+      loadingCurrentcourses,
+      loadingUser, 
+      loadingUserAttendance, 
+      user, 
+      userAttendance, 
+      courseId, 
+      selectDate, 
+      loadingEvent, 
+      events, 
+      currentcourses 
+    } = this.state
 
     var StudentList = <h3>Hãy chọn khóa học</h3>;
 
@@ -189,11 +222,12 @@ class CheckAttendance extends Component {
     if(!isEmptyObj(user) && isEmptyObj(userAttendance) && courseId !== '0'){
       StudentList = 
         <div className="animated fadeIn">
-          <Button color="danger" onClick={this.submit}> Lưu điểm danh </Button>
-          <br/>
-          <br/>
-          <Table hover bordered striped responsive size="sm">
-            <thead>
+          <Button color="primary" onClick={this.back}>
+            <i className="fa fa-arrow-left"></i> Trở về
+          </Button>
+          <Button color="danger" style={{marginLeft: 20}} onClick={this.submit}> Lưu điểm danh </Button>
+          <Table style={{marginTop: 20}} bordered responsive size="sm">
+            <thead className="thead-light">
               <tr>
                 <th>Hình đại diện</th>
                 <th>Email</th>
@@ -226,11 +260,12 @@ class CheckAttendance extends Component {
     if(!isEmptyObj(users) && !isEmptyObj(userAttendance) && courseId !== '0'){
       StudentList = 
         <div className="animated fadeIn">
-          <Button color="danger" onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
-          <br/>
-          <br/>
-          <Table hover bordered striped responsive size="sm">
-            <thead>
+          <Button color="primary" onClick={this.back}>
+            <i className="fa fa-arrow-left"></i> Trở về
+          </Button>
+          <Button color="danger" style={{marginLeft: 20}} onClick={this.submit2}> Chỉnh sửa điểm danh </Button>
+          <Table style={{marginTop: 20}} bordered responsive size="sm">
+            <thead className="thead-light">
               <tr>
                 <th>Hình đại diện</th>
                 <th>Email</th>
@@ -264,14 +299,90 @@ class CheckAttendance extends Component {
         </div>
     }
     
+    var LessonList = <h3>Hãy chọn khóa học</h3>;
+    if(courseId !== '0'){
+      LessonList = 
+        <div className="animated fadeIn">
+          <strong>Chọn ngày điểm danh</strong> 
+          <Table style={{marginTop: 20}} hover responsive bordered>
+            <thead className="thead-light">
+              <tr>
+                <th>Ngày học</th>
+                <th>Giờ học</th>
+                <th>Bài học</th>
+              </tr>
+            </thead>
+            <tbody>
+            {
+              events.map(e=>
+                <tr key={e._id} className="changeCursor" onClick={this.handleSelectDate.bind(this, e.date)}>
+                  <td>
+                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                  </td>
+                  <td>
+                    <Moment format="HH:mm - ">
+                      {e.start}
+                    </Moment>
+                    <Moment format="HH:mm">
+                      {e.end}
+                    </Moment>
+                  </td>
+                  <td>
+                    {e.text}
+                  </td>
+                </tr>
+              )
+            }
+            </tbody>
+          </Table>
+        </div>
+    }
+
     return (
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <strong>Điểm danh ngày <Moment format="DD/MM/YYYY"></Moment></strong>
-            {SelectCourse}
+            <strong>
+              Điểm danh { selectDate && <span>{this.capitalizeFirstLetter(moment(selectDate).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}</span> }
+            </strong>
+            <Fragment>
+            {
+              loadingCurrentcourses
+              ?
+              <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
+                <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
+              </div>
+              :
+              <Fragment>
+              {
+                currentcourses.length === 0
+                ?
+                <div className="card-header-actions" style={{marginRight:10}} >
+                  <Input  type="select">
+                    <option value="0">Chưa tham gia khóa học</option>
+                  </Input>
+                </div>
+                :
+                <div className="card-header-actions" style={{marginRight:10}}>
+                  <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
+                    <option value="0">Hãy chọn khóa học</option>
+                      { 
+                        currentcourses.map(course=>
+                          <option key={course._id} value={course._id}>{course.title}</option>
+                        )
+                      }
+                  </Input>
+                </div>
+              }
+              </Fragment>
+            }
+            </Fragment>
           </CardHeader>
           <CardBody>
+          {
+            selectDate
+            ?
+            <Fragment>
             {
               loadingUser || loadingUserAttendance
               ?
@@ -279,6 +390,18 @@ class CheckAttendance extends Component {
               :
               StudentList
             }
+            </Fragment>
+            :
+            <Fragment>
+            {
+              loadingEvent
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              LessonList
+            }
+            </Fragment>
+          }
           </CardBody>
         </Card>
         <SweetAlert
@@ -321,7 +444,8 @@ const mapStateToProps = state => ({
   users: state.users,
   errors: state.errors,
   success: state.success,
-  attendance: state.attendance
+  attendance: state.attendance,
+  schedule: state.schedule
 });
 
-export default connect(mapStateToProps, { getCurentCourse, getUsers, addAttendance, getTodayAttendance, clearSuccess, editAttendance, clearAttendance, clearUsers })(CheckAttendance);  
+export default connect(mapStateToProps, { getSchedule, getCurentCourse, getUsers, addAttendance, getTodayAttendance, clearSuccess, editAttendance, clearAttendance, clearUsers })(CheckAttendance);  
