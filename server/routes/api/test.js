@@ -41,6 +41,25 @@ router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, re
 
 });
 
+// @route   POST api/test/add-quiz-csv
+// @desc    teachcer create test quiz
+// @access  Private
+router.post('/add-quiz-csv', passport.authenticate('jwt', {session: false}),(req, res) => {
+  
+  const newQuiz = new Quiz({
+    title: req.body.title,
+    description: req.body.description,
+    time: req.body.time,
+    listQuiz: req.body.listQuiz
+  });
+
+  newQuiz
+  .save()
+  .then(res.json({mes: 'Thêm bài kiểm tra thành công'}))
+  .catch(err => console.log(err));
+
+});
+
 // @route   get api/test/quiz
 // @desc    get all quizes
 // @access  Private

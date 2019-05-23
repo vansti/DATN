@@ -31,6 +31,20 @@ export const addTestQuiz = (testQuizData) => dispatch => {
     });
 };
 
+export const addTestQuizCSV = (testQuizData) => dispatch => {
+  return axios
+    .post('/api/test/add-quiz-csv', testQuizData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      console.log(err.response.data);
+    });
+};
+
 export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
   return axios
     .post('/api/test/sub-quiz', submisstionQuiz)

@@ -66,6 +66,7 @@ const QuizDetail= React.lazy(() => import('./views/Quiz/QuizDetail'));
 const LessonList= React.lazy(() => import('./views/LessonList/LessonList'));
 const EditLesson= React.lazy(() => import('./views/LessonList/EditLesson'));
 const MyInfo = React.lazy(() => import('./views/MyInfo/MyInfo'));
+const AddQuizCSV = React.lazy(() => import('./views/Quiz/AddQuizCSV'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -139,7 +140,8 @@ const routes = [
   { path: '/quiz/quiz-detail/:id', exact: true, name: 'Nội dung bài kiểm tra trắc nghiệm', component: QuizDetail },
   { path: '/lesson-list', exact: true, name: 'Danh sách bài học', component: LessonList },
   { path: '/lesson-list/edit-lesson/:listId/:lessonId', exact: true, name: 'Chỉnh sửa nội dung bài học', component: EditLesson },
-  { path: '/my-info', exact: true, name: 'Thông tin cá nhân', component: MyInfo }
+  { path: '/my-info', exact: true, name: 'Thông tin cá nhân', component: MyInfo },
+  { path: '/quiz/add/csv', exact: true, name: 'Thêm bằng tập tin csv', component: AddQuizCSV },
 
 ];
 

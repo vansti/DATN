@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import SubmitValidationForm from '../../components/Quiz/Add/index';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
-import { Modal, ModalBody } from 'reactstrap';
+import { Modal, ModalBody, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 
 class QuizAddPage extends Component {
@@ -28,9 +28,14 @@ class QuizAddPage extends Component {
     }
   }
   
+  toAddQuizCSV = () =>{
+    this.props.history.push('/quiz/add/csv')
+  }
+
   render() {
     return (
       <div>
+        <Button color="danger" onClick={this.toAddQuizCSV}>Nhập file CSV</Button>
         <SubmitValidationForm/>
         <SweetAlert
           success

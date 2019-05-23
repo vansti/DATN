@@ -38,6 +38,7 @@
     "react-bootstrap-sweetalert": "^4.4.1",
     "react-chartjs-2": "^2.7.4",
     "react-countdown-now": "^2.1.0",
+    "react-csv-reader": "^1.2.2",
     "react-datepicker": "^2.4.0",
     "react-datetime-picker": "^2.2.1",
     "react-dom": "^16.7.0",
