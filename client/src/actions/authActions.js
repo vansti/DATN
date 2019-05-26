@@ -1,13 +1,14 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
+import config from './config';
 
 import { GET_ERRORS, SET_CURRENT_USER, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS } from './types';
 
 // Register User
 export const registerUser = (userData, history) => dispatch => {
   axios
-    .post('/api/users/register', userData)
+    .post(config.ADDRESS +'/api/users/register', userData)
     .then(res => history.push('/login'))
     .catch(err =>
       dispatch({
@@ -20,7 +21,7 @@ export const registerUser = (userData, history) => dispatch => {
 // Create User
 export const createUser = userData => dispatch => {
   axios
-    .post('/api/users/register', userData)
+    .post(config.ADDRESS +'/api/users/register', userData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -38,7 +39,7 @@ export const createUser = userData => dispatch => {
 // Login - Get User Token
 export const loginUser = userData => dispatch => {
   axios
-    .post('/api/users/login', userData)
+    .post(config.ADDRESS +'/api/users/login', userData)
     .then(res => {
       // Save to localStorage
       const { token } = res.data;

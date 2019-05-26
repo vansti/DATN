@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './config';
 
 import { 
   GET_USERS, 
@@ -16,7 +17,7 @@ import {
 export const getUsers = (courseid) => dispatch => {
   dispatch(setUsersLoading());
   axios
-    .get('/api/users/get-users-in-course/' + courseid)
+    .get(config.ADDRESS +'/api/users/get-users-in-course/' + courseid)
     .then(res =>
       dispatch({
         type: GET_USERS,
@@ -35,7 +36,7 @@ export const getUsers = (courseid) => dispatch => {
 export const getStudent = (studentId) => dispatch => {
   dispatch(setUsersLoading());
   axios
-    .get('/api/users/' + studentId)
+    .get(config.ADDRESS +'/api/users/' + studentId)
     .then(res =>
       dispatch({
         type: GET_STUDENT,
@@ -54,7 +55,7 @@ export const getStudent = (studentId) => dispatch => {
 export const getApproveListTeacher = (courseId) => dispatch => {
   dispatch(setUsersLoading());
   axios
-    .get('/api/users/approve-list/teacher/' + courseId)
+    .get(config.ADDRESS +'/api/users/approve-list/teacher/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_APPROVE_LIST_TEACHER,
@@ -72,7 +73,7 @@ export const getApproveListTeacher = (courseId) => dispatch => {
 export const getApproveListStudent = (courseId) => dispatch => {
   dispatch(setUsersLoading());
   axios
-    .get('/api/users/approve-list/student/' + courseId)
+    .get(config.ADDRESS +'/api/users/approve-list/student/' + courseId)
     .then(res =>
       dispatch({
         type: GET_APPROVE_LIST_STUDENT,
@@ -89,7 +90,7 @@ export const getApproveListStudent = (courseId) => dispatch => {
 // Approve Student to Course
 export const approveStudent = (courseId, studentId) => dispatch => {
   axios
-    .post(`/api/courses/approve/student/${courseId}/${studentId}`)
+    .post(config.ADDRESS +`/api/courses/approve/student/${courseId}/${studentId}`)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -108,7 +109,7 @@ export const approveStudent = (courseId, studentId) => dispatch => {
 // Approve teacher to Course
 export const approveTeacher = (courseId, teacherId) => dispatch => {
   axios
-    .post(`/api/courses/approve/teacher/${courseId}/${teacherId}`)
+    .post(config.ADDRESS +`/api/courses/approve/teacher/${courseId}/${teacherId}`)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,

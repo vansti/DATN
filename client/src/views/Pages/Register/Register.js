@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
+import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert, Modal, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { registerUser } from '../../../actions/authActions';
+import ReactLoading from 'react-loading';
 
 class Register extends Component {
   constructor() {
     super();
     this.state = {
+      isLoading: false,
       name: '',
       email: '',
       password: '',
@@ -25,7 +27,7 @@ class Register extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+      this.setState({ errors: nextProps.errors, isLoading: false });
     }
   }
 
@@ -43,10 +45,8 @@ class Register extends Component {
       password2: this.state.password2,
       role: 'student'
     };
-
+    this.setState({ isLoading: true });
     this.props.registerUser(newUser, this.props.history);
-
-
   }
   
 
@@ -105,6 +105,13 @@ class Register extends Component {
             </Row>
           </Container>
         </div>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Loading</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

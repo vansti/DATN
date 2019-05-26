@@ -1,11 +1,12 @@
 import axios from 'axios';
+import config from './config';
 
 import { GET_SUCCESS, GET_ERRORS, GET_SCHEDULE , SCHEDULE_LOADING, GET_EVENT_SCHEDULE, CLEAR_SUCCESS } from './types';
 
 // Add Schedule
 export const addSchedule= (newSchedule) => dispatch => {
   axios
-    .post('/api/schedule/add-schedule', newSchedule)
+    .post(config.ADDRESS +'/api/schedule/add-schedule', newSchedule)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -24,7 +25,7 @@ export const addSchedule= (newSchedule) => dispatch => {
 export const getSchedule= (courseId) => dispatch => {
   dispatch(setScheduleLoading());
   axios
-    .get('/api/schedule/get-schedule/'+ courseId)
+    .get(config.ADDRESS +'/api/schedule/get-schedule/'+ courseId)
     .then(res =>{
       dispatch({
         type: GET_SCHEDULE,
@@ -43,7 +44,7 @@ export const getSchedule= (courseId) => dispatch => {
 export const getEventSchedule = (courseId, eventId) => dispatch => {
   dispatch(setScheduleLoading());
   axios
-    .get(`/api/schedule/get-event-schedule/${courseId}/${eventId}`)
+    .get(config.ADDRESS +`/api/schedule/get-event-schedule/${courseId}/${eventId}`)
     .then(res =>{
       dispatch({
         type: GET_EVENT_SCHEDULE,
@@ -61,7 +62,7 @@ export const getEventSchedule = (courseId, eventId) => dispatch => {
 // edit Event Schedule
 export const editEvent = (courseId, eventId, eventData) => dispatch => {
   axios
-    .post(`/api/schedule/edit-event/${courseId}/${eventId}`, eventData)
+    .post(config.ADDRESS +`/api/schedule/edit-event/${courseId}/${eventId}`, eventData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -78,7 +79,7 @@ export const editEvent = (courseId, eventId, eventData) => dispatch => {
 
 export const addQuizEvent = (courseId, eventId, quizId, deadlineData) => dispatch => {
   axios
-    .post(`/api/schedule/add-quiz-event/${courseId}/${eventId}/${quizId}`, deadlineData)
+    .post(config.ADDRESS +`/api/schedule/add-quiz-event/${courseId}/${eventId}/${quizId}`, deadlineData)
     .then(res =>
       dispatch({
         type: GET_SUCCESS,

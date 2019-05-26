@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import logo from '../../assets/img/e-icon.png'
 import { Button, Container, Row, Col } from 'reactstrap';
+import { getCurrentProfile } from '../../actions/profileActions';
 
 class Dashboard extends Component {
-  
+
+  componentDidMount = () => {
+    this.props.getCurrentProfile();
+  }
+
   handleMycourse = () =>{
     this.props.history.push(`/courses`);
   }
@@ -131,4 +136,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, {  })(Dashboard);
+export default connect(mapStateToProps, { getCurrentProfile })(Dashboard);

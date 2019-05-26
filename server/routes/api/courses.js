@@ -192,7 +192,7 @@ router.post(
 // @access  Private
 router.get(
   '/all-course',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Course.find(
       { 'enrollDeadline' : {$gte : new Date()}},

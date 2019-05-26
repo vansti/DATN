@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './config';
 
 import { 
   GET_SUCCESS, 
@@ -15,7 +16,7 @@ import {
 // Add Lesson List
 export const addLessonList= (newLessonList) => dispatch => {
   axios
-    .post('/api/lesson/add-lesson-list', newLessonList)
+    .post(config.ADDRESS +'/api/lesson/add-lesson-list', newLessonList)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -34,7 +35,7 @@ export const addLessonList= (newLessonList) => dispatch => {
 export const getLessonList = () => dispatch => {
   dispatch(setLessonLoading());
   axios
-    .get('/api/lesson/get-lesson-list')
+    .get(config.ADDRESS +'/api/lesson/get-lesson-list')
     .then(res =>{
       dispatch({
         type: GET_LESSON_LIST,
@@ -53,7 +54,7 @@ export const getLessonList = () => dispatch => {
 export const getLesson = (listId, lessonId) => dispatch => {
   dispatch(setLessonLoading());
   axios
-    .get(`/api/lesson/get-lesson-in-list/${listId}/${lessonId}`)
+    .get(config.ADDRESS +`/api/lesson/get-lesson-in-list/${listId}/${lessonId}`)
     .then(res =>{
       dispatch({
         type: GET_LESSON,
@@ -71,7 +72,7 @@ export const getLesson = (listId, lessonId) => dispatch => {
 // Edit Lesson
 export const editLesson= (listId, lessonId, lessonData) => dispatch => {
   axios
-  .post(`/api/lesson/edit-lesson/${listId}/${lessonId}`, lessonData)
+  .post(config.ADDRESS +`/api/lesson/edit-lesson/${listId}/${lessonId}`, lessonData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -90,7 +91,7 @@ export const editLesson= (listId, lessonId, lessonData) => dispatch => {
 export const getListLessonTotal= (lessonTotal) => dispatch => {
   dispatch(setLessonLoading());
   axios
-  .get(`/api/lesson/get-list-lessonTotal/${lessonTotal}`)
+  .get(config.ADDRESS +`/api/lesson/get-list-lessonTotal/${lessonTotal}`)
     .then(res =>{
       dispatch({
         type: GET_LESSON_TOTAL_LIST,
@@ -109,7 +110,7 @@ export const getListLessonTotal= (lessonTotal) => dispatch => {
 export const getLessonIncourse= (courseId, lessonId) => dispatch => {
   dispatch(setLessonLoading());
   axios
-  .get(`/api/lesson/get-lesson-in-course/${courseId}/${lessonId}`)
+  .get(config.ADDRESS +`/api/lesson/get-lesson-in-course/${courseId}/${lessonId}`)
     .then(res =>{
       dispatch({
         type: GET_LESSON_IN_COURSE,
@@ -126,7 +127,7 @@ export const getLessonIncourse= (courseId, lessonId) => dispatch => {
 
 export const addQuizLesson = (courseId, lessonId, quizId, deadlineData) => dispatch => {
   axios
-    .post(`/api/lesson/add-quiz-event/${courseId}/${lessonId}/${quizId}`, deadlineData)
+    .post(config.ADDRESS +`/api/lesson/add-quiz-event/${courseId}/${lessonId}/${quizId}`, deadlineData)
     .then(res =>
       dispatch({
         type: GET_SUCCESS,

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './config';
 
 import { 
   GET_SUCCESS, 
@@ -13,7 +14,7 @@ import {
 // Add Attendance
 export const addAttendance= (newAttendance) => dispatch => {
   axios
-    .post('/api/attendance/add-attendance', newAttendance)
+    .post(config.ADDRESS + '/api/attendance/add-attendance', newAttendance)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -32,7 +33,7 @@ export const addAttendance= (newAttendance) => dispatch => {
 // Edit Attendance
 export const editAttendance= (editAttendance) => dispatch => {
   axios
-    .post('/api/attendance/edit-attendance', editAttendance)
+    .post(config.ADDRESS + '/api/attendance/edit-attendance', editAttendance)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -57,7 +58,7 @@ export const clearAttendance = () => {
 export const getAttendance = (courseId) => dispatch => {
   dispatch(setAttendacneLoading());
   axios
-    .get('/api/attendance/get-attendance/' + courseId)
+    .get(config.ADDRESS + '/api/attendance/get-attendance/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_ATTENDANCE,
@@ -76,7 +77,7 @@ export const getAttendance = (courseId) => dispatch => {
 export const getTodayAttendance = (courseId, date) => dispatch => {
   dispatch(setAttendacneLoading());
   axios
-    .post('/api/attendance/get-today-attendance/' + courseId, date)
+    .post(config.ADDRESS +'/api/attendance/get-today-attendance/' + courseId, date)
     .then(res =>{
       dispatch({
         type: GET_TODAY_ATTENDANCE,
@@ -101,7 +102,7 @@ export const setAttendacneLoading = () => {
 export const getStudentAbsent = (courseId, studentId) => dispatch => {
   dispatch(setAttendacneLoading());
   axios
-    .get(`/api/attendance/get-student-absent/${courseId}/${studentId}`)
+    .get(config.ADDRESS +`/api/attendance/get-student-absent/${courseId}/${studentId}`)
     .then(res =>{
       dispatch({
         type: GET_STUDENT_ABSENT_LIST,

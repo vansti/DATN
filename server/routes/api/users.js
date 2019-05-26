@@ -318,7 +318,6 @@ router.get(
           teachers: teachers,
           teacherInCourse: teacherInCourse.teachers
         }
-        console.log(result)
         res.json(result)
       } catch (err) {
         console.log(err)
