@@ -10,7 +10,8 @@ import {
   GET_ALL_COURSES,
   GET_COURSE_INFO, 
   GET_MANAGE_COURSES, 
-  ALLCOURSE_LOADING 
+  ALLCOURSE_LOADING,
+  GET_ACTIVE_COURSES
 } from './types';
 
 // Add Course
@@ -198,6 +199,25 @@ export const getManageCourses = () => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_MANAGE_COURSES,
+        payload: {}
+      })
+    );
+};
+
+// lấy các khóa học đang hoạt động
+export const getActiveCourses = () => dispatch => {
+  dispatch(setAllCourseLoading())
+  axios
+    .get(`/api/courses/get-active-course`)
+    .then(res =>
+      dispatch({
+        type: GET_ACTIVE_COURSES,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ACTIVE_COURSES,
         payload: {}
       })
     );

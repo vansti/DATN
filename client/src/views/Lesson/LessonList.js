@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Table } from 'reactstrap';
 import ReactLoading from 'react-loading';
@@ -49,10 +49,96 @@ class LessonList extends Component {
     this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${lessonId}`);
   }
 
+  handleViewLesson(lessonId){
+    this.props.history.push(`/view-courses/${this.props.match.params.id}/lesson/${lessonId}`);
+  }
+
   render() {
     var { events, loading } = this.state;
     const { role } = this.props.auth.user;
 
+    var Content = null ;
+
+    switch (role.toString()) {
+      case 'student': 
+        Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+        break;
+        
+      case 'admin':
+      case 'teacher': 
+        Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleEditLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+      break;
+
+      default: 
+          Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleViewLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+      break;
+    }
     return (
       <div className="animated fadeIn">
       {
@@ -60,75 +146,16 @@ class LessonList extends Component {
         ?
         <ReactLoading type='bars' color='#05386B'/>
         :
-        <Fragment>
-        {
-          role === 'student'
-          ?
-          <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
-            <thead>
-              <tr>
-                <th>Ngày học</th>
-                <th>Giờ học</th>
-                <th>Bài học</th>
-              </tr>
-            </thead>
-            <tbody>
-            {
-              events.map(e=>
-                <tr key={e._id} className="changeCursor" onClick={this.handleLesson.bind(this, e.lessonId)}>
-                  <td>
-                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
-                  </td>
-                  <td>
-                    <Moment format="HH:mm - ">
-                      {e.start}
-                    </Moment>
-                    <Moment format="HH:mm">
-                      {e.end}
-                    </Moment>
-                  </td>
-                  <td>
-                    {e.text}
-                  </td>
-                </tr>
-              )
-            }
-            </tbody>
-          </Table>
-          :
-          <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
-            <thead>
-              <tr>
-                <th>Ngày học</th>
-                <th>Giờ học</th>
-                <th>Bài học</th>
-              </tr>
-            </thead>
-            <tbody>
-            {
-              events.map(e=>
-                <tr key={e._id} className="changeCursor" onClick={this.handleEditLesson.bind(this, e.lessonId)}>
-                  <td>
-                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
-                  </td>
-                  <td>
-                    <Moment format="HH:mm - ">
-                      {e.start}
-                    </Moment>
-                    <Moment format="HH:mm">
-                      {e.end}
-                    </Moment>
-                  </td>
-                  <td>
-                    {e.text}
-                  </td>
-                </tr>
-              )
-            }
-            </tbody>
-          </Table>
-        }
-        </Fragment>
+        <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
+          <thead>
+            <tr>
+              <th>Ngày học</th>
+              <th>Giờ học</th>
+              <th>Bài học</th>
+            </tr>
+          </thead>
+          {Content}
+        </Table>
       }
       </div>
     )

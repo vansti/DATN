@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Label, FormGroup ,Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
+import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -41,7 +41,7 @@ class Register extends Component {
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2,
-      role: this.state.role
+      role: 'student'
     };
 
     this.props.registerUser(newUser, this.props.history);
@@ -63,7 +63,7 @@ class Register extends Component {
                   <CardBody className="p-4">
                     <Form onSubmit={this.onSubmit}>
                       <h1>Đăng ký</h1>
-                      <p className="text-muted">Tạo tài khoản nếu bạn là học viên hoặc giáo viên</p>
+                      <p className="text-muted">Tạo tài khoản nếu bạn là học viên</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
@@ -97,23 +97,6 @@ class Register extends Component {
                         </InputGroupAddon>
                         <Input type="password" placeholder="Xác nhận lại mật khẩu" autoComplete="new-password" name="password2" value={this.state.password2} onChange={this.onChange}/>
                       </InputGroup>                
-                      {errors.password2 && <Alert color="danger">{errors.password2}</Alert>}
-                      <InputGroup className="mb-3">
-                        <Col md="3">
-                          <Label>Bạn là ai? </Label>
-                        </Col>
-                        <Col md="9">
-                          <FormGroup check inline>
-                            <Input className="form-check-input" type="radio" id="inline-radio1" name="role" value="student" onChange={this.onChange}/>
-                            <Label className="form-check-label" check htmlFor="inline-radio1">Học viên</Label>
-                          </FormGroup>
-                          <FormGroup check inline>
-                            <Input className="form-check-input" type="radio" id="inline-radio2" name="role" value="teacher" onChange={this.onChange}/>
-                            <Label className="form-check-label" check htmlFor="inline-radio2">Giáo viên</Label>
-                          </FormGroup>
-                        </Col>
-                      </InputGroup>
-                      {errors.role && <Alert color="danger">{errors.role}</Alert>}
                       <Button color="success" onClick={this.onSubmit} block>Tạo Tài Khoản</Button>
                     </Form>
                   </CardBody>

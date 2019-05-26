@@ -2,13 +2,31 @@ import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 
-import { GET_ERRORS, SET_CURRENT_USER, CLEAR_ERRORS } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS } from './types';
 
 // Register User
 export const registerUser = (userData, history) => dispatch => {
   axios
     .post('/api/users/register', userData)
     .then(res => history.push('/login'))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Create User
+export const createUser = userData => dispatch => {
+  axios
+    .post('/api/users/register', userData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
@@ -56,6 +74,11 @@ export const clearErrors = () => {
   };
 };
 
+export const clearSuccess = () => {
+  return {
+    type: CLEAR_SUCCESS
+  };
+};
 
 // Log user out
 export const logoutUser = () => dispatch => {

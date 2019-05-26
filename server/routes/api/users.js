@@ -59,7 +59,7 @@ router.post('/register', (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(res.json({mes:"Tạo tài khoản thành công"}))
             .catch(err => console.log(err));
         });
       });

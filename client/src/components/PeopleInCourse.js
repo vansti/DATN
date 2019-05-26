@@ -49,7 +49,7 @@ class PeopleInCourse extends Component {
             :
             <Col sm="12" md={{ size: 6, offset: 3 }}>
               <h3>Giáo viên</h3>
-              <Table responsive hover>
+              <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
                 <tbody>
                   {
                     teachers.length === 0
@@ -80,7 +80,7 @@ class PeopleInCourse extends Component {
               {
                 role === 'student'
                 ?
-                <Table responsive hover>
+                <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
                   <tbody>
                     {                    
                       students.length === 0
@@ -106,7 +106,7 @@ class PeopleInCourse extends Component {
                   </tbody>
                 </Table>
                 :
-                <Table responsive hover>
+                <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
                   <tbody>
                     {                    
                       students.length === 0

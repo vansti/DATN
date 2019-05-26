@@ -261,6 +261,39 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
         .then(courses => res.json(courses));
 });
 
+// @route   GET api/courses/get-active-course
+// @desc    Return current user courses
+// @access  Private
+router.get('/get-active-course', (req, res) => {
+
+  async function run() {
+    try {
+
+      var course_detail = await CourseDetail.find(
+                                  {
+                                    "endDay" : { "$gte": new Date() }
+                                  },
+                                  { courseId: 1, _id: 0 }
+                                ).lean();
+
+      var course_detail = await course_detail.map(elem => { 
+        return elem = elem.courseId
+      })
+
+      var course = await Course.find(
+                                      { '_id': { $in: course_detail} },
+                                      'title coursePhoto created'
+                                )
+                               .sort({created: -1})
+      res.json(course)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
+});
+
 // @route   GET api/courses/manage-courses
 // @desc    lấy hết khóa học để admin chỉnh sữa
 // @access  Private

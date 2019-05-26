@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import {  Card, CardHeader, CardBody, Input, Modal, ModalBody, Badge, Table, Button } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Modal, ModalBody, Badge, Table, Button , ModalHeader, ListGroup, ListGroupItem, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { getCurentCourse } from '../../actions/courseActions';
+import { getManageCourses } from '../../actions/courseActions';
 import { getAttendance, clearAttendance, getTodayAttendance } from '../../actions/attendanceActions';
 import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
@@ -13,15 +13,28 @@ import Moment from 'react-moment';
 import 'moment/locale/vi';
 var moment = require('moment');
 
+const styles = {
+  bigAvatar: {
+    height: 40,
+    width: 40,
+    margin: 'auto',
+    border: '1px solid #ddd',
+    borderRadius: 5
+  }
+};
+
 class ListAttendance extends Component {
   constructor() {
     super();
     this.state = {
+      isOpenModal: false,
+      courseTitle: null,
       loadingUserAttendance: true,
       events: [],
       loadingEvent :true,
-      currentcourses: [], 
-      loadingCurrentcourses: true,
+      managecourses: [], 
+      intialManagecourses: [],
+      loadingCourses: true,
       users:[],
       intialUsers: [],
       courseId: '0',
@@ -45,6 +58,12 @@ class ListAttendance extends Component {
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
+  }
+
+  toggleModal = () => {
+    this.setState({
+      isOpenModal: !this.state.isOpenModal,
+    });
   }
 
   capitalizeFirstLetter(string) {
@@ -76,14 +95,13 @@ class ListAttendance extends Component {
     });
   }
 
-  onChangeSelectCourse = e => {
-    if(e.target.value !== '0')
-    {
-      this.props.getSchedule(e.target.value);
-      this.props.getAttendance(e.target.value);
-    }
+  onChangeSelectCourse(courseId, courseTitle) {
+    this.props.getSchedule(courseId);
+    this.props.getAttendance(courseId);
     this.setState({ 
-      courseId: e.target.value, 
+      isOpenModal: false,
+      courseTitle,
+      courseId, 
       selectDate: null,
       users: [],
       intialUsers: [],
@@ -115,10 +133,11 @@ class ListAttendance extends Component {
     });  
 
     if (nextProps.courses) {
-      const { currentcourses, loading } = nextProps.courses
+      const { managecourses, loading } = nextProps.courses
       this.setState({ 
-        currentcourses, 
-        loadingCurrentcourses: loading
+        intialManagecourses: managecourses,
+        managecourses, 
+        loadingCourses: loading
       });
     }
 
@@ -172,7 +191,7 @@ class ListAttendance extends Component {
   }
 
   componentDidMount = () => {
-    this.props.getCurentCourse();
+    this.props.getManageCourses();
     this.props.clearAttendance();
   }
   
@@ -209,6 +228,13 @@ class ListAttendance extends Component {
     })
   }
 
+  onSearch = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
+    updatedList = updatedList.filter((course)=>
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+    this.setState({ managecourses: updatedList });
+  }
+
   render() {
     const superClass = this;
     const { 
@@ -217,12 +243,13 @@ class ListAttendance extends Component {
       courseId, 
       intialUsers, 
       attendance, 
-      currentcourses, 
-      loadingCurrentcourses,
+      loadingCourses, 
+      managecourses,
       loadingEvent,
       events,
       selectDate,
-      loadingUserAttendance
+      loadingUserAttendance,
+      courseTitle
     } = this.state;
 
     var SelectDateChart = <div></div>;
@@ -249,7 +276,7 @@ class ListAttendance extends Component {
           />
     }
 
-    var LessonList = <h3>Hãy chọn khóa học</h3>;
+    var LessonList = null;
     if(courseId !== '0'){
       LessonList = 
         <div className="animated fadeIn">
@@ -287,7 +314,7 @@ class ListAttendance extends Component {
         </div>
     }
 
-    var StudentList = <div className="animated fadeIn"><h4>Hãy chọn khóa học</h4></div>;
+    var StudentList = null;
     if(courseId !== '0')
     {
       StudentList = <div className="animated fadeIn">
@@ -303,7 +330,7 @@ class ListAttendance extends Component {
                       <Button color="primary" onClick={this.back}>
                         <i className="fa fa-arrow-left"></i> Trở về
                       </Button>
-                      <Input style={{marginTop: 20}} type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+                      <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
                       <br/>
                       <h4>Không tìm thấy kết quả</h4>
                     </div>
@@ -315,7 +342,7 @@ class ListAttendance extends Component {
           <Button color="primary" onClick={this.back}>
             <i className="fa fa-arrow-left"></i> Trở về
           </Button>
-          <Input style={{marginTop: 20}} type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+          <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
           <br/>
           <Table hover bordered striped responsive size="sm">
             <thead>
@@ -356,40 +383,44 @@ class ListAttendance extends Component {
         <Card>
           <CardHeader>
             <strong>Xem lịch sử điểm danh</strong>
-            <Fragment>
-            {
-              loadingCurrentcourses
-              ?
-              <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
-                <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
-              </div>
-              :
-              <Fragment>
-              {
-                currentcourses.length === 0
-                ?
-                <div className="card-header-actions" style={{marginRight:10}} >
-                  <Input  type="select">
-                    <option value="0">Chưa tham gia khóa học</option>
-                  </Input>
-                </div>
-                :
-                <div className="card-header-actions" style={{marginRight:10}}>
-                  <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                    <option value="0">Hãy chọn khóa học</option>
-                      { 
-                        currentcourses.map(course=>
-                          <option key={course._id} value={course._id}>{course.title}</option>
-                        )
-                      }
-                  </Input>
-                </div>
-              }
-              </Fragment>
-            }
-            </Fragment>
           </CardHeader>
           <CardBody>
+            {
+              loadingCourses
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Button color="primary" onClick={this.toggleModal}> Chọn khóa học </Button>
+            }
+            <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
+              <ModalHeader  toggle={this.toggleModal}>Chọn khóa học</ModalHeader>
+              <ModalBody style={{overflowY:'scroll', height:500}}>
+                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                {
+                  managecourses.length === 0
+                  ?
+                  <b>Không có khóa học</b>
+                  :
+                  <ListGroup>
+                  {
+                    managecourses.map(course=>
+                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title)}>
+                        <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                        <span style={{marginLeft: 10}}>{course.title}</span>
+                      </ListGroupItem>
+                    )
+                  }
+                  </ListGroup>
+                }
+              </ModalBody>
+            </Modal>
+            {
+              courseTitle &&
+              <Alert style={{marginBottom: 20, marginTop: 20, textAlign: 'center', fontWeight:'bold'}} color="primary">
+                Lịch sử điểm danh của {courseTitle}
+              </Alert>
+            }
+
           {
             selectDate
             ?
@@ -432,7 +463,7 @@ class ListAttendance extends Component {
 
 ListAttendance.propTypes = {
   courses: PropTypes.object.isRequired,
-  getCurentCourse : PropTypes.func.isRequired,
+  getManageCourses : PropTypes.func.isRequired,
   attendance : PropTypes.object.isRequired,
   getAttendance: PropTypes.func.isRequired,
   clearAttendance: PropTypes.func.isRequired,
@@ -444,4 +475,4 @@ const mapStateToProps = state => ({
   schedule: state.schedule
 });
 
-export default connect(mapStateToProps, { getSchedule, getCurentCourse, getAttendance, clearAttendance, getTodayAttendance })(ListAttendance);  
+export default connect(mapStateToProps, { getSchedule, getManageCourses, getAttendance, clearAttendance, getTodayAttendance })(ListAttendance);  
