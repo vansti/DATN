@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import {withRouter, Link } from 'react-router-dom';
+
 import './Navbar.css';
 
 class Navbar extends Component {
@@ -24,18 +26,18 @@ class Navbar extends Component {
             <div className="col">
               <div className="header_content d-flex flex-row align-items-center justify-content-start">
                 <div className="logo_container">
-                  <a href="#">
+                  <Link to="/">
                     <div className="logo_text">Unic<span>at</span></div>
-                  </a>
+                  </Link>
                 </div>
                 <nav className="main_nav_contaner ml-auto">
                   <ul className="main_nav">
-                    <li className="active"><a href="#">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="courses.html">Courses</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="#">Page</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li className="active"><a href="/">Home</a></li>
+                    <li><Link to="/about">About</Link></li>
+                    <li><Link to="/course">Courses</Link></li>
+                    <li><Link to="/blog">Blog</Link></li>
+                    <li><Link to="#">Page</Link></li>
+                    <li><Link to="/contact">Contact</Link></li>
                   </ul>
                   <div className="search_button"><i className="fa fa-search" aria-hidden="true"></i></div>
 
