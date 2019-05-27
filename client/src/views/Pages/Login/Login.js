@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { loginUser, clearErrors } from '../../../actions/authActions';
 import icon from '../../../assets/img/e-icon.png'
 import ReactLoading from 'react-loading';
+import isEmptyObj from '../../../validation/is-empty';
 
 class Login extends Component {
   constructor() {
@@ -28,7 +29,7 @@ class Login extends Component {
       this.props.history.push('/');
     }
 
-    if (nextProps.errors) {
+    if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false });
     }
   }

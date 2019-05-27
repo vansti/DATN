@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { registerUser } from '../../../actions/authActions';
 import ReactLoading from 'react-loading';
+import isEmptyObj from '../../../validation/is-empty';
 
 class Register extends Component {
   constructor() {
@@ -26,7 +27,7 @@ class Register extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
+    if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false });
     }
   }

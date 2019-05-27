@@ -217,9 +217,9 @@ class Lesson extends Component {
           </CardBody>
         </Card>
         <SweetAlert
-          	warning
+          	danger
           	confirmBtnText="OK"
-          	confirmBtnBsStyle="warning"
+          	confirmBtnBsStyle="danger"
           	title="Đã hết hạn làm trắc nghiệm!"
             show={this.state.isShowFail}
             onConfirm={this.hideAlertFail}>

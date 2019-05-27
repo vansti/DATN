@@ -35,7 +35,11 @@ class Schedule extends Component {
       durationBarVisible: false,
       timeRangeSelectedHandling: "Disabled",
       onEventClick: args => {
-        this.props.history.push(`/courses/${this.state.courseId}/lesson/${args.e.data._id}`);
+        this.props.auth.user.role === 'student'
+        ?
+        this.props.history.push(`/courses/${this.state.courseId}/lesson/${args.e.data.lessonId}`)
+        :
+        this.props.history.push(`/courses/${this.state.courseId}/add-in-lesson/${args.e.data.lessonId}`)
       },
     };
   }
@@ -88,14 +92,14 @@ class Schedule extends Component {
 
   render() {
     var {...config} = this.state;
-    const {currentcourses} = this.props.courses;
+    const { currentcourses, loading } = this.props.courses;
 
     var SelectCourse = 
                 <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
                   <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
                 </div>
 
-    if(currentcourses !== null)
+    if(loading === false)
     {
       if(currentcourses.length === 0)
         SelectCourse = 
@@ -190,6 +194,7 @@ Schedule.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  auth: state.auth,
   courses: state.courses,
   schedule: state.schedule,
 });
