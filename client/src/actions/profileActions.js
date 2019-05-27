@@ -1,18 +1,19 @@
 import axios from 'axios';
+import config from './config';
 
 import { GET_ERRORS, GET_PROFILE, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS} from './types';
 
 // Edit Profle
 export const editProfile = (userData, fileData) => dispatch => {
   axios
-    .post('/api/users/edit-profile', userData)
+    .post(config.ADDRESS +'/api/users/edit-profile', userData)
     .then(res =>{
 
       if(fileData !== null)
       {
         let fd = new FormData();
         fd.append('image', fileData, fileData.name)
-        axios.post('/api/users/edit-avatar', fd)
+        axios.post(config.ADDRESS +'/api/users/edit-avatar', fd)
         .then(res2  => {
           dispatch({
             type: GET_SUCCESS,
@@ -44,7 +45,7 @@ export const getCurrentProfile = () => dispatch => {
   dispatch(clearErrors());
   dispatch(clearSuccess());
   axios
-    .get('/api/users/current')
+    .get(config.ADDRESS +'/api/users/current')
     .then(res =>
       dispatch({
         type: GET_PROFILE,
@@ -64,7 +65,7 @@ export const changePassword = (passwordData, history) => dispatch => {
   dispatch(clearErrors());
   dispatch(clearSuccess());
   axios
-    .post('/api/users/change-password', passwordData)
+    .post(config.ADDRESS +'/api/users/change-password', passwordData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,

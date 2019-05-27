@@ -1,27 +1,45 @@
 import React, { Component, Fragment } from 'react';
-import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Badge, Table, Row, Col } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Modal, ModalBody, Badge, Table, Button , ModalHeader, ListGroup, ListGroupItem, Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { getCurentCourse } from '../../actions/courseActions';
-import { getAttendance, clearAttendance} from '../../actions/attendanceActions';
+import { getManageCourses } from '../../actions/courseActions';
+import { getAttendance, clearAttendance, getTodayAttendance } from '../../actions/attendanceActions';
+import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
 import ReactLoading from 'react-loading';
-import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import isEmptyObj from '../../validation/is-empty';
 import { Chart } from 'react-google-charts';
+import Moment from 'react-moment'; 
+import 'moment/locale/vi';
 var moment = require('moment');
+
+const styles = {
+  bigAvatar: {
+    height: 40,
+    width: 40,
+    margin: 'auto',
+    border: '1px solid #ddd',
+    borderRadius: 5
+  }
+};
 
 class ListAttendance extends Component {
   constructor() {
     super();
     this.state = {
-      currentcourses: [], 
-      loadingCurrentcourses: true,
+      isOpenModal: false,
+      courseTitle: null,
+      loadingUserAttendance: true,
+      events: [],
+      loadingEvent :true,
+      managecourses: [], 
+      intialManagecourses: [],
+      loadingCourses: true,
       users:[],
       intialUsers: [],
       courseId: '0',
       isLoading: false,
-      startDate: null,
+      selectDate: null,
       highlightDates: [],
       chartData:[
         [
@@ -42,22 +60,49 @@ class ListAttendance extends Component {
     this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
   }
 
+  toggleModal = () => {
+    this.setState({
+      isOpenModal: !this.state.isOpenModal,
+    });
+  }
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   handleToSudentInfo(studentId){
     this.props.history.push('/student-info/' + studentId)
   }
   
-  handleChangeDate(date) {
+  handleChangeDate(selectDate) {
+    var date = {
+      selectDate
+    };
+
+    this.props.getTodayAttendance(this.state.courseId, date);
     this.setState({
-      startDate: date
+      selectDate
     });
   }
 
-  onChangeSelectCourse = e => {
-    if(e.target.value !== '0')
-      this.props.getAttendance(e.target.value);
+  handleChangeDateChart = (selectDate) => {
+    var date = {
+      selectDate: moment(selectDate).format('YYYY-MM-DD')
+    };
+    this.props.getTodayAttendance(this.state.courseId, date);
+    this.setState({
+      selectDate: moment(selectDate).format('YYYY-MM-DD')
+    });
+  }
+
+  onChangeSelectCourse(courseId, courseTitle) {
+    this.props.getSchedule(courseId);
+    this.props.getAttendance(courseId);
     this.setState({ 
-      courseId: e.target.value, 
-      startDate: null,
+      isOpenModal: false,
+      courseTitle,
+      courseId, 
+      selectDate: null,
       users: [],
       intialUsers: [],
       chartData: [
@@ -77,12 +122,40 @@ class ListAttendance extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.courses) {
-      const { currentcourses, loading } = nextProps.courses
+    const { schedule, loading } = nextProps.schedule
+    if(!isEmptyObj(schedule))
       this.setState({ 
-        currentcourses, 
-        loadingCurrentcourses: loading
+        events: schedule.events,
+        loadingEvent: loading
       });
+    this.setState({
+      loadingEvent: loading 
+    });  
+
+    if (nextProps.courses) {
+      const { managecourses, loading } = nextProps.courses
+      this.setState({ 
+        intialManagecourses: managecourses,
+        managecourses, 
+        loadingCourses: loading
+      });
+    }
+
+    if (!isEmptyObj(nextProps.attendance)) {
+      const { loading, today_attendance } = nextProps.attendance
+
+      if(today_attendance === null)
+        this.setState({
+          intialUsers: [],
+          users: [],
+          loadingUserAttendance: loading
+        })
+      else
+        this.setState({
+          intialUsers: today_attendance.students,
+          users: today_attendance.students,
+          loadingUserAttendance: loading
+        })
     }
 
     if (!isEmptyObj(nextProps.attendance)) {
@@ -118,17 +191,17 @@ class ListAttendance extends Component {
   }
 
   componentDidMount = () => {
-    this.props.getCurentCourse();
+    this.props.getManageCourses();
     this.props.clearAttendance();
   }
   
 
   submit=()=>{
-    if(this.state.startDate !== null)
+    if(this.state.selectDate !== null)
     {
       var userList = [];
       this.props.attendance.attendance.forEach(element => {
-        if(moment(this.state.startDate).format('YYYY-MM-DD') === element.date)
+        if(moment(this.state.selectDate).format('YYYY-MM-DD') === element.date)
           userList = element.students
       })
       this.setState({
@@ -147,6 +220,21 @@ class ListAttendance extends Component {
     this.setState({users: updatedList});
   }
 
+  back=()=>{
+    this.setState({
+      selectDate: null,
+      users: [],
+      intialUsers: []
+    })
+  }
+
+  onSearch = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
+    updatedList = updatedList.filter((course)=>
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+    this.setState({ managecourses: updatedList });
+  }
+
   render() {
     const superClass = this;
     const { 
@@ -155,37 +243,19 @@ class ListAttendance extends Component {
       courseId, 
       intialUsers, 
       attendance, 
-      currentcourses, 
-      loadingCurrentcourses 
+      loadingCourses, 
+      managecourses,
+      loadingEvent,
+      events,
+      selectDate,
+      loadingUserAttendance,
+      courseTitle
     } = this.state;
 
-    var SelectDate = <div></div>;
-    
     var SelectDateChart = <div></div>;
 
     if(!isEmptyObj(attendance) && courseId !== '0')
     {
-      SelectDate = 
-          <div className="animated fadeIn">
-            <div className="card-header-actions" >
-              <Button color="danger" onClick={this.submit}> Xác nhận </Button>
-            </div>
-            <div className="card-header-actions" style={{marginRight:10}}>
-              <DatePicker
-                selected={this.state.startDate}
-                onChange={this.handleChangeDate}
-                highlightDates={this.state.highlightDates}
-                customInput={<Input />}
-                dateFormat="dd/MM/yyyy"
-                placeholderText="Hãy chọn ngày" />
-            </div>
-            <div className="card-header-actions">
-              <div style={{width:60}}>
-                <i style={{marginLeft:25, marginTop:10}}className="fa fa-arrow-right" aria-hidden="true"></i>
-              </div>
-            </div>
-          </div>
-
       SelectDateChart =
           <Chart
             chartType="Calendar"
@@ -198,9 +268,7 @@ class ListAttendance extends Component {
               {
                 eventName: "select",
                 callback({ chartWrapper }) {
-                  superClass.setState({
-                    startDate : new Date(chartWrapper.getChart().getSelection()[0].date)
-                  })
+                  superClass.handleChangeDateChart(chartWrapper.getChart().getSelection()[0].date)
                 }
               }
             ]}
@@ -208,19 +276,61 @@ class ListAttendance extends Component {
           />
     }
 
-    if(courseId === '0'){
-      SelectDate = <div></div>;
+    var LessonList = null;
+    if(courseId !== '0'){
+      LessonList = 
+        <div className="animated fadeIn">
+          <Table hover responsive bordered>
+            <thead className="thead-light">
+              <tr>
+                <th>Ngày học</th>
+                <th>Giờ học</th>
+                <th>Bài học</th>
+              </tr>
+            </thead>
+            <tbody>
+            {
+              events.map(e=>
+                <tr key={e._id} className="changeCursor" onClick={this.handleChangeDate.bind(this, e.date)}>
+                  <td>
+                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                  </td>
+                  <td>
+                    <Moment format="HH:mm - ">
+                      {e.start}
+                    </Moment>
+                    <Moment format="HH:mm">
+                      {e.end}
+                    </Moment>
+                  </td>
+                  <td>
+                    {e.text}
+                  </td>
+                </tr>
+              )
+            }
+            </tbody>
+          </Table>
+        </div>
     }
-    
-    var StudentList = <div className="animated fadeIn"><h4>Hãy chọn khóa học và ngày điểm danh</h4></div>;
-    if(isEmptyObj(attendance) && courseId !== '0')
+
+    var StudentList = null;
+    if(courseId !== '0')
     {
-      StudentList = <div className="animated fadeIn"><h4>Chưa có điểm danh</h4></div>
+      StudentList = <div className="animated fadeIn">
+                      <Button color="primary" onClick={this.back}>
+                        <i className="fa fa-arrow-left"></i> Trở về
+                      </Button>
+                      <h4 style={{marginTop: 20}}>Chưa có điểm danh</h4>
+                    </div>
     }
     if(!isEmptyObj(intialUsers) && isEmptyObj(users) && courseId !== '0')
     {
       StudentList = <div className="animated fadeIn">
-                      <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+                      <Button color="primary" onClick={this.back}>
+                        <i className="fa fa-arrow-left"></i> Trở về
+                      </Button>
+                      <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
                       <br/>
                       <h4>Không tìm thấy kết quả</h4>
                     </div>
@@ -229,7 +339,10 @@ class ListAttendance extends Component {
     if(!isEmptyObj(users) && courseId !== '0'){
       StudentList = 
         <div className="animated fadeIn">
-          <Input type="text" name="search" value={this.state.search} onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+          <Button color="primary" onClick={this.back}>
+            <i className="fa fa-arrow-left"></i> Trở về
+          </Button>
+          <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
           <br/>
           <Table hover bordered striped responsive size="sm">
             <thead>
@@ -269,56 +382,71 @@ class ListAttendance extends Component {
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <Row >
-              <Col sm="3">
-                <strong>Xem lịch sử điểm danh</strong>
-              </Col>
-              <Col>
-                {SelectDate}
-                {
-                  loadingCurrentcourses
-                  ?
-                  <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
-                    <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
-                  </div>
-                  :
-                  <Fragment>
-                  {
-                    currentcourses.length === 0
-                    ?
-                    <div className="card-header-actions" style={{marginRight:10}} >
-                      <Input  type="select">
-                        <option value="0">Chưa tham gia khóa học</option>
-                      </Input>
-                    </div>
-                    :
-                    <div className="card-header-actions" style={{marginRight:10}}>
-                      <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-                        <option value="0">Hãy chọn khóa học</option>
-                          { 
-                            currentcourses.map(course=>
-                              <option key={course._id} value={course._id}>{course.title}</option>
-                            )
-                          }
-                      </Input>
-                    </div>
-                  }
-                  </Fragment>
-                }
-              </Col>
-            </Row>
+            <strong>Xem lịch sử điểm danh</strong>
           </CardHeader>
           <CardBody>
             {
-              loadingAttendance
+              loadingCourses
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Button color="primary" onClick={this.toggleModal}> Chọn khóa học </Button>
+            }
+            <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
+              <ModalHeader  toggle={this.toggleModal}>Chọn khóa học</ModalHeader>
+              <ModalBody style={{overflowY:'scroll', height:500}}>
+                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                {
+                  managecourses.length === 0
+                  ?
+                  <b>Không có khóa học</b>
+                  :
+                  <ListGroup>
+                  {
+                    managecourses.map(course=>
+                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title)}>
+                        <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                        <span style={{marginLeft: 10}}>{course.title}</span>
+                      </ListGroupItem>
+                    )
+                  }
+                  </ListGroup>
+                }
+              </ModalBody>
+            </Modal>
+            {
+              courseTitle &&
+              <Alert style={{marginBottom: 20, marginTop: 20, textAlign: 'center', fontWeight:'bold'}} color="primary">
+                Lịch sử điểm danh của {courseTitle}
+              </Alert>
+            }
+
+          {
+            selectDate
+            ?
+            <Fragment>
+            {
+              loadingUserAttendance
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              StudentList
+            }
+            </Fragment>
+            :
+            <Fragment>
+            {
+              loadingAttendance || loadingEvent
               ?
               <ReactLoading type='bars' color='#05386B'/>
               :
               <Fragment>
                 {SelectDateChart}
-                {StudentList}
+                {LessonList}
               </Fragment>
             }
+            </Fragment>
+          }
           </CardBody>
         </Card>
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
@@ -335,7 +463,7 @@ class ListAttendance extends Component {
 
 ListAttendance.propTypes = {
   courses: PropTypes.object.isRequired,
-  getCurentCourse : PropTypes.func.isRequired,
+  getManageCourses : PropTypes.func.isRequired,
   attendance : PropTypes.object.isRequired,
   getAttendance: PropTypes.func.isRequired,
   clearAttendance: PropTypes.func.isRequired,
@@ -344,6 +472,7 @@ ListAttendance.propTypes = {
 const mapStateToProps = state => ({
   courses: state.courses,
   attendance: state.attendance,
+  schedule: state.schedule
 });
 
-export default connect(mapStateToProps, { getCurentCourse, getAttendance, clearAttendance })(ListAttendance);  
+export default connect(mapStateToProps, { getSchedule, getManageCourses, getAttendance, clearAttendance, getTodayAttendance })(ListAttendance);  

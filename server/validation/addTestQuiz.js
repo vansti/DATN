@@ -4,25 +4,28 @@ const isEmpty = require('./is-empty');
 module.exports = function validateAddTestQuizInput(data) {
   let errors = {};
   data.testTitle = !isEmpty(data.testTitle) ? data.testTitle : '';
-  data.testSynopsis = !isEmpty(data.testSynopsis) ? data.testSynopsis : '';
+  data.testTime = !isEmpty(data.testTime) ? data.testTime : '';
 
   if (Validator.isEmpty(data.testTitle)) {
     errors.testTitle = 'Hãy điền tiêu đề bài tập';
   }
 
-  if (Validator.isEmpty(data.testSynopsis)) {
-    errors.testSynopsis = 'Hãy điền hạn chót nộp bài';
+  if (Validator.isEmpty(data.testTime)) {
+    errors.testTime = 'Hãy điền thời gian làm bài';
   }
 
-  if (!data.quizzes || !data.quizzes.length) {
-    errors.quizzes = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
+  if (!data.listQuiz || !data.listQuiz.length) {
+    errors.listQuiz = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
   } else {
     //validate array question
     const quizArrayErrors = [];
-    data.quizzes.forEach((quiz, quizIndex) => {
+    data.listQuiz.forEach((quiz, quizIndex) => {
       const quizErrors = {};
       if(!quiz || !quiz.question) {
         quizErrors.question = 'Yêu cầu';
+      }
+      if(!quiz || !quiz.correctAnswer) {
+        quizErrors.correctAnswer = 'Yêu cầu';
       }
       if (quiz || !quiz.answers || !quiz.answers.length) {
         //validate array answer
@@ -40,7 +43,7 @@ module.exports = function validateAddTestQuizInput(data) {
       }
     });
     if(quizArrayErrors.length) {
-      errors.quizzes = quizArrayErrors;
+      errors.listQuiz = quizArrayErrors;
     }
     //end array question
   }

@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody } from 'reactstrap';
+import {  Card, CardHeader, CardBody, Input, Button, Modal, ModalBody, Table, ModalHeader, ListGroup, ListGroupItem, Alert } from 'reactstrap';
 import {DayPilot, DayPilotCalendar, DayPilotNavigator} from "daypilot-pro-react";
 import "./CalendarStyles.css";
 import ReactLoading from 'react-loading';
 import PropTypes from 'prop-types';
-import { getCurentCourse } from '../../actions/courseActions';
+import { getActiveCourses } from '../../actions/courseActions';
 import { addSchedule, getSchedule } from '../../actions/scheduleActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { clearSuccess } from '../../actions/courseActions';
 import isEmptyObj from '../../validation/is-empty';
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+var moment = require('moment');
 
 const styles = {
   left: {
@@ -18,6 +22,13 @@ const styles = {
   },
   main: {
     marginLeft: "220px"
+  },
+  bigAvatar: {
+    height: 40,
+    width: 40,
+    margin: 'auto',
+    border: '1px solid #ddd',
+    borderRadius: 5
   }
 };
 
@@ -25,39 +36,29 @@ class AddSchedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      intialActivecourses: [],
+      activecourse: [],
+      loadingCourse: false,
+      events: [],
       loading: false,
-      isLoading:false,
+      isLoading: false,
       isShowSuccess: false,
       courseId: '0',
       viewType: "Week",
       headerHeight: 30,
       hourWidth: 60,
       cellHeight: 30,
+      timeRangeSelectedHandling: "Disabled",
       durationBarVisible: false,
-      timeRangeSelectedHandling: "Enabled",
-      onTimeRangeSelected: args => {
-        let dp = this.calendar;
-        DayPilot.Modal.prompt("Thêm sự kiện:", "").then(function(modal) {
-          dp.clearSelection();
-          if (!modal.result) { return; }
-          dp.events.add(new DayPilot.Event({
-            start: args.start.value,
-            end: args.end.value,
-            id: DayPilot.guid(),
-            text: modal.result
-          }));
-        });
-      },
-      eventDeleteHandling: "Update",
-      onEventClick: args => {
-        let dp = this.calendar;
-        DayPilot.Modal.prompt("Thay đổi tiêu đề:", args.e.text()).then(function(modal) {
-          if (!modal.result) { return; }
-          args.e.data.text = modal.result;
-          dp.events.update(args.e);
-        });
-      },
+      isOpenModal: false,
+      courseTitle: null
     };
+  }
+
+  toggleModal = () => {
+    this.setState({
+      isOpenModal: !this.state.isOpenModal,
+    });
   }
 
   hideAlertSuccess(){
@@ -69,7 +70,7 @@ class AddSchedule extends Component {
   }
 
   componentDidMount() {
-    this.props.getCurentCourse();
+    this.props.getActiveCourses();
 
     document.getElementsByClassName("calendar_default_corner")[0].innerHTML = `<div class="calendar_default_corner_inner" unselectable="on"></div>`;
 
@@ -79,19 +80,25 @@ class AddSchedule extends Component {
     });
   }
 
-  onChangeSelectCourse = e => {
-    if(e.target.value !== '0')
-    {
-      this.props.getSchedule(e.target.value)
-    }
+  onChangeSelectCourse(courseId, courseTitle) {
+    this.props.getSchedule(courseId)
     this.setState({ 
-      courseId: e.target.value
+      courseId,
+      courseTitle,
+      isOpenModal: false
     });
   }
 
   componentWillReceiveProps(nextProps) {
 
-    if (nextProps.success.data === "Lưu thành công") {
+    const { activecourse, loading } = nextProps.courses
+    this.setState({
+      intialActivecourses: activecourse,
+      activecourse,
+      loadingCourse: loading
+    });
+
+    if (nextProps.success.mes === "Lưu thành công") {
       this.setState({isShowSuccess: true, isLoading: false})
     }
 
@@ -113,78 +120,142 @@ class AddSchedule extends Component {
   }
 
   submit=()=>{
-    var elist = this.calendar.events.list;
-
-    elist.map(function (doc) {
-      doc.date = doc.start.toString().slice(0, 10);
-      delete doc.id; 
-      delete doc.resource; 
-      return doc; 
-    })
-
-    elist.sort(function(a,b){
-      return new Date(a.start) - new Date(b.start);
-    });
 
     var newSchedule = {
       courseId: this.state.courseId,
-      events: elist
+      events: this.state.events
     };
+
     this.props.addSchedule(newSchedule)
     this.setState({isLoading: true})
   }
 
-  render() {
-    var {...config} = this.state;
-    const {currentcourses} = this.props.courses;
+  onChangeTime = (eventId, time) => 
+  {
+    var Arr = this.state.events.slice(0);
 
-    var SelectCourse = 
-                <div className="card-header-actions" style={{marginRight:10, marginBottom:40}} >
-                  <ReactLoading type='bars' color='#05386B' height={10} width={50}/>
-                </div>
-
-    if(currentcourses !== null)
-    {
-      if(currentcourses.length === 0)
-        SelectCourse = 
-                  <div className="card-header-actions" style={{marginRight:10}} >
-                      <Input  type="select">
-                        <option value="0">Chưa tham gia khóa học</option>
-                      </Input>
-                  </div>
-      else{
-        SelectCourse = 
-        <div className="card-header-actions" style={{marginRight:10}}>
-          <Input  type="select" name="courseId" onChange={this.onChangeSelectCourse}>
-            <option value="0">Hãy chọn khóa học</option>
-              { 
-                currentcourses.map(course=>
-                  <option key={course._id} value={course._id}>{course.title}</option>
-                )
-              }
-          </Input>
-        </div>
+    Arr.map(function(e) {
+      if(eventId === e._id)
+      {
+        e.time = time
+        e.start = moment(e.date).format('YYYY-MM-DD') + 'T' + time[0] + ':00'
+        e.end = moment(e.date).format('YYYY-MM-DD') + 'T' + time[1] + ':00'
       }
-    }
+      return e
+    });
+    this.setState({events: Arr})
+  }
 
-    var DisPlay = <h2>Hãy chọn khóa học</h2>;
-    if(this.state.courseId !== '0'){
-      DisPlay = null;
-    }
+  onChangeDate = (eventId, date) => 
+  {
+    var Arr = this.state.events.slice(0);
+
+    Arr.map(function(e) {
+      if(eventId === e._id)
+      {
+        e.date = moment(date).format('YYYY-MM-DD')
+        e.start = moment(date).format('YYYY-MM-DD') + 'T' + e.time[0] + ':00'
+        e.end = moment(date).format('YYYY-MM-DD') + 'T' + e.time[1] + ':00'
+      }
+      return e
+    });
+    this.setState({events: Arr})
+  }
+  
+  onSearch = e =>{
+    var updatedList = JSON.parse(JSON.stringify(this.state.intialActivecourses));
+    updatedList = updatedList.filter((course)=>
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+    this.setState({ activecourse: updatedList });
+  }
+
+  render() {
+    var {...config } = this.state;
+    var { loadingCourse, activecourse, courseTitle } = this.state;
 
     return (
       <div className="animated fadeIn">
         <Card>
           <CardHeader>
-            <strong>Tạo thời khóa biểu</strong>
-            {SelectCourse}
+            <i className="fa fa-calendar" aria-hidden="true"></i>
+            <strong>Chỉnh sửa thời khóa biểu</strong>
           </CardHeader>
           <CardBody >
-            {DisPlay}
+            {
+              loadingCourse
+              ?
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <Button color="primary" onClick={this.toggleModal}> Chọn khóa học </Button>
+            }
+            <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
+              <ModalHeader  toggle={this.toggleModal}>Chọn khóa học</ModalHeader>
+              <ModalBody style={{overflowY:'scroll', height:500}}>
+                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                {
+                  activecourse.length === 0
+                  ?
+                  <b>Không có khóa học</b>
+                  :
+                  <ListGroup>
+                  {
+                    activecourse.map(course=>
+                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title)}>
+                        <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
+                        <span style={{marginLeft: 10}}>{course.title}</span>
+                      </ListGroupItem>
+                    )
+                  }
+                  </ListGroup>
+                }
+              </ModalBody>
+            </Modal>
+
             <div style={{display: this.state.courseId === '0' ? 'none' : 'block'}}>
-              <Button color="danger" onClick={this.submit}> Lưu </Button>
-              <br/>
-              <br/>
+              <Alert style={{marginBottom: 20, marginTop: 20, textAlign: 'center', fontWeight:'bold'}} color="primary">
+                Thời khóa biểu của {courseTitle}
+              </Alert>
+              <Button style={{marginBottom: 20}} color="danger" onClick={this.submit}> Lưu </Button>
+              {
+                this.state.events.length === 0
+                ?
+                null
+                :
+                <Table responsive bordered>
+                  <thead className="thead-light">
+                    <tr>
+                      <th>Ngày học</th>
+                      <th>Giờ học</th>
+                      <th>Bài học</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {
+                    this.state.events.map(e=>
+                      <tr key={e._id}>
+                        <td>
+                          <DatePicker
+                            selected={new Date(e.date)}
+                            onChange={this.onChangeDate.bind(this, e._id)}
+                            dateFormat="dd/MM/yyyy"
+                            customInput={<Input />}
+                          />
+                        </td>
+                        <td>
+                          <TimeRangePicker
+                            onChange={this.onChangeTime.bind(this, e._id)}
+                            value={e.time}
+                          />
+                        </td>
+                        <td>
+                          {e.text}
+                        </td>
+                      </tr>
+                    )
+                  }
+                  </tbody>
+                </Table>
+              }
               <div style={styles.left}>
                 <DayPilotNavigator
                   selectMode={"week"}
@@ -199,6 +270,7 @@ class AddSchedule extends Component {
                       startDate: args.day
                     });
                   }}
+                  events= {this.state.events}
                 />
               </div>
               <div style={styles.main}>
@@ -243,7 +315,7 @@ class AddSchedule extends Component {
 AddSchedule.propTypes = {
   courses: PropTypes.object.isRequired,
   schedule: PropTypes.object.isRequired,
-  getCurentCourse : PropTypes.func.isRequired,
+  getActiveCourses : PropTypes.func.isRequired,
   addSchedule : PropTypes.func.isRequired,
   clearSuccess: PropTypes.func.isRequired,
   getSchedule: PropTypes.func.isRequired,
@@ -255,4 +327,4 @@ const mapStateToProps = state => ({
   schedule: state.schedule,
 });
 
-export default connect(mapStateToProps, { getCurentCourse, addSchedule, clearSuccess, getSchedule })(AddSchedule);  
+export default connect(mapStateToProps, { getActiveCourses, addSchedule, clearSuccess, getSchedule })(AddSchedule);  

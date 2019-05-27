@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert } from 'reactstrap';
+import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert, Modal, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser, clearErrors } from '../../../actions/authActions';
 import icon from '../../../assets/img/e-icon.png'
+import ReactLoading from 'react-loading';
+import isEmptyObj from '../../../validation/is-empty';
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
+      isLoading: false,
       email: '',
       password: '',
       errors: {}
@@ -26,8 +29,8 @@ class Login extends Component {
       this.props.history.push('/');
     }
 
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false });
     }
   }
 
@@ -38,6 +41,7 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
+    this.setState({ isLoading: true });
     this.props.clearErrors();
     this.props.loginUser(userData);
   }
@@ -78,14 +82,7 @@ class Login extends Component {
                           <Input type="password" name="password" placeholder="Mật khẩu" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
                         </InputGroup>
                         {errors.password_login && <Alert color="danger">{errors.password_login}</Alert>}
-                        <Row>
-                          <Col xs="6">
-                            <Button color="primary" className="px-4" onClick={this.onSubmit}>Đăng nhập</Button>
-                          </Col>
-                          <Col xs="6" className="text-right">
-                            <Button color="link" className="px-0">Quên mật khẩu?</Button>
-                          </Col>
-                        </Row>
+                        <Button color="primary" className="px-4" onSubmit={this.onSubmit}>Đăng nhập</Button>
                       </Form>
                     </CardBody>
                   </Card>
@@ -93,7 +90,6 @@ class Login extends Component {
                     <CardBody className="text-center">
                       <div>
                         <h2>Đăng ký</h2>
-                        
                         <p><img alt="Logo" src={icon} style={{width: 100, height: 100}} /></p>
                         <Link to="/register">
                           <Button color="primary" className="mt-3" active tabIndex={-1}>Đăng ký ngay!</Button>
@@ -106,6 +102,13 @@ class Login extends Component {
             </Row>
           </Container>
         </div>
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Loading</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

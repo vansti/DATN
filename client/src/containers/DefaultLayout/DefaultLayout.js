@@ -15,9 +15,11 @@ import {
   AppSidebarNav,
 } from '@coreui/react';
 // sidebar nav config
-import TeacherNavigation from '../../TeacherNav';
-import StudentNavigation from '../../StudentNav';
-import AdminNavigation from '../../AdminNav';
+import TeacherNavigation from '../../navigations/TeacherNav';
+import StudentNavigation from '../../navigations/StudentNav';
+import AdminNavigation from '../../navigations/AdminNav';
+import MinistryNavigation from '../../navigations/MinistryNav';
+import AdvisorNavigation from '../../navigations/AdvisorNav';
 // routes config
 import routes from '../../routes';
 
@@ -43,12 +45,13 @@ class DefaultLayout extends Component {
     const { role } = this.props.auth.user
     let AppSidebarNavRole;
 
-    if (role.toString() === 'student') {
-      AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;
-    } else if(role.toString() === 'teacher'){
-      AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;
-    } else if(role.toString() === 'admin'){
-      AppSidebarNavRole = <AppSidebarNav navConfig={AdminNavigation} {...this.props} />;
+    switch (role.toString()) {
+      case 'student': AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;;break;
+      case 'teacher': AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;break;
+      case 'advisor': AppSidebarNavRole = <AppSidebarNav navConfig={AdvisorNavigation} {...this.props} />;break;
+      case 'ministry': AppSidebarNavRole = <AppSidebarNav navConfig={MinistryNavigation} {...this.props} />;break;  
+      case 'admin': AppSidebarNavRole = <AppSidebarNav navConfig={AdminNavigation} {...this.props} />;break;     
+      default: break;
     }
 
     return (

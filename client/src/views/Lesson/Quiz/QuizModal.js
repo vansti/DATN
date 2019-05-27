@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { getListQuiz } from '../../../actions/testQuizAction'; 
-import { addQuizEvent, getEventSchedule, clearSuccess } from '../../../actions/scheduleActions'; 
+import { addQuizLesson, getLessonIncourse, clearSuccess } from '../../../actions/lessonActions'; 
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
@@ -65,7 +65,7 @@ class QuizModal extends Component {
         isShowError: true
       })
     else{
-      this.props.addQuizEvent(this.props.courseId, this.props.eventId, quizId, deadlineData)
+      this.props.addQuizLesson(this.props.courseId, this.props.eventId, quizId, deadlineData)
       this.setState({ isLoading: true })
     }
   } 
@@ -99,7 +99,7 @@ class QuizModal extends Component {
     this.setState({
       isShowSuccess: false
     })
-    this.props.getEventSchedule(this.props.courseId, this.props.eventId)
+    this.props.getLessonIncourse(this.props.courseId, this.props.eventId)
   }
 
   hideAlertError(){
@@ -239,4 +239,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default connect(mapStateToProps, { getListQuiz, addQuizEvent, clearSuccess, getEventSchedule })(QuizModal);  
+export default connect(mapStateToProps, { getListQuiz, addQuizLesson, clearSuccess, getLessonIncourse })(QuizModal);  

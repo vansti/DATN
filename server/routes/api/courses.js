@@ -15,6 +15,7 @@ cloudinary.config({
 
 // Load Input Validation
 const validateAddCourseInput = require('../../validation/addcourse');
+const validateEditCourseInput = require('../../validation/editcourse');
 
 
 // Course Model
@@ -24,6 +25,8 @@ const User = require('../../models/User');
 const SubExercise = require('../../models/SubExercise');
 const SubQuiz = require('../../models/SubQuiz');
 const Schedule = require('../../models/Schedule');
+const LessonList = require('../../models/LessonList');
+const Lesson = require('../../models/Lesson');
 
 router.use(cors());
 router.use(formData.parse())
@@ -57,13 +60,45 @@ router.post(
       info: req.body.info
     });
 
-    const newSchedule = new Schedule({
-      events: req.body.events
-    });
-
     async function run() {
       try {
+        // Tạo khóa học
         const course = await newCourse.save()
+
+        // Thêm khóa học đó cho người tạo
+        await
+        User.findByIdAndUpdate(
+          req.user.id ,
+          { 
+            $push: {
+              courses: course._id
+            }
+          }
+        )
+
+        // lấy danh sách bài học 
+        const lessonlist = await LessonList.findById(req.body.listId);
+
+        // ánh xạ bài học vào ngày học
+        var events = req.body.events
+        for( var i=0; i < events.length; i++ )
+        {
+          var newLesson = new Lesson({
+            courseId: course._id,
+            rootId: lessonlist.lesson[i]._id,
+            text: lessonlist.lesson[i].text,
+            content: lessonlist.lesson[i].content,
+            files: lessonlist.lesson[i].files,
+          });
+
+          var lesson = await newLesson.save()
+          events[i].lessonId = lesson._id
+        }
+
+        const newSchedule = new Schedule({
+          events: events
+        });
+
         newCourseDetail.courseId = course._id
         newSchedule.courseId = course._id
         await newSchedule.save();
@@ -85,7 +120,7 @@ router.post(
   '/edit-course/:courseId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateAddCourseInput(req.body);
+    const { errors, isValid } = validateEditCourseInput(req.body);
     // Check Validation
     if (!isValid) {
       // Return any errors with 400 status
@@ -114,35 +149,12 @@ router.post(
           {
             $set: 
             {
-              studyTime: req.body.studyTime,
-              openingDay: req.body.openingDay,
-              endDay: req.body.endDay,
               fee: req.body.fee,
               info: req.body.info
             }
           }
         )
         
-        const find = await Schedule.findOne({ 'courseId' : req.params.courseId })
-
-        if(find)
-          Schedule.findOneAndUpdate(
-            { 'courseId' : req.params.courseId },
-            {
-              $set: 
-              {
-                events: req.body.events
-              }
-            }
-          )
-        else{
-          const newSchedule = new Schedule({
-            courseId: req.params.courseId,
-            events: req.body.events
-          });
-          newSchedule.save();
-        }
-
         res.json("Chỉnh sửa khóa học thành công")
       } catch (err) {
         console.log(err)
@@ -180,7 +192,7 @@ router.post(
 // @access  Private
 router.get(
   '/all-course',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Course.find(
       { 'enrollDeadline' : {$gte : new Date()}},
@@ -247,6 +259,39 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
   Course.find({ '_id': { $in: req.user.courses} })
         .sort({created: -1})
         .then(courses => res.json(courses));
+});
+
+// @route   GET api/courses/get-active-course
+// @desc    Return current user courses
+// @access  Private
+router.get('/get-active-course', (req, res) => {
+
+  async function run() {
+    try {
+
+      var course_detail = await CourseDetail.find(
+                                  {
+                                    "endDay" : { "$gte": new Date() }
+                                  },
+                                  { courseId: 1, _id: 0 }
+                                ).lean();
+
+      var course_detail = await course_detail.map(elem => { 
+        return elem = elem.courseId
+      })
+
+      var course = await Course.find(
+                                      { '_id': { $in: course_detail} },
+                                      'title coursePhoto created'
+                                )
+                               .sort({created: -1})
+      res.json(course)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
 });
 
 // @route   GET api/courses/manage-courses

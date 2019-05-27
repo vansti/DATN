@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { getEventSchedule } from '../../actions/scheduleActions';
+import { getLessonIncourse } from '../../actions/lessonActions';
 import isEmptyObj from '../../validation/is-empty';
 import { 
   Alert, 
@@ -20,8 +20,7 @@ import ReactLoading from 'react-loading';
 import NoImg from '../../assets/img/NoImg.png';
 import ExerciseList from './Exercise/ExerciseList';
 import Moment from 'react-moment'; 
-import 'moment/locale/vi';
-var moment = require('moment');
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 class Lesson extends Component {
   constructor(props) {
@@ -30,17 +29,17 @@ class Lesson extends Component {
     this.state = {
       accordion: [],
       loading: true,
-      date: '',
       text: '',
       content: '',
       files: [],
       exercises: [],
-      quizzes: []
+      quizzes: [],
+      isShowFail: false
     };
   }
 
   componentDidMount(){
-    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId)
+    this.props.getLessonIncourse(this.props.match.params.id, this.props.match.params.lessonId)
   }
 
   capitalizeFirstLetter(string) {
@@ -49,16 +48,15 @@ class Lesson extends Component {
 
   componentWillReceiveProps(nextProps) {
     
-    const { event, loading } = nextProps.schedule
-    if(!isEmptyObj(event))
+    const { lesson_in_course, loading } = nextProps.lesson
+    if(!isEmptyObj(lesson_in_course))
     {
-      var { date, text, content, files, exercises, quizzes } = event
+      var { text, content, files, exercises, quizzes } = lesson_in_course
 
       var accordion = [];
       exercises.map(()=>accordion.push(false))
 
       this.setState({ 
-        date,
         text,
         content,
         files,
@@ -74,20 +72,40 @@ class Lesson extends Component {
 
   }
 
-  jumpToQuizLesson = quizId => {
-    this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${quizId}`);
+  jumpToQuizLesson(quizId, quizDeadline){
+    var now = new Date();
+    var deadline = new Date(quizDeadline);
+    if(deadline.getTime() >= now.getTime())
+    {
+      this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${quizId}`);
+    }else{
+      this.setState({
+        isShowFail: true
+      })
+    }
+  }
+
+  jumpToQuizDetail(quizId){
+    this.props.history.push(`/quiz/quiz-detail/${quizId}`);
+  }
+
+  hideAlertFail = () =>{
+    this.setState({
+      isShowFail: false
+    })
   }
 
   render() {
     const { 
       content, 
-      date, 
       text, 
       loading,
       files,
       exercises,
       quizzes 
     } = this.state;
+    const { role } = this.props.auth.user;
+
     return (
       <div className="animated fadeIn">
         <Modal isOpen={loading} className='modal-sm' >
@@ -97,13 +115,11 @@ class Lesson extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
-        <Alert color="dark" style={{textAlign: 'center',fontWeight: 'bold'}}>
-          Bài học {this.capitalizeFirstLetter(moment(date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
-          <br/>
-          <span style={{fontFamily:'Baloo Bhai, cursive', fontSize: 20 }}>
-            {text}
-          </span>
+
+        <Alert color="dark" style={{textAlign: 'center', fontFamily:'Baloo Bhai, cursive', fontSize: 20}}>
+          {text}
         </Alert>
+
         <Card>
           <CardBody>
             <Label style={{fontWeight:'bold'}}>
@@ -151,6 +167,7 @@ class Lesson extends Component {
 
         <Card>
           <CardHeader>
+            <i className="fa fa-file-text" aria-hidden="true"></i>
             <b>Bài tập</b>
           </CardHeader>
           <CardBody>
@@ -160,6 +177,7 @@ class Lesson extends Component {
 
         <Card>
           <CardHeader>
+            <i className="fa fa-question-circle" aria-hidden="true"></i>
             <b>Bài trắc nghiệm</b>
           </CardHeader>
           <CardBody>
@@ -173,9 +191,17 @@ class Lesson extends Component {
               quizzes.map((quiz,index) => 
                 <Card className="mb-0" key={index} style={{marginTop:10}}>
                   <CardHeader style={{backgroundColor: 'lightblue'}}>
-                    <Button block color="link" className="text-left m-0 p-0" onClick={() => this.jumpToQuizLesson(quiz.quizId._id)}>
-                      <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
-                    </Button>
+                    {
+                      role === 'student'
+                      ?
+                      <Button block color="link" className="text-left m-0 p-0" onClick={this.jumpToQuizLesson.bind(this, quiz.quizId._id, quiz.deadline)}>
+                        <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
+                      </Button>
+                      :
+                      <Button block color="link" className="text-left m-0 p-0" onClick={this.jumpToQuizDetail.bind(this, quiz.quizId._id)}>
+                        <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
+                      </Button>
+                    }
                     <small>                  
                       Hạn
                       <Moment format=" HH:mm ngày DD/MM/YYYY">
@@ -190,16 +216,22 @@ class Lesson extends Component {
           }
           </CardBody>
         </Card>
+        <SweetAlert
+          	danger
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="danger"
+          	title="Đã hết hạn làm trắc nghiệm!"
+            show={this.state.isShowFail}
+            onConfirm={this.hideAlertFail}>
+        </SweetAlert>
       </div>
     )
   }
 }
 
-Lesson.propTypes = {
-};
-
 const mapStateToProps = state => ({
-  schedule: state.schedule
+  lesson: state.lesson,
+  auth: state.auth
 });
 
-export default withRouter(connect(mapStateToProps, { getEventSchedule })(Lesson));  
+export default withRouter(connect(mapStateToProps, { getLessonIncourse })(Lesson));  

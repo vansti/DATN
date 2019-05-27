@@ -4,11 +4,8 @@
   "description": "Student management system built with mern stack",
   "main": "server.js",
   "scripts": {
-    "client-install": "npm install --prefix client",
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "server": "nodemon server.js"
   },
   "author": "T",
   "license": "MIT",

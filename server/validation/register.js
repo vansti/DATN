@@ -18,7 +18,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (Validator.isEmpty(data.role)) {
-    errors.role = 'Hãy chọn vai trò của bạn';
+    errors.role = 'Hãy chọn chức danh';
   }
 
   if (Validator.isEmpty(data.email)) {

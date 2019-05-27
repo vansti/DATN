@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
 import { addExercise, clearSuccess, clearErrors } from '../../../actions/exerciseActions';
-import { getEventSchedule } from '../../../actions/scheduleActions';
+import { getLessonIncourse } from '../../../actions/lessonActions';
 import isEmptyObj from '../../../validation/is-empty';
 import { withRouter } from 'react-router-dom';
 import DatePicker from "react-datepicker";
@@ -62,7 +62,7 @@ class ExerciseBox extends Component {
       attachFiles: this.state.attachFiles,
       deadline: this.state.deadline,
       courseId: this.props.match.params.id,
-      eventId: this.props.match.params.lessonId
+      lessonId: this.props.match.params.lessonId
     };
 
     this.props.addExercise(exerciseData);
@@ -99,7 +99,7 @@ class ExerciseBox extends Component {
       modal: false,
     })
     this.props.clearSuccess();
-    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId);
+    this.props.getLessonIncourse(this.props.match.params.id, this.props.match.params.lessonId);
   }
 
 
@@ -256,4 +256,4 @@ const mapStateToProps = state => ({
   success: state.success
 });
 
-export default withRouter(connect(mapStateToProps, { addExercise, clearSuccess, clearErrors, getEventSchedule })(ExerciseBox));  
+export default withRouter(connect(mapStateToProps, { addExercise, clearSuccess, clearErrors, getLessonIncourse })(ExerciseBox));  

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { SubmissionError } from 'redux-form';
-// import moment from 'moment';
-// import { format_date } from '../constants/format';
 import isEmpty from '../validation/is-empty';
+import config from './config';
+
 import {
   GET_ERRORS,
   CLEAR_ERRORS,
@@ -12,14 +12,14 @@ import {
   GET_QUIZ_LIST,
   QUIZ_LOADING,
   GET_QUIZ_SUBMISSTION,
-  GET_QUIZ_DETAIL
+  GET_QUIZ_DETAIL,
+  IS_DO_QUIZ_LOADING,
+  GET_QUIZ_DONE
 } from './types';
 
-export const addTestQuiz = (testQuizData, history) => dispatch => {
-  dispatch(clearErrors());
-  dispatch(clearSuccess());
+export const addTestQuiz = (testQuizData) => dispatch => {
   return axios
-    .post('/api/test/add-quiz', testQuizData)
+    .post(config.ADDRESS +'/api/test/add-quiz', testQuizData)
     .then(res => {
       dispatch({
         type: GET_SUCCESS,
@@ -33,9 +33,23 @@ export const addTestQuiz = (testQuizData, history) => dispatch => {
     });
 };
 
+export const addTestQuizCSV = (testQuizData) => dispatch => {
+  return axios
+    .post(config.ADDRESS +'/api/test/add-quiz-csv', testQuizData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      console.log(err.response.data);
+    });
+};
+
 export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
   return axios
-    .post('/api/test/sub-quiz', submisstionQuiz)
+    .post(config.ADDRESS +'/api/test/sub-quiz', submisstionQuiz)
     .then(res => {
       dispatch({
         type: GET_SUCCESS,
@@ -53,7 +67,7 @@ export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
 export const getListQuiz = () => dispatch => {
   dispatch(setQuizzesLoading());
   axios
-    .get('/api/test/quiz')
+    .get(config.ADDRESS +'/api/test/quiz')
     .then(res => {
       let data = formatDataListQuizTest(res.data);
       dispatch({
@@ -73,7 +87,7 @@ export const getListQuiz = () => dispatch => {
 // Get QuizSubmisstion by id
 export const getQuizSubmisstion = (testQuizId) => dispatch => {
   axios
-    .get(`/api/test/sub-quiz/${testQuizId}`)
+    .get(config.ADDRESS +`/api/test/sub-quiz/${testQuizId}`)
     .then(res =>{
       console.log(res.data);
       dispatch({
@@ -95,7 +109,7 @@ export const getQuizSubmisstion = (testQuizId) => dispatch => {
 export const getDetailQuiz = (testQuizId) => dispatch => {
   dispatch(setQuizzesLoading());
   axios
-    .get(`/api/test/quiz-detail/${testQuizId}`)
+    .get(config.ADDRESS +`/api/test/quiz-detail/${testQuizId}`)
     .then(res => {
       dispatch({
         type: GET_QUIZ_DETAIL,
@@ -118,7 +132,7 @@ export const setQuizzesLoading = () => {
 export const getQuizListInCourse = (courseId) => dispatch => {
   dispatch(setQuizzesLoading());
   axios
-    .get(`/api/test/${courseId}`)
+    .get(config.ADDRESS +`/api/test/${courseId}`)
     .then(res =>
       dispatch({
         type: GET_QUIZ_LIST,
@@ -131,6 +145,30 @@ export const getQuizListInCourse = (courseId) => dispatch => {
         payload: {}
       })
     );
+};
+
+export const isDoQuiz = (courseId, quizId) => dispatch => {
+  dispatch(setIsDoQuizzesLoading());
+  axios
+    .get(config.ADDRESS +`/api/test/is-do-quiz/${courseId}/${quizId}`)
+    .then(res =>
+      dispatch({
+        type: GET_QUIZ_DONE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_QUIZ_DONE,
+        payload: {}
+      })
+    );
+};
+
+export const setIsDoQuizzesLoading = () => {
+  return {
+    type: IS_DO_QUIZ_LOADING
+  };
 };
 
 // Clear errors

@@ -32,7 +32,7 @@ const QuizSchema = new Schema({
     }
   ],
   time: {
-    type: String,
+    type: Number,
     required: true
   },
   created: {

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport');
-const path = require('path');
 const socketIO = require("socket.io");
 
 require('dotenv').config();
@@ -19,6 +18,8 @@ const test = require('./routes/api/test');
 const attendance = require('./routes/api/attendance');
 
 const schedule = require('./routes/api/schedule');
+
+const lesson = require('./routes/api/lesson');
 
 const app = express();
 
@@ -67,15 +68,8 @@ app.use('/api/schedule', schedule)
 // exercises Route
 app.use('/api/test', test);
 
-// Server static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static('client/build'));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+// lesson Route
+app.use('/api/lesson', lesson);
 
 const port = process.env.PORT || 5000;
 

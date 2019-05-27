@@ -59,7 +59,7 @@ router.post('/register', (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(res.json({mes:"Tạo tài khoản thành công"}))
             .catch(err => console.log(err));
         });
       });
@@ -269,6 +269,7 @@ router.get(
             { students: 1 }
           )
           .populate('students', '_id name email photo')
+          .lean()
 
         const coursedetail = await 
           CourseDetail.findOne(
@@ -276,12 +277,12 @@ router.get(
             { enrollStudents: 1 }
           )
           .populate('enrollStudents.student', '_id name email photo')
+          .lean()
 
         const result = {
           students: course.students,
           enrollStudents: coursedetail.enrollStudents
         }
-        console.log(result.enrollStudents);
         res.json(result)
       } catch (err) {
         console.log(err)

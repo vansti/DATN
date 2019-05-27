@@ -90,10 +90,8 @@ class ScoreExercise extends Component {
         case 7: bay+=1;break;
         case 8: tam+=1;break;
         case 9: chin+=1;break;
-        case 10: muoi+=1;     
-          break;       
-        default:
-          break;
+        case 10: muoi+=1;break;       
+        default: break;
       }
       return sub
     })

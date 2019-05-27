@@ -19,30 +19,13 @@ router.post(
   '/add-schedule',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-
-    Schedule.findOne({ courseId: req.body.courseId }).then(schedule=>{
-      if (schedule) {
-        
-        schedule.events = req.body.events
-        Schedule.findByIdAndUpdate(schedule._id, schedule, {new: true}).then(fschedule => res.json(fschedule))
-        .catch(err => console.log(err));
-
-      } else{
-
-        const newSchedule = new Schedule({
-          courseId: req.body.courseId,
-          events: req.body.events
-        });
-    
-        newSchedule
-        .save()
-        .then(schedule => {
-          res.json(schedule)
-        })
-
-      }
-    })
-
+    req.body.events.map(e=> {delete e.id; delete e.text})
+    Schedule.findOneAndUpdate(
+      { courseId: req.body.courseId },
+      { events: req.body.events }
+    )
+    .then(res.json({mes:'Lưu thành công'}))
+    .catch(err => console.log(err));
   }
 );
 
@@ -59,8 +42,15 @@ router.get(
         const schedule = await 
         Schedule.findOne(
           { courseId: req.params.courseId }
-        ).lean()
-        
+        )
+        .populate('events.lessonId','text')
+        .lean()
+
+        schedule.events.map(e=>{
+          e.text = e.lessonId.text
+          e.lessonId = e.lessonId._id
+        })
+
         res.json(schedule)
       } catch (err) {
         console.log(err)

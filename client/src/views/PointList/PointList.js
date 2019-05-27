@@ -113,8 +113,8 @@ class PointList extends Component {
                 ?
                 <h3>Không có cột điểm</h3>
                 :
-                <Table dark responsive>
-                  <thead>
+                <Table bordered responsive>
+                  <thead className="thead-light">
                     <tr>
                       <th>Tên cột điểm</th>
                       <th>Tỉ lệ % điểm</th>
@@ -135,7 +135,9 @@ class PointList extends Component {
                               ?
                               element.test.title                              
                               :
-                              'Chưa chọn'
+                              <span style={{color:'#A8A8A8'}}>
+                                Chưa chọn
+                              </span>
                             }
                           </td>
                           <td><ModalExercise pointColumnsId={element._id} courseId={courseId}/></td>

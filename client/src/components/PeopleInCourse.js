@@ -37,6 +37,8 @@ class PeopleInCourse extends Component {
   render() {
     const { students, teachers } = this.state.users
     const { loading } = this.state
+    const { role } = this.props.auth.user
+
     return (
       <Container>
         <Row>
@@ -47,7 +49,7 @@ class PeopleInCourse extends Component {
             :
             <Col sm="12" md={{ size: 6, offset: 3 }}>
               <h3>Giáo viên</h3>
-              <Table responsive hover>
+              <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
                 <tbody>
                   {
                     teachers.length === 0
@@ -75,31 +77,61 @@ class PeopleInCourse extends Component {
               <br/>
               <br/>
               <h3>Học viên</h3>
-              <Table responsive hover>
-                <tbody>
-                  {                    
-                    students.length === 0
-                    ?
-                    <tr><td></td><td>Chưa có học viên</td></tr>
-                    :
-                    students.map(user =>
-                      <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user._id)} className="changeCursor">
-                        <td>                      
-                          <div className="avatar">
-                            <img src={user.photo} className="img-avatar" alt="" />
-                          </div>
-                        </td>
-                        <td>
-                          <div>{user.name}</div>
-                          <div className="small text-muted">
-                            {user.email}
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  }
-                </tbody>
-              </Table>
+              {
+                role === 'student'
+                ?
+                <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
+                  <tbody>
+                    {                    
+                      students.length === 0
+                      ?
+                      <tr><td></td><td>Chưa có học viên</td></tr>
+                      :
+                      students.map(user =>
+                        <tr key={user._id}>
+                          <td>                      
+                            <div className="avatar">
+                              <img src={user.photo} className="img-avatar" alt="" />
+                            </div>
+                          </td>
+                          <td>
+                            <div>{user.name}</div>
+                            <div className="small text-muted">
+                              {user.email}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    }
+                  </tbody>
+                </Table>
+                :
+                <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
+                  <tbody>
+                    {                    
+                      students.length === 0
+                      ?
+                      <tr><td></td><td>Chưa có học viên</td></tr>
+                      :
+                      students.map(user =>
+                        <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user._id)} className="changeCursor">
+                          <td>                      
+                            <div className="avatar">
+                              <img src={user.photo} className="img-avatar" alt="" />
+                            </div>
+                          </td>
+                          <td>
+                            <div>{user.name}</div>
+                            <div className="small text-muted">
+                              {user.email}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    }
+                  </tbody>
+                </Table>
+              }
             </Col>
           }
         </Row>
@@ -113,7 +145,8 @@ PeopleInCourse.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  users: state.users
+  users: state.users,
+  auth: state.auth
 });
 
 export default withRouter(connect(mapStateToProps, { })(PeopleInCourse));  

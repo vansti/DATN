@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './config';
 
 import { 
   POINT_LOADING,
@@ -19,7 +20,7 @@ export const setPointLoading = () => {
 export const getPointColumns = (courseId) => dispatch => {
   dispatch(setPointLoading())
   axios
-    .get(`/api/courses/get-point-columns/${courseId}`)
+    .get(config.ADDRESS +`/api/courses/get-point-columns/${courseId}`)
     .then(res =>
       dispatch({
         type: GET_POINT_COLUMNS,
@@ -37,7 +38,7 @@ export const getPointColumns = (courseId) => dispatch => {
 // gán pointcolumn loại exercise
 export const setPointColumnsExercise = ( courseId, pointColumnsId, exerciseId ) => dispatch => {
   axios
-    .get(`/api/courses/set-point-colums-exercise/${courseId}/${pointColumnsId}/${exerciseId}`)
+    .get(config.ADDRESS +`/api/courses/set-point-colums-exercise/${courseId}/${pointColumnsId}/${exerciseId}`)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -55,7 +56,7 @@ export const setPointColumnsExercise = ( courseId, pointColumnsId, exerciseId ) 
 // gán pointcolumn loại quiz
 export const setPointColumnsQuiz = ( courseId, pointColumnsId, quizId ) => dispatch => {
   axios
-    .get(`/api/courses/set-point-colums-quiz/${courseId}/${pointColumnsId}/${quizId}`)
+    .get(config.ADDRESS +`/api/courses/set-point-colums-quiz/${courseId}/${pointColumnsId}/${quizId}`)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -74,7 +75,7 @@ export const setPointColumnsQuiz = ( courseId, pointColumnsId, quizId ) => dispa
 export const getPointColumnsStudent = (courseId, studentId) => dispatch => {
   dispatch(setPointLoading())
   axios
-    .get(`/api/courses/get-point-columns-student/${courseId}/${studentId}`)
+    .get(config.ADDRESS +`/api/courses/get-point-columns-student/${courseId}/${studentId}`)
     .then(res =>
       dispatch({
         type: GET_STUDENT_POINT,

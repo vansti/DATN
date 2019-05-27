@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import config from './config'
 import { 
   GET_SUCCESS, 
   GET_ERRORS, 
@@ -21,7 +21,7 @@ import {
 export const getExercisePoint = (id) => dispatch => {
   dispatch(setExercisesLoading());
   axios
-    .get(`/api/exercises/exercisePointOP/${id}`)
+    .get(config.ADDRESS +`/api/exercises/exercisePointOP/${id}`)
     .then(res => {
       dispatch({
         type: GET_EXERPOINT,
@@ -38,7 +38,7 @@ export const getExercisePoint = (id) => dispatch => {
 // Add Exercise
 export const addExercise = (exerciseData) => dispatch => {
   axios
-    .post('/api/exercises/add-exercise', exerciseData)
+    .post(config.ADDRESS +'/api/exercises/add-exercise', exerciseData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -63,7 +63,7 @@ export const setExercisesLoading = () => {
 // Add Point
 export const addPoint= (newPoint) => dispatch => {
   axios
-    .post('/api/exercises/add-point', newPoint)
+    .post(config.ADDRESS +'/api/exercises/add-point', newPoint)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -82,7 +82,7 @@ export const addPoint= (newPoint) => dispatch => {
 export const getExerciseList = (courseId) => dispatch => {
   dispatch(setExercisesLoading());
   axios
-    .get(`/api/exercises/${courseId}`)
+    .get(config.ADDRESS +`/api/exercises/${courseId}`)
     .then(res =>
       dispatch({
         type: GET_EXERCISE_LIST,
@@ -100,7 +100,7 @@ export const getExerciseList = (courseId) => dispatch => {
 // Add Comment
 export const addComment = (commentData, exerciseId) => dispatch => {
   axios
-    .post(`/api/exercises/comment/${exerciseId}`, commentData)
+    .post(config.ADDRESS +`/api/exercises/comment/${exerciseId}`, commentData)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -120,7 +120,7 @@ export const addComment = (commentData, exerciseId) => dispatch => {
 export const getComments = (exerciseId) => dispatch => {
   dispatch(setCommentsLoading());
   axios
-    .get(`/api/exercises/get-comments/${exerciseId}`)
+    .get(config.ADDRESS +`/api/exercises/get-comments/${exerciseId}`)
     .then(res =>
       dispatch({
         type: GET_COMMENT,
@@ -143,7 +143,7 @@ export const setCommentsLoading = () => {
 // get 1 exercise
 export const getExercise = (id) => dispatch => {
   axios
-    .get(`/api/exercises/exercise/${id}`)
+    .get(config.ADDRESS +`/api/exercises/exercise/${id}`)
     .then(res =>
       dispatch({
         type: GET_EXER,
@@ -164,7 +164,7 @@ export const addSubmission = (data, exerciseId) => dispatch => {
   fd.append('file',data.file)
   axios({
     method: "post",
-    url: `/api/exercises/${exerciseId}/submit`,
+    url: config.ADDRESS +`/api/exercises/${exerciseId}/submit`,
     data: fd,
     headers:{'Content-Type': 'multipart/form-data'},
   }).then(res =>{
@@ -192,7 +192,7 @@ export const setSubmitLoading = () => {
 export const getSubmission = (exerciseId) => dispatch => {
   dispatch(setSubmitLoading())
   axios
-    .get(`/api/exercises/${exerciseId}/get-submission`)
+    .get(config.ADDRESS +`/api/exercises/${exerciseId}/get-submission`)
     .then(res =>{
       dispatch({
         type: GET_SUBMISSION,
@@ -208,7 +208,7 @@ export const getSubmission = (exerciseId) => dispatch => {
 export const getSubmissionExer = (exerciseId) => dispatch => {
   
   axios
-    .get(`/api/exercises/${exerciseId}/get-submissionTai`)
+    .get(config.ADDRESS +`/api/exercises/${exerciseId}/get-submissionTai`)
     .then(res =>{
       dispatch({
         type: GET_SUBMISSION2,
@@ -223,7 +223,7 @@ export const getSubmissionExer = (exerciseId) => dispatch => {
 
 export const download = (exerciseId, submission) => dispatch => {
   axios
-    .get(`/api/exercises/${exerciseId}/download`,{
+    .get(config.ADDRESS +`/api/exercises/${exerciseId}/download`,{
       responseType: 'blob'
     })
     .then(res =>{
@@ -242,7 +242,7 @@ export const download = (exerciseId, submission) => dispatch => {
 
 export const downloadSubmission = (data, fileName) => dispatch => {
   axios
-    .post(`/api/exercises/get-file-submission`, data)
+    .post(config.ADDRESS +`/api/exercises/get-file-submission`, data)
     .then(res =>{
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
@@ -258,7 +258,7 @@ export const downloadSubmission = (data, fileName) => dispatch => {
 
 export const deleteSubmission = (exerciseId) => dispatch => {
   axios
-    .delete(`/api/exercises/${exerciseId}/delete`)
+    .delete(config.ADDRESS +`/api/exercises/${exerciseId}/delete`)
     .then(res =>
       dispatch({
         type: DEL_SUBMISSION

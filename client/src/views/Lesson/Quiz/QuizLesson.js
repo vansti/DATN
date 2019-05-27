@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 //action
-import { getDetailQuiz } from '../../../actions/testQuizAction';
+import { getDetailQuiz, isDoQuiz } from '../../../actions/testQuizAction';
 //component
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Modal, ModalBody } from 'reactstrap';
@@ -22,10 +22,13 @@ class QuizLesson extends Component {
       isLoading: false,
       alert: '',
       typeAlert: '',
+      loadingQuizDone: true,
+      quizDone: {}
     };
   }
 
   componentDidMount = () => {
+    this.props.isDoQuiz(this.props.match.params.id, this.props.match.params.quizId);
     this.props.getDetailQuiz(this.props.match.params.quizId);
   }
 
@@ -43,13 +46,15 @@ class QuizLesson extends Component {
       this.setState({isShowSuccess: true, isLoading: false, alert: alert, typeAlert: typeAlert});
     }
 
-    const { quizDetail, loading } = nextProps.testQuiz
+    const { quizDetail, loading, quizDone, loadingQuizDone } = nextProps.testQuiz
     if(!isEmptyObj(quizDetail))
       this.setState({ 
         quizDetail,
-        loading 
+        loading
       });
     this.setState({
+      quizDone,
+      loadingQuizDone,
       loading 
     });  
   }
@@ -66,15 +71,15 @@ class QuizLesson extends Component {
   }
 
   render(){
-    const { loading, quizDetail } = this.state;
+    const { loading, quizDetail, loadingQuizDone, quizDone } = this.state;
     return  (
       <div>
         {
-          loading
+          loading || loadingQuizDone
           ?
           <ReactLoading type='bars' color='#05386B' />
           :
-          <QuizTest quizTest={quizDetail} shuffle={true}/>
+          <QuizTest quizTest={quizDetail} quizDone={quizDone} shuffle={true}/>
         }
         {
           this.state.typeAlert === 'success' ?
@@ -117,7 +122,8 @@ QuizLesson.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  getDetailQuiz: bindActionCreators(getDetailQuiz, dispatch)
+  getDetailQuiz: bindActionCreators(getDetailQuiz, dispatch),
+  isDoQuiz: bindActionCreators(isDoQuiz, dispatch)
 });
 
 const mapStateToProps = state => ({

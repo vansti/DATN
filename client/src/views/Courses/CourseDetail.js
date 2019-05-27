@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { getUsers } from '../../actions/userActions';
 import { getCourseInfo } from '../../actions/courseActions';
 import PeopleInCourse from '../../components/PeopleInCourse';
-// import PostInCourse from '../../components/PostInCourse';
 import LessonList from '../Lesson/LessonList';
 import ReactLoading from 'react-loading';
 

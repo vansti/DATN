@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Table, Row, Col } from 'reactstrap';
+import { Table } from 'reactstrap';
 import ReactLoading from 'react-loading';
 import { getSchedule } from '../../actions/scheduleActions';
 import PropTypes from 'prop-types';
@@ -42,16 +42,103 @@ class LessonList extends Component {
   }
 
   handleEditLesson(lessonId){
-    this.props.history.push(`/courses/${this.props.match.params.id}/edit-lesson/${lessonId}`);
+    this.props.history.push(`/courses/${this.props.match.params.id}/add-in-lesson/${lessonId}`);
   }
 
   handleLesson(lessonId){
     this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${lessonId}`);
   }
 
+  handleViewLesson(lessonId){
+    this.props.history.push(`/view-courses/${this.props.match.params.id}/lesson/${lessonId}`);
+  }
+
   render() {
     var { events, loading } = this.state;
     const { role } = this.props.auth.user;
+
+    var Content = null ;
+
+    switch (role.toString()) {
+      case 'student': 
+        Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+        break;
+        
+      case 'admin':
+      case 'teacher': 
+        Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleEditLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+      break;
+
+      default: 
+          Content = 
+            <tbody>
+              {
+                events.map(e=>
+                  <tr key={e._id} className="changeCursor" onClick={this.handleViewLesson.bind(this, e.lessonId)}>
+                    <td>
+                      {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                    </td>
+                    <td>
+                      <Moment format="HH:mm - ">
+                        {e.start}
+                      </Moment>
+                      <Moment format="HH:mm">
+                        {e.end}
+                      </Moment>
+                    </td>
+                    <td>
+                      {e.text}
+                    </td>
+                  </tr>
+                )
+              }
+            </tbody>
+      break;
+    }
     return (
       <div className="animated fadeIn">
       {
@@ -59,82 +146,16 @@ class LessonList extends Component {
         ?
         <ReactLoading type='bars' color='#05386B'/>
         :
-        <Fragment>
-          <Row>
-            <Col>
-            {
-              events.length === 0
-              ?
-              <h3>Chưa có bài học</h3>
-              :
-              <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
-                <thead>
-                  <tr>
-                    <th>Ngày học</th>
-                    <th>Giờ học</th>
-                    <th>Tiêu đề</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {
-                  events.map(e=>
-                    <tr key={e._id} className="changeCursor" onClick={this.handleLesson.bind(this, e._id)}>
-                      <td>
-                        {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
-                      </td>
-
-                      <td>
-                        <Moment format="HH:mm - ">
-                          {e.start}
-                        </Moment>
-                        <Moment format="HH:mm">
-                          {e.end}
-                        </Moment>
-                      </td>
-                      <td>
-                        {e.text}
-                      </td>
-                    </tr>
-                  )
-                }
-                </tbody>
-              </Table>
-            }
-            </Col>
-            {
-              role === 'teacher' || 'admin'
-              ?
-              <Col xs="2">
-              {
-                events.length === 0
-                ?
-                null
-                :
-                <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
-                  <thead>
-                    <tr>
-                      <th className="text-center">Chỉnh sửa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {
-                    events.map(e=>
-                      <tr key={e._id} className="changeCursor" onClick={this.handleEditLesson.bind(this, e._id)}>
-                        <td align='center'>
-                          <i className="icon-pencil"></i>
-                        </td>
-                      </tr>
-                    )
-                  }
-                  </tbody>
-                </Table>
-              }
-              </Col>
-              :
-              null
-            }
-          </Row>
-        </Fragment>
+        <Table hover dark responsive className="table-outline mb-0 d-none d-sm-table">
+          <thead>
+            <tr>
+              <th>Ngày học</th>
+              <th>Giờ học</th>
+              <th>Bài học</th>
+            </tr>
+          </thead>
+          {Content}
+        </Table>
       }
       </div>
     )

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './config';
 
 import { 
   GET_ERRORS, 
@@ -10,20 +11,21 @@ import {
   GET_ALL_COURSES,
   GET_COURSE_INFO, 
   GET_MANAGE_COURSES, 
-  ALLCOURSE_LOADING 
+  ALLCOURSE_LOADING,
+  GET_ACTIVE_COURSES
 } from './types';
 
 // Add Course
 export const addCourse = (courseData, fileData) => dispatch => {
   axios
-    .post('/api/courses/add-course', courseData)
+    .post(config.ADDRESS +'/api/courses/add-course', courseData)
     .then(res =>{
 
       if(fileData !== null)
       {
         let fd = new FormData();
         fd.append('image', fileData, fileData.name)
-        axios.post('/api/courses/add-course-avatar/' + res.data.courseId, fd)
+        axios.post(config.ADDRESS +'/api/courses/add-course-avatar/' + res.data.courseId, fd)
         .then(data  => {
           dispatch({
             type: GET_SUCCESS,
@@ -51,20 +53,19 @@ export const addCourse = (courseData, fileData) => dispatch => {
 // Edit Course
 export const editCourse = (courseId, courseData, fileData) => dispatch => {
   axios
-    .post(`/api/courses/edit-course/${courseId}`, courseData)
+    .post(config.ADDRESS +`/api/courses/edit-course/${courseId}`, courseData)
     .then(res =>{
 
       if(fileData !== null)
       {
         let fd = new FormData();
         fd.append('image', fileData, fileData.name)
-        axios.post(`/api/courses/add-course-avatar/${courseId}`, fd)
+        axios.post(config.ADDRESS +`/api/courses/add-course-avatar/${courseId}`, fd)
         .then(data  => {
           dispatch({
             type: GET_SUCCESS,
             payload: {data: 'Chỉnh sửa khóa học thành công'}
           })
-          dispatch(getCourseInfo(courseId))
         });
       }
       else
@@ -73,7 +74,6 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
           type: GET_SUCCESS,
           payload: {data: 'Chỉnh sửa khóa học thành công'}
         })
-        dispatch(getCourseInfo(courseId))
       }
 
     })
@@ -88,7 +88,7 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
 // Enroll Course
 export const enrollCourse = (courseId) => dispatch => {
   axios
-    .post('/api/courses/enroll-course/' + courseId)
+    .post(config.ADDRESS +'/api/courses/enroll-course/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -107,7 +107,7 @@ export const enrollCourse = (courseId) => dispatch => {
 // Unenroll Course
 export const unenrollCourse = (courseId) => dispatch => {
   axios
-    .post('/api/courses/unenroll-course/' + courseId)
+    .post(config.ADDRESS +'/api/courses/unenroll-course/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,
@@ -127,7 +127,7 @@ export const unenrollCourse = (courseId) => dispatch => {
 export const getCurentCourse = () => dispatch => {
   dispatch(setAllCourseLoading())
   axios
-    .get('/api/courses/current')
+    .get(config.ADDRESS +'/api/courses/current')
     .then(res =>
       dispatch({
         type: GET_CURRENT_COURSES,
@@ -152,7 +152,7 @@ export const setAllCourseLoading = () => {
 export const getAllCourse = () => dispatch => {
   dispatch(setAllCourseLoading())
   axios
-    .get('/api/courses/all-course')
+    .get(config.ADDRESS +'/api/courses/all-course')
     .then(res =>
       dispatch({
         type: GET_ALL_COURSES,
@@ -171,7 +171,7 @@ export const getAllCourse = () => dispatch => {
 export const getCourseInfo = (courseId) => dispatch => {
   dispatch(setAllCourseLoading())
   axios
-    .get(`/api/courses/course-info/${courseId}`)
+    .get(config.ADDRESS +`/api/courses/course-info/${courseId}`)
     .then(res =>
       dispatch({
         type: GET_COURSE_INFO,
@@ -190,7 +190,7 @@ export const getCourseInfo = (courseId) => dispatch => {
 export const getManageCourses = () => dispatch => {
   dispatch(setAllCourseLoading())
   axios
-    .get(`/api/courses/manage-courses`)
+    .get(config.ADDRESS +`/api/courses/manage-courses`)
     .then(res =>
       dispatch({
         type: GET_MANAGE_COURSES,
@@ -205,11 +205,30 @@ export const getManageCourses = () => dispatch => {
     );
 };
 
+// lấy các khóa học đang hoạt động
+export const getActiveCourses = () => dispatch => {
+  dispatch(setAllCourseLoading())
+  axios
+    .get(config.ADDRESS +`/api/courses/get-active-course`)
+    .then(res =>
+      dispatch({
+        type: GET_ACTIVE_COURSES,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ACTIVE_COURSES,
+        payload: {}
+      })
+    );
+};
+
 // get student courses by student id
 export const getStudentCourse = (studentId) => dispatch => {
   dispatch(setAllCourseLoading())
   axios
-    .get('/api/courses/' + studentId)
+    .get(config.ADDRESS +'/api/courses/' + studentId)
     .then(res =>
       dispatch({
         type: GET_STUDENT_COURSES,
@@ -227,7 +246,7 @@ export const getStudentCourse = (studentId) => dispatch => {
 // join course
 export const joinCourse = (courseId) => dispatch => {
   axios
-    .post('/api/courses/join-course/' + courseId)
+    .post(config.ADDRESS +'/api/courses/join-course/' + courseId)
     .then(res =>{
       dispatch({
         type: GET_SUCCESS,

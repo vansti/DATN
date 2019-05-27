@@ -20,6 +20,7 @@ const User = require('../../models/User');
 const Exercise = require('../../models/Exercise');
 const SubExercise = require('../../models/SubExercise');
 const Schedule = require('../../models/Schedule');
+const Lesson = require('../../models/Lesson');
 
 router.use(cors());
 
@@ -88,12 +89,12 @@ router.post(
                 }
               )
 
-        await Schedule.updateOne(
-                { courseId: req.body.courseId, "events._id": req.body.eventId },
+        await Lesson.updateOne(
+                { _id: req.body.lessonId },
                 { 
                   $push: 
                   { 
-                    "events.$.exercises" : exercise._id
+                    exercises : exercise._id
                   }
                 }
               )
