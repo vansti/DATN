@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import { withRouter } from 'react-router-dom';
 import isEmptyObj from '../validation/is-empty';
+import { getUsers } from '../actions/userActions';
 
 class PeopleInCourse extends Component {
   constructor(props) {
@@ -22,6 +23,10 @@ class PeopleInCourse extends Component {
 
   handleToSudentInfo(studentId){
     this.props.history.push('/student-info/' + studentId)
+  }
+
+  componentDidMount = () => {
+    this.props.getUsers(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -149,4 +154,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default withRouter(connect(mapStateToProps, { })(PeopleInCourse));  
+export default withRouter(connect(mapStateToProps, { getUsers })(PeopleInCourse));  
