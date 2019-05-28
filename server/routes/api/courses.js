@@ -65,10 +65,9 @@ router.post(
         // Tạo khóa học
         const course = await newCourse.save()
 
-        // Thêm khóa học đó cho người tạo
-        await
-        User.findByIdAndUpdate(
-          req.user.id ,
+        await 
+        User.updateMany(
+          { 'role' : 'admin' } ,
           { 
             $push: {
               courses: course._id
@@ -221,7 +220,7 @@ router.get(
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1, 
+          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1,
             enrollStudents:  
             {
               $elemMatch: {
@@ -233,10 +232,17 @@ router.get(
 
         const result = {
           course: course,
-          course_detail: course_detail
+          course_detail: course_detail,
+          isApprove: false
         }
+
         if(result.course_detail.enrollStudents === undefined)
+        {
           result.isEnroll = false
+          var find = await Course.findOne({ students: req.user.id });
+          if(find)
+            result.isApprove = true
+        }
         else{   
           result.isEnroll = true
           delete result.course_detail.enrollStudents
@@ -429,17 +435,6 @@ router.post(
 
     async function run() {
       try {
-        await 
-        CourseDetail.findOneAndUpdate(
-          { 'courseId' : req.params.courseId },
-          { 
-            $pull: {
-              enrollStudents: {
-                student: req.params.teacherId
-              }
-            }
-          }
-        )
 
         await 
         Course.findByIdAndUpdate(

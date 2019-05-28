@@ -60,64 +60,7 @@ class ApproveTeacher extends Component {
     const { approve_list_teacher, loading } = this.state;
     return (
       <div className="animated fadeIn">
-        <Card>
-          <CardHeader>
-            <b>Danh sách giáo viên</b>
-          </CardHeader>
-          <CardBody>
-            {
-              loading
-              ? 
-              <ReactLoading type='bars' color='#05386B'/>
-              :
-              <div className="animated fadeIn">
-                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên giáo viên . . ."/>
-                {
-                  approve_list_teacher.teachers.length === 0
-                  ? 
-                  <Table bordered striped responsive size="sm">
 
-                    <h2> Không có giáo viên</h2>
-                  </Table>
-                  :
-                  <Table bordered striped responsive size="sm">
-                    <thead>
-                      <tr>
-                        <th>Hình đại diện</th>
-                        <th>Email</th>
-                        <th>Họ và Tên</th>
-                        <th>Thời gian làm việc</th>
-                        <th>Phê duyệt</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {
-                        approve_list_teacher.teachers.map((elem, index) =>
-                          <tr key={elem._id}>
-                            <th>                      
-                              <div className="avatar">
-                                <img src={elem.photo} className="img-avatar" alt="" />
-                              </div>
-                            </th>
-                            <td>{elem.email}</td>
-                            <td>{elem.name}</td>
-                            <td>
-                              <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                                {elem.enrollDate}
-                              </Moment>
-                            </td>
-                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Duyệt </Button></td>
-                          </tr>
-                        )
-                      }
-                    </tbody>
-                  </Table>
-                }
-              </div>
-            }
-
-          </CardBody>
-        </Card>
         <Card>
           <CardHeader>
             <b>Danh sách giáo viên trong khóa</b>
@@ -162,6 +105,63 @@ class ApproveTeacher extends Component {
             }
           </CardBody>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <b>Danh sách giáo viên</b>
+          </CardHeader>
+          <CardBody>
+            {
+              loading
+              ? 
+              <ReactLoading type='bars' color='#05386B'/>
+              :
+              <div className="animated fadeIn">
+                <Input style={{marginBottom:10}}type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên giáo viên . . ."/>
+                {
+                  approve_list_teacher.teachers.length === 0
+                  ? 
+                  <h2> Không có giáo viên</h2>
+                  :
+                  <Table bordered striped responsive size="sm">
+                    <thead>
+                      <tr>
+                        <th>Hình đại diện</th>
+                        <th>Email</th>
+                        <th>Họ và Tên</th>
+                        <th>Thời gian làm việc</th>
+                        <th>Phê duyệt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        approve_list_teacher.teachers.map((elem, index) =>
+                          <tr key={elem._id}>
+                            <th>                      
+                              <div className="avatar">
+                                <img src={elem.photo} className="img-avatar" alt="" />
+                              </div>
+                            </th>
+                            <td>{elem.email}</td>
+                            <td>{elem.name}</td>
+                            <td>
+                              <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
+                                {elem.enrollDate}
+                              </Moment>
+                            </td>
+                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Duyệt </Button></td>
+                          </tr>
+                        )
+                      }
+                    </tbody>
+                  </Table>
+                }
+              </div>
+            }
+
+          </CardBody>
+        </Card>
+
         <Modal isOpen={this.state.isLoading} className='modal-sm' >
           <ModalBody className="text-center">
             <h3>Đang xử lý</h3>

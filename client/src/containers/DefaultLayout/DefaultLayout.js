@@ -46,7 +46,7 @@ class DefaultLayout extends Component {
     let AppSidebarNavRole;
 
     switch (role.toString()) {
-      case 'student': AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;;break;
+      case 'student': AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;break;
       case 'teacher': AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;break;
       case 'advisor': AppSidebarNavRole = <AppSidebarNav navConfig={AdvisorNavigation} {...this.props} />;break;
       case 'ministry': AppSidebarNavRole = <AppSidebarNav navConfig={MinistryNavigation} {...this.props} />;break;  

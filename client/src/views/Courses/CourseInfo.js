@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { CardBody, CardHeader, Card, Jumbotron, Media, Row, Col, Button, Modal, ModalBody } from 'reactstrap';
+import { CardBody, CardHeader, Card, Jumbotron, Media, Row, Col, Button, Modal, ModalBody, Alert } from 'reactstrap';
 import { getCourseInfo, enrollCourse, unenrollCourse, clearSuccess } from '../../actions/courseActions';
 import Moment from 'react-moment'; 
 import NumberFormat from 'react-number-format';
@@ -74,7 +74,7 @@ class CourseInfo extends Component {
   render() {
     const { courseinfo, loading } = this.state
     const { role } = this.props.auth.user
-
+    console.log(courseinfo)
     return (
       <div className="animated fadeIn">
         <Card>
@@ -120,9 +120,17 @@ class CourseInfo extends Component {
                         {
                           courseinfo.isEnroll === false
                           ?
-                          <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
-                            <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
-                          </Button>
+                          <Fragment>
+                            {
+                              courseinfo.isApprove === true
+                              ?
+                              <Alert color='danger' style={{textAlign: 'center', fontWeight: 'bold'}}>Đã tham gia vào khóa học</Alert>
+                              :
+                              <Button color="danger" onClick={this.handleEnroll} className="btn-pill" size="lg" block>
+                                <i className="fa fa-pencil-square-o"></i>&nbsp;Ghi danh
+                              </Button>
+                            }
+                          </Fragment>
                           :
                           <Button color="danger" onClick={this.handleUnEnroll} className="btn-pill" size="lg" block>
                             <i className="fa fa-times"></i>&nbsp;Hủy ghi danh

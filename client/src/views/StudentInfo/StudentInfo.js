@@ -151,6 +151,10 @@ class StudentIfo extends Component {
     this.props.history.push(`/courses/${courseId}/lesson/${lessonId}`);
   }
 
+  handleToViewLesson(courseId, lessonId){
+    this.props.history.push(`/view-courses/${courseId}/lesson/${lessonId}`);
+  }
+
   render() {
     const { 
       student, 
@@ -168,6 +172,8 @@ class StudentIfo extends Component {
       isShowLesson
     } = this.state
     var AbsentList = null;
+    
+    const { role } = this.props.auth.user
     
     if(isShowAbsentList === true){
       AbsentList = 
@@ -187,48 +193,95 @@ class StudentIfo extends Component {
                 <th>Bài học</th>
               </tr>
             </thead>
-            <tbody>
-              {
-                student_absent_list.absentlist.map(element=>
-                  <tr key={element._id} className="changeCursor"  onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
-                    <td >
-                      <Moment format="DD/MM/YYYY">
-                        {element.date}
-                      </Moment>
-                    </td >
-                    <td>
-                    {
-                      element.event
-                        ? 
-                        <Fragment>
-                          <Moment format="HH:mm - ">
-                            {element.event.start}
-                          </Moment>
-                          <Moment format="HH:mm">
-                            {element.event.end}
-                          </Moment>
-                        </Fragment>
-                        : 
-                        <small style={{color:'#A8A8A8'}}>
-                          Chưa cập nhật
-                        </small>
-                      }
-                    </td>
-                    <td>
+            {
+              role === 'teacher'
+              ?
+              <tbody>
+                {
+                  student_absent_list.absentlist.map(element=>
+                    <tr key={element._id} className="changeCursor"  onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
+                      <td >
+                        <Moment format="DD/MM/YYYY">
+                          {element.date}
+                        </Moment>
+                      </td >
+                      <td>
                       {
                         element.event
-                        ? 
-                        <span>{element.event.lessonId.text}</span> 
-                        : 
-                        <small style={{color:'#A8A8A8'}}>
-                          Chưa cập nhật
-                        </small>
-                      }
-                    </td>
-                  </tr>
-                )
-              }
-            </tbody>
+                          ? 
+                          <Fragment>
+                            <Moment format="HH:mm - ">
+                              {element.event.start}
+                            </Moment>
+                            <Moment format="HH:mm">
+                              {element.event.end}
+                            </Moment>
+                          </Fragment>
+                          : 
+                          <small style={{color:'#A8A8A8'}}>
+                            Chưa cập nhật
+                          </small>
+                        }
+                      </td>
+                      <td>
+                        {
+                          element.event
+                          ? 
+                          <span>{element.event.lessonId.text}</span> 
+                          : 
+                          <small style={{color:'#A8A8A8'}}>
+                            Chưa cập nhật
+                          </small>
+                        }
+                      </td>
+                    </tr>
+                  )
+                }
+              </tbody>
+              :
+              <tbody>
+                {
+                  student_absent_list.absentlist.map(element=>
+                    <tr key={element._id} className="changeCursor"  onClick={this.handleToViewLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
+                      <td >
+                        <Moment format="DD/MM/YYYY">
+                          {element.date}
+                        </Moment>
+                      </td >
+                      <td>
+                      {
+                        element.event
+                          ? 
+                          <Fragment>
+                            <Moment format="HH:mm - ">
+                              {element.event.start}
+                            </Moment>
+                            <Moment format="HH:mm">
+                              {element.event.end}
+                            </Moment>
+                          </Fragment>
+                          : 
+                          <small style={{color:'#A8A8A8'}}>
+                            Chưa cập nhật
+                          </small>
+                        }
+                      </td>
+                      <td>
+                        {
+                          element.event
+                          ? 
+                          <span>{element.event.lessonId.text}</span> 
+                          : 
+                          <small style={{color:'#A8A8A8'}}>
+                            Chưa cập nhật
+                          </small>
+                        }
+                      </td>
+                    </tr>
+                  )
+                }
+              </tbody>
+            }
           </Table>
         }
       </Fragment>
@@ -329,20 +382,39 @@ class StudentIfo extends Component {
               <th>Tiêu đề</th>
             </tr>
           </thead>
-          <tbody>
           {
-            schedule.events.map(e=>
-              <tr key={e._id} className="changeCursor" onClick={this.handleToLesson.bind(this, schedule.courseId, e._id)}>
-                <td>
-                  {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
-                </td>
-                <td>
-                  {e.text}
-                </td>
-              </tr>
-            )
+            role === 'teacher'
+            ?
+            <tbody>
+            {
+              schedule.events.map(e=>
+                <tr key={e._id} className="changeCursor" onClick={this.handleToLesson.bind(this, schedule.courseId, e._id)}>
+                  <td>
+                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                  </td>
+                  <td>
+                    {e.text}
+                  </td>
+                </tr>
+              )
+            }
+            </tbody>
+            :
+            <tbody>
+            {
+              schedule.events.map(e=>
+                <tr key={e._id} className="changeCursor" onClick={this.handleToViewLesson.bind(this, schedule.courseId, e._id)}>
+                  <td>
+                    {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
+                  </td>
+                  <td>
+                    {e.text}
+                  </td>
+                </tr>
+              )
+            }
+            </tbody>
           }
-          </tbody>
         </Table>
         }
       </Fragment>
@@ -484,7 +556,8 @@ const mapStateToProps = state => ({
   courses: state.courses,
   attendance: state.attendance,
   point: state.point,
-  schedule: state.schedule
+  schedule: state.schedule,
+  auth: state.auth
 });
 
 export default connect(mapStateToProps, { getStudent, getStudentCourse, getStudentAbsent, getPointColumnsStudent, getSchedule })(StudentIfo);  
