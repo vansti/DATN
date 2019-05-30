@@ -6,10 +6,51 @@ import config from './config';
 import { GET_ERRORS, SET_CURRENT_USER, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS } from './types';
 
 // Register User
-export const registerUser = (userData, history) => dispatch => {
+export const registerUser = (userData) => dispatch => {
   axios
     .post(config.ADDRESS +'/api/users/register', userData)
-    .then(res => history.push('/login'))
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Confirm Mail
+export const confirmMail = (userId) => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/confirm/'+ userId)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Confirm Mail
+export const resendMail = (userData) => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/re-send-mail', userData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert, Modal, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser, clearErrors } from '../../../actions/authActions';
+import { loginUser, clearErrors, resendMail, clearSuccess } from '../../../actions/authActions';
 import icon from '../../../assets/img/e-icon.png'
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../../validation/is-empty';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
+      isShowSuccess: false,
       isLoading: false,
       email: '',
       password: '',
@@ -32,6 +34,11 @@ class Login extends Component {
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false });
     }
+
+    if (nextProps.success.mes === 'Đã gửi lại mail xác nhận') {
+      this.setState({ isShowSuccess: true, isLoading: false })
+      this.props.clearSuccess()
+    }
   }
 
   onSubmit = e => {
@@ -46,8 +53,23 @@ class Login extends Component {
     this.props.loginUser(userData);
   }
 
+  onSendMail = e => {
+    e.preventDefault();
+    const userData = {
+      email: this.state.email
+    };
+    this.setState({ isLoading: true });
+    this.props.resendMail(userData);
+  }
+
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
+  }
+
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false
+    })
   }
 
   render() {
@@ -73,6 +95,14 @@ class Login extends Component {
                           <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} />
                         </InputGroup>
                         {errors.email_login && <Alert color="danger">{errors.email_login}</Alert>}
+                        {
+                          errors.email_login === 'Hãy xác nhận email của bạn trước khi đăng nhập'
+                          && 
+                          <div style={{marginBottom: 20}}>
+                            <Button onClick={this.onSendMail} color="danger" className="px-4" >Gửi lại mail xác nhận</Button>
+                            <p>Hãy kiểm tra spam mail nếu bạn không nhận được thư xác nhận</p>
+                          </div>
+                        }
                         <InputGroup className="mb-4">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
@@ -109,6 +139,15 @@ class Login extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        <SweetAlert
+          	success
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="success"
+          	title="Đã gửi lại mail xác nhận!"
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}
+            onCancel={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
       </div>
     );
   }
@@ -122,7 +161,8 @@ Login.propTypes = {
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
+  success: state.success
 });
 
-export default connect(mapStateToProps, { loginUser, clearErrors })(Login);
+export default connect(mapStateToProps, { loginUser, clearErrors, resendMail, clearSuccess })(Login);

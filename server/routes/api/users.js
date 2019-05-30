@@ -29,6 +29,9 @@ const CourseDetail = require('../../models/CourseDetail');
 router.use(cors());
 router.use(formData.parse())
 
+const sendEmail = require('../../email/email.send')
+const templates = require('../../email/email.templates')
+
 // @route   POST api/users/register
 // @desc    Register User
 // @access  Public
@@ -53,18 +56,79 @@ router.post('/register', (req, res) => {
         role: req.body.role
       });
 
+
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
           newUser.password = hash;
           newUser
             .save()
-            .then(res.json({mes:"Tạo tài khoản thành công"}))
+            .then(user=>{
+              sendEmail(user.email, templates.confirm(user._id, user.name))
+              .then(res.json({mes:"Tạo tài khoản thành công"}))
+              .catch(err => console.log(err));
+  
+            })
             .catch(err => console.log(err));
         });
       });
     }
   });
+});
+
+// @route   GET api/users/re-send-mail
+// @desc    Gửi lại mail
+// @access  Public
+router.post('/re-send-mail', (req, res) => {
+
+  async function run() {
+    try {
+      const user = await User.findOne({ email: req.body.email }, 'email name')
+
+      if (!user) {
+        errors.email_login = 'Không tìm thấy email này';
+        return res.status(404).json(errors);
+      }
+
+      sendEmail(user.email, templates.confirm(user._id, user.name))
+      .then(res.json({mes:"Đã gửi lại mail xác nhận"}))
+      .catch(err => console.log(err));
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
+
+});
+
+// @route   GET api/users/confirm/:userId
+// @desc    Xác nhận mail
+// @access  Public
+router.post('/confirm/:userId', (req, res) => {
+
+  async function run() {
+    try {
+      const user = await User.findById(req.params.userId, 'confirmed')
+      if(user.confirmed === true)
+        res.json({ mes: "Tài khoản mail đã được kích hoạt" })
+      else{
+        await User.findByIdAndUpdate(
+                req.params.userId, 
+                {
+                  confirmed: true
+                }
+              )
+        res.json({ mes: "Xác nhận thành công" })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
+
 });
 
 // @route   GET api/users/login
@@ -86,6 +150,11 @@ router.post('/login', (req, res) => {
     // Check for User
     if (!user) {
       errors.email_login = 'Không tìm thấy tài khoản này';
+      return res.status(404).json(errors);
+    }
+
+    if (user.confirmed === false) {
+      errors.email_login = 'Hãy xác nhận email của bạn trước khi đăng nhập';
       return res.status(404).json(errors);
     }
 

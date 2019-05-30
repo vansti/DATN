@@ -29,6 +29,11 @@ const Register = Loadable({
   loading
 });
 
+const Confirm = Loadable({
+  loader: () => import('./views/Pages/Confirm/Confirm'),
+  loading
+});
+
 // Check for token
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -73,6 +78,7 @@ class App extends Component {
           : <div className="main">
               <Switch location={location}>
                 <Route path="/login" component={Login} />
+                <Route path="/confirm/:id" component={Confirm} />
                 <Route path="/register" component={Register} />
                 <Route component={Login}  />
               </Switch>

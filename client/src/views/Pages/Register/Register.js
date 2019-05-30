@@ -3,14 +3,16 @@ import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputG
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { registerUser } from '../../../actions/authActions';
+import { registerUser, clearSuccess, clearErrors } from '../../../actions/authActions';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../../validation/is-empty';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 class Register extends Component {
   constructor() {
     super();
     this.state = {
+      isShowSuccess: false,
       isLoading: false,
       name: '',
       email: '',
@@ -27,6 +29,11 @@ class Register extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.success.mes === 'Tạo tài khoản thành công') {
+      this.setState({ isShowSuccess: true, isLoading: false })
+      this.props.clearSuccess()
+    }
+
     if (!isEmptyObj(nextProps.errors)) {
       this.setState({ errors: nextProps.errors, isLoading: false });
     }
@@ -47,9 +54,16 @@ class Register extends Component {
       role: 'student'
     };
     this.setState({ isLoading: true });
-    this.props.registerUser(newUser, this.props.history);
+    this.props.registerUser(newUser);
+    this.props.clearErrors();
   }
   
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false
+    })
+    this.props.history.push('/login');
+  }
 
   render() {
     const { errors } = this.state;
@@ -113,6 +127,16 @@ class Register extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        <SweetAlert
+          	success
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="success"
+          	title="Tạo tài khoản thành công!"
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}
+            onCancel={this.hideAlertSuccess.bind(this)}>
+              Hãy vào mail của bạn và xác nhận 
+        </SweetAlert>
       </div>
     );
   }
@@ -126,7 +150,8 @@ Register.propTypes = {
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
+  success: state.success
 });
 
-export default connect(mapStateToProps, { registerUser })(withRouter(Register));
+export default connect(mapStateToProps, { registerUser, clearSuccess, clearErrors })(withRouter(Register));
