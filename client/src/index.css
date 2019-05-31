@@ -8,6 +8,10 @@ tr.changeCursor:hover {
   cursor: pointer;
 }
 
+.changeCursor:hover { 
+  cursor: pointer;
+}
+
 .centered {
   position: fixed;
   left: 50%;

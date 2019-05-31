@@ -203,6 +203,53 @@ router.get(
   }
 );
 
+// @route   GET api/courses/guest-course-info/:courseId
+// @desc    lấy thông tin chi tiết của khóa học cho guest
+// @access  Public
+router.get(
+  '/guest-course-info/:courseId',
+  (req, res) => {
+
+    async function run() {
+      try {
+
+        var course = await 
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}).lean()
+
+        var course_detail = await  
+        CourseDetail.findOne(
+          { 'courseId' : req.params.courseId },
+          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1}
+        ).lean()
+
+        var schedule = await
+        Schedule.findOne(
+          { courseId: req.params.courseId }
+        )
+        .populate('events.lessonId','text')
+        .lean()
+
+        schedule.events.map(e=>{
+          e.text = e.lessonId.text
+          e.lessonId = e.lessonId._id
+        })
+
+        const result = {
+          course,
+          course_detail,
+          schedule,
+        }
+
+        res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
 // @route   GET api/courses/course-info/:courseId
 // @desc    lấy thông tin chi tiết của khóa học
 // @access  Private
@@ -230,10 +277,23 @@ router.get(
           }
         ).lean()
 
+        var schedule = await
+        Schedule.findOne(
+          { courseId: req.params.courseId }
+        )
+        .populate('events.lessonId','text')
+        .lean()
+
+        schedule.events.map(e=>{
+          e.text = e.lessonId.text
+          e.lessonId = e.lessonId._id
+        })
+
         const result = {
           course: course,
           course_detail: course_detail,
-          isApprove: false
+          isApprove: false,
+          schedule
         }
 
         if(result.course_detail.enrollStudents === undefined)

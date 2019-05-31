@@ -5,11 +5,16 @@ import {
   GET_COURSE_INFO,
   GET_MANAGE_COURSES,
   ALLCOURSE_LOADING,
-  GET_ACTIVE_COURSES
+  GET_ACTIVE_COURSES,
+  GET_GUEST_COURSE_INFO
 } from '../actions/types';
 
 const initialState = {
   courseinfo: {
+    course: {},
+    course_detail: {}
+  },
+  guestcourseinfo: {
     course: {},
     course_detail: {}
   },
@@ -56,6 +61,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         courseinfo: action.payload,
+        loading: false
+      };
+    case GET_GUEST_COURSE_INFO:
+      return {
+        ...state,
+        guestcourseinfo: action.payload,
         loading: false
       };
     case GET_MANAGE_COURSES:

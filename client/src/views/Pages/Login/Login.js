@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert, Modal, ModalBody } from 'reactstrap';
+import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Alert, Modal, ModalBody, Nav, NavItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser, clearErrors, resendMail, clearSuccess } from '../../../actions/authActions';
@@ -8,6 +8,8 @@ import icon from '../../../assets/img/e-icon.png'
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../../validation/is-empty';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { AppNavbarBrand, AppHeader } from '@coreui/react';
+import logo from '../../../assets/img/e-icon.png';
 
 class Login extends Component {
   constructor() {
@@ -76,6 +78,18 @@ class Login extends Component {
     const { errors } = this.state;
     return (
       <div className="animated fadeIn">
+        <AppHeader>
+          <AppNavbarBrand full={{ src: logo, width: 50, height: 50, alt: 'Logo' }} className='changeCursor' onClick={()=>this.props.history.push('/')}/>
+          <b style={{fontFamily:'Roboto Slab, serif', fontSize:20}} onClick={()=>this.props.history.push('/')} className='changeCursor'>TRUNG TÂM ĐÀO TẠO</b>
+          <Nav className="d-md-down-none" navbar>
+            <NavItem className="px-3">
+              <Link to="/login">Đăng nhập</Link>
+            </NavItem>
+            <NavItem className="px-3">
+              <Link to="/register">Đăng ký</Link>
+            </NavItem>
+          </Nav>
+        </AppHeader>
         <div className="app flex-row align-items-center">
           <Container>
             <Row className="justify-content-center">

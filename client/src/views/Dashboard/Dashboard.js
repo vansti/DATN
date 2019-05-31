@@ -119,7 +119,7 @@ class Dashboard extends Component {
             <Col md="9" lg="7" xl="6">
               <div>
                 <img src={logo} alt='Logo' height="150" width="150" />
-                <div style={{fontFamily:'Roboto Slab, serif', fontSize:30, fontWeight:'bold' }}>HỆ THỐNG QUẢN LÝ HỌC VIÊN</div>
+                <div style={{fontFamily:'Roboto Slab, serif', fontSize:30, fontWeight:'bold' }}>TRUNG TÂM ĐÀO TẠO</div>
                 {
                   Content
                 }

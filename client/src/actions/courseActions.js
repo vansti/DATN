@@ -12,7 +12,8 @@ import {
   GET_COURSE_INFO, 
   GET_MANAGE_COURSES, 
   ALLCOURSE_LOADING,
-  GET_ACTIVE_COURSES
+  GET_ACTIVE_COURSES,
+  GET_GUEST_COURSE_INFO
 } from './types';
 
 // Add Course
@@ -162,6 +163,25 @@ export const getAllCourse = () => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_ALL_COURSES,
+        payload: {}
+      })
+    );
+};
+
+// lấy thông tin chi tiết của 1 khóa học
+export const getGuestCourseInfo = (courseId) => dispatch => {
+  dispatch(setAllCourseLoading())
+  axios
+    .get(config.ADDRESS +`/api/courses/guest-course-info/${courseId}`)
+    .then(res =>
+      dispatch({
+        type: GET_GUEST_COURSE_INFO,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_GUEST_COURSE_INFO,
         payload: {}
       })
     );
