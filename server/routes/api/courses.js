@@ -299,7 +299,7 @@ router.get(
         if(result.course_detail.enrollStudents === undefined)
         {
           result.isEnroll = false
-          var find = await Course.findOne({ students: req.user.id });
+          var find = await Course.findOne({ _id: req.params.courseId, students: req.user.id });
           if(find)
             result.isApprove = true
         }

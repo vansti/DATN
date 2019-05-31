@@ -3,7 +3,6 @@ import {Input, Card, CardBody, Table, Button, CardHeader, Modal, ModalBody} from
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getApproveListTeacher, approveTeacher, clearSuccess } from '../../actions/userActions';
-import Moment from 'react-moment'; 
 import ReactLoading from 'react-loading';
 
 
@@ -129,7 +128,6 @@ class ApproveTeacher extends Component {
                         <th>Hình đại diện</th>
                         <th>Email</th>
                         <th>Họ và Tên</th>
-                        <th>Thời gian làm việc</th>
                         <th>Phê duyệt</th>
                       </tr>
                     </thead>
@@ -144,11 +142,6 @@ class ApproveTeacher extends Component {
                             </th>
                             <td>{elem.email}</td>
                             <td>{elem.name}</td>
-                            <td>
-                              <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                                {elem.enrollDate}
-                              </Moment>
-                            </td>
                             <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Duyệt </Button></td>
                           </tr>
                         )

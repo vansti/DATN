@@ -57,7 +57,7 @@ class DefaultHeader extends Component {
             </NavItem>
           }
           <NavItem className="px-3">
-            <Link to="/course-info">Danh sách tất cả khóa học</Link>
+            <Link to="/course-info">Danh sách các khóa học hiện có</Link>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>

@@ -116,7 +116,7 @@ class Lesson extends Component {
           </ModalBody>
         </Modal>
 
-        <Alert color="dark" style={{textAlign: 'center', fontFamily:'Baloo Bhai, cursive', fontSize: 20}}>
+        <Alert color="dark" style={{textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>
           {text}
         </Alert>
 

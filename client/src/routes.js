@@ -57,7 +57,7 @@ const routes = [
   { path: '/add-schedule', exact: true, name: 'Chỉnh sửa thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
-  { path: '/course-info', exact: true, name: 'Danh sách tất cả khóa học', component: AllCourses },
+  { path: '/course-info', exact: true, name: 'Danh sách các khóa học hiện có', component: AllCourses },
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
