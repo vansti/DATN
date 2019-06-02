@@ -215,15 +215,7 @@ class MyInfo extends Component {
                       }
                     </td>
                     <td>
-                      {
-                        element.event
-                        ? 
-                        <span>{element.event.lessonId.text}</span> 
-                        : 
-                        <small style={{color:'#A8A8A8'}}>
-                          Chưa cập nhật
-                        </small>
-                      }
+                      {element.event.lessonId.text}
                     </td>
                   </tr>
                 )

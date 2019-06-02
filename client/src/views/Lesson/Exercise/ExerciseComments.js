@@ -95,10 +95,9 @@ class ExerciseComments extends Component {
 
   render() {
     const { comments, loading } = this.state
-    const { exercise } = this.props
     return (
       <Fragment>
-        <Button block color="ghost-dark" onClick={this.onOpenModal}>{exercise.comments.length} bình luận</Button>
+        <Button block color="ghost-dark" onClick={this.onOpenModal}>bình luận</Button>
         <Modal isOpen={this.state.large} toggle={this.toggleLarge} className='modal-lg'>
           <ModalHeader  toggle={this.toggleLarge}>Bình luận về bài tập</ModalHeader>
           <ModalBody style={{overflowY:'scroll', height:400}}>

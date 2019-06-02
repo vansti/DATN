@@ -388,7 +388,7 @@ class AddCourse extends Component {
               <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Học phí</Label>
                 <InputGroup>
-                  <Input type="number" value={this.state.fee} onChange={this.handleChange('fee')}/>
+                  <Input type="number" min='0' value={this.state.fee} onChange={this.handleChange('fee')}/>
                   <InputGroupAddon addonType="append">
                     <InputGroupText>VND</InputGroupText>
                   </InputGroupAddon>

@@ -53,19 +53,22 @@ class QuizModal extends Component {
   }
 
   handleClickQuiz(quizId){
-    const deadlineData = {}
+    const timeData = {}
 
     this.state.listTestQuiz.forEach(elem => {
       if(elem._id.toString() === quizId.toString())
-        deadlineData.deadline = elem.deadLine  
+      {
+        timeData.deadline = elem.deadLine  
+        timeData.startTime = elem.startTime  
+      }
     })
 
-    if(deadlineData.deadline === undefined)
+    if(timeData.deadline === undefined || timeData.startTime === undefined)
       this.setState({
         isShowError: true
       })
     else{
-      this.props.addQuizLesson(this.props.courseId, this.props.eventId, quizId, deadlineData)
+      this.props.addQuizLesson(this.props.courseId, this.props.eventId, quizId, timeData)
       this.setState({ isLoading: true })
     }
   } 
@@ -128,6 +131,17 @@ class QuizModal extends Component {
     })
   }
 
+  onChangeStartTime(quizId, time){
+    this.state.listTestQuiz.map(elem => {
+      if(elem._id.toString() === quizId.toString())
+        return elem.startTime = time;
+      return elem;
+    })
+    this.setState({
+      listTestQuiz: this.state.listTestQuiz
+    })
+  }
+
   render() {
     const { listTestQuiz, loading } = this.state;
     return (
@@ -160,7 +174,35 @@ class QuizModal extends Component {
                       <CardBody>
                         <Row>
                           <Col xs="10">
-                            <Label style={{marginRight: 10, fontWeight:'bold'}}>Hạn chót làm bài: </Label> 
+                            <Label style={{marginRight: 10, fontWeight:'bold'}}>Thời gian bắt đầu làm: </Label> 
+                            {
+                              quiz.startTime
+                              ?
+                              <DatePicker
+                                selected={quiz.startTime}
+                                onChange={this.onChangeStartTime.bind(this, quiz._id)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                isClearable={true}
+                                dateFormat="dd/MM/yyyy HH:mm aa"
+                                customInput={<Input />}
+                                timeCaption="time"
+                              />
+                              :
+                              <DatePicker
+                                onChange={this.onChangeStartTime.bind(this, quiz._id)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                isClearable={true}
+                                dateFormat="dd/MM/yyyy HH:mm aa"
+                                customInput={<Input />}
+                                timeCaption="time"
+                              />
+                            }
+                            <br/>
+                            <Label style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Hạn chót làm bài: </Label> 
                             {
                               quiz.deadLine
                               ?
@@ -224,7 +266,7 @@ class QuizModal extends Component {
         <SweetAlert
           	danger
             confirmBtnText="OK"
-            title='Hãy chọn deadline'            
+            title='Hãy chọn deadline và thời gian bắt đầu làm'            
           	confirmBtnBsStyle="danger"
             show={this.state.isShowError}
             onConfirm={this.hideAlertError.bind(this)}>

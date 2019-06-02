@@ -167,7 +167,8 @@ router.post(
 
     const quiz = {
       quizId: req.params.quizId,
-      deadline: req.body.deadline 
+      deadline: req.body.deadline,
+      startTime: req.body.startTime
     }
 
     const newSubQuiz = new SubQuiz({

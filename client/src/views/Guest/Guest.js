@@ -245,7 +245,7 @@ class Guest extends Component {
                             {course.enrollDeadline}
                           </Moment>
                           <hr/>
-                          <p> {course.intro} </p>
+                          <p className='max-lines'> {course.intro} </p>
                           <Button outline color="primary" onClick={this.handleDetail.bind(this, course._id)}><b>Xem chi tiết</b></Button>
                         </CardBody>
                       </Card>

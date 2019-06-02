@@ -85,6 +85,10 @@ class InLesson extends Component {
     this.props.history.push(`/score/${this.props.match.params.id}/${exerciseId}`)
   }
 
+  jumpToQuizDetail(quizId){
+    this.props.history.push(`/quiz/quiz-detail/${quizId}`);
+  }
+  
   render() {
     const { 
       content, 
@@ -104,7 +108,7 @@ class InLesson extends Component {
           </ModalBody>
         </Modal>
 
-        <Alert color="dark" style={{textAlign: 'center', fontFamily:'Baloo Bhai, cursive', fontSize: 20}}>
+        <Alert color="dark" style={{textAlign: 'center', fontSize: 20}}>
           {text}
         </Alert>
 
@@ -247,9 +251,18 @@ class InLesson extends Component {
                 quizzes.map((quiz,index) => 
                   <Card className="mb-0" key={index} style={{marginTop:10}}>
                     <CardHeader style={{backgroundColor: 'lightblue'}}>
-                      <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
+                      <Button block color="link" className="text-left m-0 p-0" onClick={this.jumpToQuizDetail.bind(this, quiz.quizId._id)}>
+                        <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
+                      </Button>
                       <small>                  
-                        Hạn
+                        Thời gian bắt đầu làm
+                        <Moment format=" HH:mm ngày DD/MM/YYYY">
+                          {quiz.startTime}
+                        </Moment>
+                      </small>
+                      <br/>
+                      <small>                  
+                        Hạn chót làm bài
                         <Moment format=" HH:mm ngày DD/MM/YYYY">
                           {quiz.deadline}
                         </Moment>

@@ -44,6 +44,9 @@ const LessonSchema = new Schema({
       },
       deadline: {
         type: Date
+      },
+      startTime: {
+        type: Date
       }
     }
   ]

@@ -34,7 +34,8 @@ class Lesson extends Component {
       files: [],
       exercises: [],
       quizzes: [],
-      isShowFail: false
+      isShowFail: false,
+      isShowFailstartTime: false
     };
   }
 
@@ -72,17 +73,27 @@ class Lesson extends Component {
 
   }
 
-  jumpToQuizLesson(quizId, quizDeadline){
+  jumpToQuizLesson(quizId, quizDeadline, quizStartTime){
     var now = new Date();
     var deadline = new Date(quizDeadline);
-    if(deadline.getTime() >= now.getTime())
+    var startTime = new Date(quizStartTime);
+
+    if(startTime.getTime() <= now.getTime())
     {
-      this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${quizId}`);
+      if(deadline.getTime() >= now.getTime())
+      {
+        this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${quizId}`);
+      }else{
+        this.setState({
+          isShowFail: true
+        })
+      }
     }else{
       this.setState({
-        isShowFail: true
+        isShowFailstartTime: true
       })
     }
+
   }
 
   jumpToQuizDetail(quizId){
@@ -92,6 +103,12 @@ class Lesson extends Component {
   hideAlertFail = () =>{
     this.setState({
       isShowFail: false
+    })
+  }
+
+  hideAlertFailstartTime=()=>{
+    this.setState({
+      isShowFailstartTime: false
     })
   }
 
@@ -194,7 +211,7 @@ class Lesson extends Component {
                     {
                       role === 'student'
                       ?
-                      <Button block color="link" className="text-left m-0 p-0" onClick={this.jumpToQuizLesson.bind(this, quiz.quizId._id, quiz.deadline)}>
+                      <Button block color="link" className="text-left m-0 p-0" onClick={this.jumpToQuizLesson.bind(this, quiz.quizId._id, quiz.deadline, quiz.startTime)}>
                         <h5 className="m-0 p-0" style={{color: 'black'}}>{quiz.quizId.title}</h5>
                       </Button>
                       :
@@ -203,7 +220,14 @@ class Lesson extends Component {
                       </Button>
                     }
                     <small>                  
-                      Hạn
+                      Thời gian bắt đầu làm
+                      <Moment format=" HH:mm ngày DD/MM/YYYY">
+                        {quiz.startTime}
+                      </Moment>
+                    </small>
+                    <br/>
+                    <small>                  
+                      Hạn chót làm bài
                       <Moment format=" HH:mm ngày DD/MM/YYYY">
                         {quiz.deadline}
                       </Moment>
@@ -223,6 +247,14 @@ class Lesson extends Component {
           	title="Đã hết hạn làm trắc nghiệm!"
             show={this.state.isShowFail}
             onConfirm={this.hideAlertFail}>
+        </SweetAlert>
+        <SweetAlert
+          	warning
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="warning"
+          	title="Chưa tới thời gian làm trắc nghiệm!"
+            show={this.state.isShowFailstartTime}
+            onConfirm={this.hideAlertFailstartTime}>
         </SweetAlert>
       </div>
     )
