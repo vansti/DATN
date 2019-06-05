@@ -70,8 +70,19 @@ class QuizLesson extends Component {
     this.context.router.history.goBack();
   }
 
+  shuffleQuestions = (questions) => {
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    return questions;
+  }
   render(){
-    const { loading, quizDetail, loadingQuizDone, quizDone } = this.state;
+    const { loading, loadingQuizDone, quizDone } = this.state;
+    let quizTest = this.state.quizDetail;
+    if(quizTest.listQuiz) {
+      quizTest.listQuiz = this.shuffleQuestions(quizTest.listQuiz);
+    }
     return  (
       <div>
         {
@@ -79,7 +90,7 @@ class QuizLesson extends Component {
           ?
           <ReactLoading type='bars' color='#05386B' />
           :
-          <QuizTest quizTest={quizDetail} quizDone={quizDone} shuffle={true}/>
+          <QuizTest quizTest={quizTest} quizDone={quizDone} shuffle={true}/>
         }
         {
           this.state.typeAlert === 'success' ?

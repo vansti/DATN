@@ -117,7 +117,6 @@ router.post('/sub-quiz', passport.authenticate('jwt', { session: false }), (req,
             if(index === -1) {
                 subQuiz.studentSubmission.unshift(submission);
                 const subQuizUpdated = await subQuiz.save();
-                
                 response = {
                     data: submission.point,
                     message: 'success'
