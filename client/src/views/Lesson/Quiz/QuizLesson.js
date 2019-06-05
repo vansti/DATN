@@ -79,9 +79,9 @@ class QuizLesson extends Component {
   }
   render(){
     const { loading, loadingQuizDone, quizDone } = this.state;
-    let quizTest = this.state.quizDetail;
-    if(quizTest.listQuiz) {
-      quizTest.listQuiz = this.shuffleQuestions(quizTest.listQuiz);
+    let quizDetail = this.state.quizDetail;
+    if(quizDetail.listQuiz) {
+      quizDetail.listQuiz = this.shuffleQuestions(quizDetail.listQuiz);
     }
     return  (
       <div>
@@ -90,7 +90,7 @@ class QuizLesson extends Component {
           ?
           <ReactLoading type='bars' color='#05386B' />
           :
-          <QuizTest quizTest={quizTest} quizDone={quizDone} shuffle={true}/>
+          <QuizTest quizTest={quizDetail} quizDone={quizDone} shuffle={true}/>
         }
         {
           this.state.typeAlert === 'success' ?

@@ -27,7 +27,6 @@ class Quiz extends Component {
 
   render() {
     const { quiz, shuffle, showDefaultResult, onComplete, customResultPage } = this.props;
-    console.log("TCL: Quiz -> render -> shuffle", shuffle)
     if(!quiz) {
       console.error("Quiz object is required.");
       return (null);
