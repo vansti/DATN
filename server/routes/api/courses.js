@@ -417,6 +417,16 @@ router.post(
           }
         )
 
+        await
+        User.findByIdAndUpdate(
+          req.user.id ,
+          { 
+            $push: {
+              courses: req.params.courseId
+            }
+          }
+        )
+
         res.json({ mes: 'Ghi danh thành công vào khóa học' })
       } catch (err) {
         console.log(err)
@@ -513,6 +523,20 @@ router.post(
     async function run() {
       try {
 
+        const find = 
+        await
+        Course.find(
+          { _id: req.params.courseId, teachers: req.params.teacherId }
+        )
+
+        if(find.length !== 0)
+        {
+          let errors = {
+            err : 'Giáo viên đã được thêm'
+          }
+          return res.status(400).json(errors);
+        }
+        
         await 
         Course.findByIdAndUpdate(
           req.params.courseId ,

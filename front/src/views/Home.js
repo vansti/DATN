@@ -9,6 +9,7 @@ import slide2 from '../assets/img/slide2.jpg';
 import slide3 from '../assets/img/slide3.jpg';
 import slide4 from '../assets/img/slide4.jpg';
 import a2 from '../assets/img/a2.jpg';
+import emo from '../assets/img/emo.png';
 import isEmptyObj from '../validation/is-empty';
 
 import {
@@ -218,35 +219,48 @@ class Home extends Component {
             ?
             <ReactLoading type='bars' color='#05386B'/>
             :
-            <Row style={{marginTop:70}}>
+            <div>
               {
-                allcourses.map(course =>
-                <Col xs="12" sm="6" md="4" key={course._id}>
-                  <Card>
-                    <CardHeader>
-                      <div style={styles.imgbox3}>
-                        <img src={course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
-                      </div>
-          
-                      <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
+                allcourses.length === 0
+                ?
+                <div style={{marginTop:70}}> 
+                  <h4>Hiện tại trung tâm chưa có khóa học có thể ghi danh</h4>
+                  <img src={emo} alt="avatar" style={{width: 70, height: 70}}/>
+                </div>
+                :
+                <div>
+                  <Row style={{marginTop:70}}>
+                    {
+                      allcourses.map(course =>
+                      <Col xs="12" sm="6" md="4" key={course._id}>
+                        <Card>
+                          <CardHeader>
+                            <div style={styles.imgbox3}>
+                              <img src={course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+                            </div>
+                
+                            <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
 
-                    </CardHeader>
-                    <CardBody>
-                      <b><i className="fa fa-clock-o" aria-hidden="true"></i>&ensp;&ensp;Hạn đăng ký - </b>
-                      <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                        {course.enrollDeadline}
-                      </Moment>
-                      <hr/>
-                      <p className='max-lines'> {course.intro} </p>
-                      <Button outline color="primary" onClick={this.handleDetail.bind(this, course._id)}><b>Xem chi tiết</b></Button>
-                    </CardBody>
-                  </Card>
-                </Col>
-                )
+                          </CardHeader>
+                          <CardBody>
+                            <b><i className="fa fa-clock-o" aria-hidden="true"></i>&ensp;&ensp;Hạn đăng ký - </b>
+                            <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
+                              {course.enrollDeadline}
+                            </Moment>
+                            <hr/>
+                            <p className='max-lines'> {course.intro} </p>
+                            <Button outline color="primary" onClick={this.handleDetail.bind(this, course._id)}><b>Xem chi tiết</b></Button>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                      )
+                    }
+                  </Row>
+                  <Button color="ghost-dark" onClick={()=>this.props.history.push('/all-course')}><b>Xem tất cả khóa học</b></Button>
+                </div>
               }
-            </Row>
+            </div>
           }
-          <Button color="ghost-dark" onClick={()=>this.props.history.push('/all-course')}><b>Xem tất cả khóa học</b></Button>
         </Container>
 
       </div>

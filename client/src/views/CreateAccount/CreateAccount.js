@@ -11,6 +11,7 @@ class CreateAccount extends Component {
     this.state = {
       name: '',
       email: '',
+      phone: '',
       password: '',
       password2: '',
       errors: {},
@@ -41,6 +42,7 @@ class CreateAccount extends Component {
     const newUser = {
       name: this.state.name,
       email: this.state.email,
+      phone: this.state.phone,
       password: this.state.password,
       password2: this.state.password2,
       role: this.state.role
@@ -54,6 +56,7 @@ class CreateAccount extends Component {
     this.setState({
       name: '',
       email: '',
+      phone: '',
       password: '',
       password2: '',
       errors: {},
@@ -83,6 +86,7 @@ class CreateAccount extends Component {
                       <Input type="text" placeholder="Họ và Tên" autoComplete="username" name="name" value={this.state.name} onChange={this.onChange} />
                     </InputGroup>
                     {errors.name && <Alert color="danger">{errors.name}</Alert>}
+
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>@</InputGroupText>
@@ -90,6 +94,15 @@ class CreateAccount extends Component {
                       <Input type="text" placeholder="Email" autoComplete="email" name="email" value={this.state.email} onChange={this.onChange}/>
                     </InputGroup>
                     {errors.email && <Alert color="danger">{errors.email}</Alert>}
+
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText><i className="icon-phone"></i></InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" placeholder="Số điện thoại" name="phone" value={this.state.phone} onChange={this.onChange}/>
+                    </InputGroup>
+                    {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -99,6 +112,7 @@ class CreateAccount extends Component {
                       <Input type="password" placeholder="Mật khẩu" autoComplete="new-password" name="password" value={this.state.password} onChange={this.onChange}/>
                     </InputGroup>
                     {errors.password && <Alert color="danger">{errors.password}</Alert>}
+
                     <InputGroup className="mb-4">
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -108,6 +122,7 @@ class CreateAccount extends Component {
                       <Input type="password" placeholder="Xác nhận lại mật khẩu" autoComplete="new-password" name="password2" value={this.state.password2} onChange={this.onChange}/>
                     </InputGroup>                
                     {errors.password2 && <Alert color="danger">{errors.password2}</Alert>}
+
                     <Label style={{fontWeight:'bold'}}>Chức danh</Label>
                     <InputGroup className="mb-3">
                       <Col md="1"></Col>
@@ -127,6 +142,7 @@ class CreateAccount extends Component {
                       </Col>
                     </InputGroup>
                     {errors.role && <Alert color="danger">{errors.role}</Alert>}
+
                     <Button color="success" onClick={this.onSubmit} block>Tạo Tài Khoản</Button>
                   </Form>
                 </CardBody>

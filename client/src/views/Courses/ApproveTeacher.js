@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import {Input, Card, CardBody, Table, Button, CardHeader, Modal, ModalBody} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getApproveListTeacher, approveTeacher, clearSuccess } from '../../actions/userActions';
+import { getApproveListTeacher, approveTeacher, clearSuccess, clearErrors } from '../../actions/userActions';
 import ReactLoading from 'react-loading';
+import isEmptyObj from '../../validation/is-empty';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 class ApproveTeacher extends Component {
@@ -17,7 +19,11 @@ class ApproveTeacher extends Component {
       courseId: null,
       loading: true,
       isLoading: false,
-      intialTeacher: []
+      intialTeacher: [],
+      isShowErr: false,
+      errors: {
+        err: ''
+      }
     };
     this.handleClickApprove = this.handleClickApprove.bind(this);
   }
@@ -35,6 +41,11 @@ class ApproveTeacher extends Component {
     if (nextProps.success === "Duyệt thành công") {
       this.setState({isLoading: false})
       this.props.clearSuccess();
+    }
+
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false, isShowErr: true });
+      this.props.clearErrors();
     }
   }
 
@@ -55,6 +66,12 @@ class ApproveTeacher extends Component {
     this.setState({approve_list_teacher: {...this.state.approve_list_teacher, teachers: updatedList}});
   }
   
+  hideAlert(){
+    this.setState({
+      isShowErr: false
+    })
+  }
+
   render() {
     const { approve_list_teacher, loading } = this.state;
     return (
@@ -142,7 +159,7 @@ class ApproveTeacher extends Component {
                             </th>
                             <td>{elem.email}</td>
                             <td>{elem.name}</td>
-                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Duyệt </Button></td>
+                            <td><Button color="danger" onClick={this.handleClickApprove.bind(this, elem._id)}> Thêm </Button></td>
                           </tr>
                         )
                       }
@@ -162,6 +179,14 @@ class ApproveTeacher extends Component {
             <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
           </ModalBody>
         </Modal>
+        <SweetAlert
+          	danger
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="danger"
+            title={this.state.errors.err}
+            show={this.state.isShowErr}
+            onConfirm={this.hideAlert.bind(this)}>
+        </SweetAlert>
       </div>
     )
   }
@@ -175,6 +200,7 @@ ApproveTeacher.propTypes = {
 
 const mapStateToProps = state => ({
   users: state.users,
-  success: state.success
+  success: state.success,
+  errors: state.errors
 });
-export default connect(mapStateToProps, { getApproveListTeacher, approveTeacher, clearSuccess })(ApproveTeacher); 
+export default connect(mapStateToProps, { getApproveListTeacher, approveTeacher, clearSuccess, clearErrors })(ApproveTeacher); 
