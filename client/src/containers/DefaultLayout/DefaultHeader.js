@@ -3,7 +3,7 @@ import {withRouter, Link } from 'react-router-dom';
 import { DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { AppAsideToggler, AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
+import { AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
 import logo from '../../assets/img/e-icon.png'
 import { getCurrentProfile } from '../../actions/profileActions';
 
@@ -13,7 +13,7 @@ class DefaultHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      photo: ''
+      profile: ''
     };
   }
 
@@ -27,14 +27,15 @@ class DefaultHeader extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.profile.profile) {
-      const profile = nextProps.profile.profile
-      this.setState({photo: profile.photo})
+      const { profile } = nextProps.profile
+      this.setState({ profile })
     }
   }
 
-  componentDidMount
   render() {
     const { role } = this.props.auth.user;
+    const { profile } = this.state;
+
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -56,23 +57,23 @@ class DefaultHeader extends Component {
               <Link to="/edit-profile">Thông tin cá nhân</Link>
             </NavItem>
           }
-          <NavItem className="px-3">
-            <Link to="/course-info">Danh sách các khóa học hiện có</Link>
-          </NavItem>
         </Nav>
-        <Nav className="ml-auto" navbar>
+        <Nav className="ml-auto" navbar style={{marginRight: 10}}>
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={this.state.photo} className="img-avatar" alt="ava" />
+              <img src={profile.photo} className="img-avatar" alt="ava" />
             </DropdownToggle>
-            <DropdownMenu right style={{ right: 'auto' }}>
+            <DropdownMenu>
               <DropdownItem header tag="div" className="text-center"><strong>Tài khoản</strong></DropdownItem>
+              <DropdownItem tag="div" style={{textAlign: 'center'}}>
+                <b>{profile.name}</b><br/> 
+                <small style={{color:'grey'}}>{profile.email} </small>
+              </DropdownItem>
               <DropdownItem onClick={this.toEditProfile}><i className="fa fa-user"></i> Thay đổi thông tin </DropdownItem>
               <DropdownItem onClick={e => this.props.onLogout(e)}><i className="fa fa-lock"></i> Đăng Xuất</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
-        <AppAsideToggler className="d-md-down-none" />
       </React.Fragment>
     );
   }

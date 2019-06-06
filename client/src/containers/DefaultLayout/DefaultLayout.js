@@ -38,7 +38,7 @@ class DefaultLayout extends Component {
   signOut(e) {
     e.preventDefault();
     this.props.logoutUser();
-    window.location.href = '/login';
+    this.props.history.push('/login');
   }
   
   render() {

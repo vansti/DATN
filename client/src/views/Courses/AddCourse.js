@@ -82,7 +82,9 @@ class AddCourse extends Component {
       loading: true,
       isOpenModal: false,
       listId: '',
-      listTitle: ''
+      listTitle: '',
+      maxStudent: '',
+      minStudent: ''
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -225,6 +227,8 @@ class AddCourse extends Component {
       const courseData = {
         title: this.state.title,
         intro: this.state.intro,
+        minStudent: this.state.minStudent,
+        maxStudent: this.state.maxStudent,
         enrollDeadline: this.state.enrollDeadline,
         studyTime: this.getStudyTime(this.state.days),
         openingDay: this.state.openingDay,
@@ -390,7 +394,7 @@ class AddCourse extends Component {
                 <InputGroup>
                   <Input type="number" min='0' value={this.state.fee} onChange={this.handleChange('fee')}/>
                   <InputGroupAddon addonType="append">
-                    <InputGroupText>VND</InputGroupText>
+                    <InputGroupText>USD</InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
               </FormGroup>
@@ -585,6 +589,27 @@ class AddCourse extends Component {
                 </FormGroup>
               </FormGroup>
               {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
+              
+              <FormGroup>
+                <div className="form-row">
+                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối đa </Label>
+                  <div className="col-2">
+                    <Input type="number" min='0' value={this.state.maxStudent} onChange={this.handleChange('maxStudent')}/>
+                  </div>
+                </div>
+              </FormGroup>
+              {errors.maxStudent && <Alert color="danger">{errors.maxStudent}</Alert>}
+
+              <FormGroup>
+                <div className="form-row">
+                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối thiểu </Label>
+                  <div className="col-2">
+                    <Input type="number" min='0' value={this.state.minStudent} onChange={this.handleChange('minStudent')}/>
+                  </div>
+                </div>
+              </FormGroup>
+              {errors.minStudent && <Alert color="danger">{errors.minStudent}</Alert>}
+
               <Label style={{fontWeight: 'bold'}}>Giới thiệu nội dung khóa học</Label>
               <CKEditor data={this.state.info} onChange={this.onEditorChange} />
               {errors.info && <Alert color="danger">{errors.info}</Alert>}

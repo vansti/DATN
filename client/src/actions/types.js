@@ -28,6 +28,7 @@ export const CLEAR_ATTENDANCE = 'CLEAR_ATTENDANCE';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const GET_USERS = 'GET_USERS';
 export const CLEAR_USER = 'CLEAR_USER';
+export const SEARCH_STUDENT = 'SEARCH_STUDENT';
 //Point
 export const GET_POINT_COLUMNS = 'GET_POINT_COLUMNS';
 export const POINT_LOADING = 'POINT_LOADING';
@@ -62,3 +63,5 @@ export const GET_LESSON = 'GET_LESSON';
 export const GET_LESSON_TOTAL_LIST = 'GET_LESSON_TOTAL_LIST';
 export const GET_LESSON_IN_COURSE = 'GET_LESSON_IN_COURSE';
 
+export const GET_SCHOOL = 'GET_SCHOOL';
+export const SCHOOL_LOADING = 'SCHOOL_LOADING';

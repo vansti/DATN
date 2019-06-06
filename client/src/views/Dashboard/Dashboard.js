@@ -27,11 +27,6 @@ class Dashboard extends Component {
       case 'student': 
         Content = 
           <div style={{ marginTop:30 }}>
-            <Button color="secondary" size="lg" block onClick={this.handleAllcourse}>
-              <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-                Xem khóa học hiện có
-              </span>
-            </Button>
             <Button color="secondary" size="lg" block onClick={this.handleMycourse}>
               <span style={{fontFamily:'Baloo Bhai, cursive'}}>
                 Xem khóa học của bạn
@@ -96,11 +91,6 @@ class Dashboard extends Component {
       case 'admin': 
         Content = 
         <div style={{ marginTop:30 }}>
-          <Button color="secondary" size="lg" block onClick={this.handleAllcourse}>
-            <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-              Xem khóa học hiện có
-            </span>
-          </Button>
           <Button color="secondary" size="lg" block onClick={this.handleMycourse}>
             <span style={{fontFamily:'Baloo Bhai, cursive'}}>
               Xem khóa học của bạn

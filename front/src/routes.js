@@ -1,13 +1,28 @@
+import React from 'react';
 import DefaultLayout from './containers/DefaultLayout';
-import Home from './Views/Home';
 
+const Login = React.lazy(() => import('./views/Login'));
+const Register = React.lazy(() => import('./views/Register'));
+const Home = React.lazy(() => import('./views/Home'));
+const Confirm = React.lazy(() => import('./views/Confirm'));
+const EditProfile = React.lazy(() => import('./views/EditProfile'));
+const CourseInfo = React.lazy(() => import('./views/CourseInfo'));
+const AllCourse = React.lazy(() => import('./views/AllCourse'));
+const AboutUs = React.lazy(() => import('./views/AboutUs'));
+
+// https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/', exact: true, name: 'Trang chủ', component: DefaultLayout },
-  { path: '/home', exact: true, name: 'Trang chủ', component: Home },
-  { path: '/course', exact: true, name: 'Khóa học', component: Home },
-  { path: '/blog', exact: true, name: 'Blog', component: Home },
-  { path: '/page', exact: true, name: 'Trang', component: Home },
-  { path: '/contact', exact: true, name: 'Liên lạc', component: Home },
-]
+  { path: '/', exact: true, component: DefaultLayout },
+  { path: '/home', component: Home },
+  { path: '/register', component: Register },
+  { path: '/login', component: Login },
+  { path: '/confirm/:id', component: Confirm },
+  { path: '/edit-profile', component: EditProfile },
+  { path: '/course-info/:courseId', component: CourseInfo },
+  { path: '/all-course', component: AllCourse },
+  { path: '/about-us', component: AboutUs }
+
+];
 
 export default routes;
+

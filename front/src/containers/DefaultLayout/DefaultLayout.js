@@ -1,50 +1,70 @@
-import React, { Component } from 'react';
-import './DefaultLayout.css';
-
-//router
+import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+
+import {
+  AppFooter,
+  AppHeader
+} from '@coreui/react';
+// routes config
 import routes from '../../routes';
 
-import DefaultHeader from '../../components/Partial/Header';
-import DefaultFooter from '../../components/Partial/Footer';
+import { logoutUser } from '../../actions/authActions';
+import { connect } from 'react-redux';
+
+const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
+const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
-  // constructor(props){
-    // super(props);
-    // this.state = {};
-  // }
 
-  // componentWillMount(){}
-  // componentDidMount(){}
-  // componentWillUnmount(){}
+  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
-  // componentWillReceiveProps(){}
-  // shouldComponentUpdate(){}
-  // componentWillUpdate(){}
-  // componentDidUpdate(){}
-
+  signOut(e) {
+    e.preventDefault();
+    this.props.logoutUser();
+    this.props.history.push('/login');
+  }
+  
   render() {
     return (
       <div className="app">
-        <DefaultHeader />
-        <Switch>
-          {routes.map((route, idx) => {
-            return route.component ? (
-              <Route
-                key={idx}
-                path={route.path}
-                exact={route.exact}
-                render={props => (
-                  <route.component {...props} />
-                )} />
-              ) : (null);
-          })}
-          <Redirect from="/" to="/home" />
-        </Switch>
-        <DefaultFooter />
+        <AppHeader fixed>
+          <Suspense  fallback={this.loading()}>
+            <DefaultHeader onLogout={e=>this.signOut(e)}/>
+          </Suspense>
+        </AppHeader>
+        <div className="app-body">
+          <main className="main">
+            <Suspense fallback={this.loading()}>
+              <Switch>
+                {
+                  routes.map((route, idx) => {
+                  return route.component ? (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      exact={route.exact}
+                      render={props => (
+                        <route.component {...props} />
+                      )} />
+                    ) : (null);
+                  })
+                }
+                <Redirect from="/" to="/home" />
+              </Switch>
+            </Suspense>
+          </main>
+        </div>
+        <AppFooter>
+          <Suspense fallback={this.loading()}>
+            <DefaultFooter />
+          </Suspense>
+        </AppFooter>
       </div>
     );
   }
 }
 
-export default DefaultLayout;
+const mapStateToProps = state => ({
+});
+
+export default connect(mapStateToProps, { logoutUser })(DefaultLayout);

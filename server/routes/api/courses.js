@@ -57,7 +57,9 @@ router.post(
       openingDay: req.body.openingDay,
       endDay: req.body.endDay,
       fee: req.body.fee,
-      info: req.body.info
+      info: req.body.info,
+      maxStudent: req.body.maxStudent,
+      minStudent: req.body.minStudent
     });
 
     async function run() {
@@ -267,7 +269,7 @@ router.get(
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1,
+          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1, isFull: 1,
             enrollStudents:  
             {
               $elemMatch: {
@@ -290,23 +292,16 @@ router.get(
         })
 
         const result = {
-          course: course,
-          course_detail: course_detail,
-          isApprove: false,
-          schedule
+          course,
+          course_detail,
+          schedule,
+          isEnroll: true
         }
 
         if(result.course_detail.enrollStudents === undefined)
         {
           result.isEnroll = false
-          var find = await Course.findOne({ _id: req.params.courseId, students: req.user.id });
-          if(find)
-            result.isApprove = true
         }
-        else{   
-          result.isEnroll = true
-          delete result.course_detail.enrollStudents
-        } 
 
         res.json(result)
       } catch (err) {
@@ -395,18 +390,40 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
 
-    CourseDetail.findOneAndUpdate(
-      { 'courseId' : req.params.courseId },
-      { 
-        $push: {
-          enrollStudents: {
-            student: req.user.id
+    async function run() {
+      try {
+        // console.log(req.body)
+        await 
+        CourseDetail.findOneAndUpdate(
+          { 'courseId' : req.params.courseId },
+          { 
+            $push: {
+              enrollStudents: {
+                student: req.user.id,
+                paymentMethod: req.body.paymentMethod,
+                paymentDetail: req.body.paymentDetail
+              }
+            }
           }
-        }
+        )
+
+        await 
+        Course.findByIdAndUpdate(
+          req.params.courseId ,
+          { 
+            $push: {
+              students: req.user.id
+            }
+          }
+        )
+
+        res.json({ mes: 'Ghi danh thành công vào khóa học' })
+      } catch (err) {
+        console.log(err)
       }
-    )
-    .then(coursedetail => res.json(coursedetail))
-    .catch(err => console.log(err));
+    }
+
+    run();
   }
 );
 

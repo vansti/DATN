@@ -10,7 +10,9 @@ import {
   GET_SUCCESS, 
   GET_ERRORS, 
   CLEAR_SUCCESS, 
-  USERS_LOADING 
+  USERS_LOADING,
+  CLEAR_ERRORS,
+  SEARCH_STUDENT
 } from './types';
 
 // Get a list of users
@@ -125,6 +127,60 @@ export const approveTeacher = (courseId, teacherId) => dispatch => {
     );
 };
 
+// add student
+export const addStudent = userData => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/add-student', userData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// add student
+export const searchStudent = userData => dispatch => {
+  dispatch(setUsersLoading());
+  axios
+    .post(config.ADDRESS +'/api/users/search-student', userData)
+    .then(res =>{
+      dispatch({
+        type: SEARCH_STUDENT,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// add student
+export const addJoinedStudent = userData => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/add-joined-student', userData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
 
 export const setUsersLoading = () => {
   return {
@@ -142,5 +198,12 @@ export const clearUsers = () => {
 export const clearSuccess = () => {
   return {
     type: CLEAR_SUCCESS
+  };
+};
+
+// Clear errors
+export const clearErrors = () => {
+  return {
+    type: CLEAR_ERRORS
   };
 };

@@ -14,6 +14,7 @@ import submissionReducer from './submissionReducer';
 import testQuizReducer from './testQuizReducer';
 import pointReducer from './pointReducer';
 import lessonReducer from './lessonReducer';
+import schoolReducer from './schoolReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -30,6 +31,7 @@ export default combineReducers({
   testQuiz: testQuizReducer,
   submission: submissionReducer,
   point: pointReducer,
-  lesson: lessonReducer
+  lesson: lessonReducer,
+  school: schoolReducer
 });
 

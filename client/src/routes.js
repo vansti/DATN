@@ -21,6 +21,8 @@ const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
 const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
+const AddStudent = React.lazy(() => import('./views/Courses/AddStudent'));
+const AddJoinedStudent = React.lazy(() => import('./views/Courses/AddJoinedStudent'));
 const ApproveTeacher = React.lazy(() => import('./views/Courses/ApproveTeacher'));
 const EditCourse = React.lazy(() => import('./views/Courses/EditCourse'));
 const PointList = React.lazy(() => import('./views/PointList/PointList'));
@@ -35,6 +37,7 @@ const MyInfo = React.lazy(() => import('./views/MyInfo/MyInfo'));
 const AddQuizCSV = React.lazy(() => import('./views/Quiz/AddQuizCSV'));
 const CreateAccount = React.lazy(() => import('./views/CreateAccount/CreateAccount'));
 const ViewCourseList = React.lazy(() => import('./views/Courses/ViewCourseList'));
+const SchoolInfo = React.lazy(() => import('./views/SchoolInfo/SchoolInfo'));
 
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -62,6 +65,8 @@ const routes = [
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
   { path: '/manage-courses/approve/student/:courseId', exact: true, name: 'Quản lý học viên', component: ApproveStudent },
+  { path: '/manage-courses/approve/student/:courseId/add-student', exact: true, name: 'Thêm học viên mới', component: AddStudent },
+  { path: '/manage-courses/approve/student/:courseId/add-joined-student', exact: true, name: 'Thêm học viên cũ', component: AddJoinedStudent },
   { path: '/manage-courses/edit-course/:courseId', exact: true, name: 'Chỉnh sửa khóa học', component: EditCourse },
   { path: '/manage-courses/approve/teacher/:courseId', exact: true, name: 'Quản lý giáo viên', component: ApproveTeacher },
   { path: '/point-list', exact: true, name: 'Quản lý cột điểm', component: PointList },
@@ -75,6 +80,7 @@ const routes = [
   { path: '/my-info', exact: true, name: 'Thông tin cá nhân', component: MyInfo },
   { path: '/quiz/add/csv', exact: true, name: 'Thêm bằng tập tin csv', component: AddQuizCSV },
   { path: '/create-account', exact: true, name: 'Tạo tài khoản', component: CreateAccount },
+  { path: '/school-info', exact: true, name: 'Thông tin trung tâm', component: SchoolInfo }
 
 ];
 

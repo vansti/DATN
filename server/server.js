@@ -9,6 +9,8 @@ require('dotenv').config();
 
 const users = require('./routes/api/users');
 
+const school = require('./routes/api/school');
+
 const courses = require('./routes/api/courses');
 
 const exercises = require('./routes/api/exercises');
@@ -55,6 +57,9 @@ app.use('/api/users', users)
 
 // courses Route
 app.use('/api/courses', courses)
+
+// school Route
+app.use('/api/school', school)
 
 // exercises Route
 app.use('/api/exercises', exercises)

@@ -93,6 +93,11 @@ export default {
       name: 'Tạo tài khoản',
       url: '/create-account',
       icon: 'fa fa-user-plus',
+    },
+    {
+      name: 'Thông tin trung tâm',
+      url: '/school-info',
+      icon: 'fa fa-info-circle',
     }
   ],
 };

@@ -20,9 +20,39 @@ const CourseDetailSchema = new Schema({
   fee:{
     type: String
   },
+  maxStudent: {
+    type: Number
+  },
+  minStudent: {
+    type: Number
+  },
+  isFull:{
+    type: Boolean,
+    default: false
+  },
   enrollStudents:[{
     student: {
       type: mongoose.Schema.ObjectId, ref: 'users'
+    },
+    paymentMethod:{
+      type: String
+    },
+    paymentDetail:{
+      recipient_name:{
+        type: String
+      },
+      email:{
+        type: String
+      },
+      payerID:{
+        type: String
+      },
+      line1:{
+        type: String
+      },
+      city:{
+        type: String
+      }
     },
     enrollDate: {
       type: Date,

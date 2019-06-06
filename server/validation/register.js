@@ -1,5 +1,6 @@
 const Validator = require('validator');
 const isEmpty = require('./is-empty');
+const isPhone =  require('is-phone')
 
 module.exports = function validateRegisterInput(data) {
   let errors = {};
@@ -8,9 +9,14 @@ module.exports = function validateRegisterInput(data) {
   data.email = !isEmpty(data.email) ? data.email : '';
   data.password = !isEmpty(data.password) ? data.password : '';
   data.password2 = !isEmpty(data.password2) ? data.password2 : '';
+  data.phone = !isEmpty(data.phone) ? data.phone : '';
 
   if (!Validator.isLength(data.name, { min: 2, max: 30 })) {
     errors.name = 'Họ Tên phải ít nhất 2 ký tự';
+  }
+
+  if (!isPhone(data.phone)) {
+    errors.phone = 'Số điện thoại không đúng';
   }
 
   if (Validator.isEmpty(data.name)) {

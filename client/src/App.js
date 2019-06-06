@@ -24,26 +24,6 @@ const Login = Loadable({
   loading
 });
 
-const Register = Loadable({
-  loader: () => import('./views/Pages/Register'),
-  loading
-});
-
-const Confirm = Loadable({
-  loader: () => import('./views/Pages/Confirm/Confirm'),
-  loading
-});
-
-const Guest = Loadable({
-  loader: () => import('./views/Guest/Guest'),
-  loading
-});
-
-const CourseInfo = Loadable({
-  loader: () => import('./views/Guest/CourseInfo'),
-  loading
-});
-
 // Check for token
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -87,12 +67,8 @@ class App extends Component {
           ? <PrivateRoute path="/" component={DefaultLayout} />
           : <div className="main">
               <Switch location={location}>
-                <Route path="/guest-course-info/:courseId" component={CourseInfo} />
                 <Route path="/login" component={Login} />
-                <Route path="/confirm/:id" component={Confirm} />
-                <Route path="/register" component={Register} />
-                <Route path="/guest" component={Guest} />
-                <Route component={Guest} />
+                <Route component={Login} />
               </Switch>
             </div>
         }

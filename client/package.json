@@ -36,15 +36,18 @@
     "react-datetime-picker": "^2.2.1",
     "react-dom": "^16.7.0",
     "react-dropzone": "^4.2.12",
+    "react-facebook": "^8.0.4",
     "react-google-charts": "^3.0.11",
     "react-loadable": "^5.5.0",
     "react-loading": "^2.0.3",
     "react-moment": "^0.8.4",
     "react-number-format": "^4.0.7",
+    "react-player": "^1.11.0",
     "react-quill": "^1.3.3",
     "react-redux": "^6.0.0",
     "react-router-config": "^4.4.0-beta.6",
     "react-router-dom": "^4.3.1",
+    "react-scripts": "^2.1.8",
     "react-test-renderer": "^16.7.0",
     "react-transition-group": "^2.5.3",
     "reactstrap": "^7.0.2",
@@ -52,8 +55,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-form": "^8.1.0",
     "redux-thunk": "^2.3.0",
-    "simple-line-icons": "^2.4.1",
-    "react-scripts": "^2.1.8"
+    "simple-line-icons": "^2.4.1"
   },
   "devDependencies": {
     "react-scripts": "^2.1.8"

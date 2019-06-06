@@ -1,1 +1,3 @@
-export { default } from './DefaultLayout.js';
+import DefaultLayout from './DefaultLayout';
+
+export default DefaultLayout;

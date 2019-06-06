@@ -4,6 +4,12 @@ const isEmpty = require('./is-empty');
 module.exports = function validateAddCourseInput(data) {
   let errors = {};
 
+  if (Validator.isEmpty(data.maxStudent)) 
+    errors.maxStudent = 'Hãy điền số lượng học viên tối đa';
+
+  if (Validator.isEmpty(data.minStudent)) 
+    errors.minStudent = 'Hãy điền số lượng học viên tối thiểu';
+
   if (Validator.isEmpty(data.listId)) 
     errors.listId = 'Hãy chọn danh sách bài học';
 

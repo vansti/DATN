@@ -1,25 +1,50 @@
-import React from 'react';
-import { Switch, Route , withRouter, Redirect } from 'react-router-dom';
+import React, { Component } from 'react';
 import Loadable from 'react-loadable';
-//css Page
-import './assets/styles/main_styles.css';
-import './assets/styles/responsive.css';
+import './App.scss';
+import { Route , withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { setCurrentUser } from './actions/authActions';
+import setAuthToken from './utils/setAuthToken';
+import jwt_decode from 'jwt-decode';
+import store from './store/store';
 
-import './App.css';
+const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
 // Containers
-import DefaultLayout from './containers/DefaultLayout'
+const DefaultLayout = Loadable({
+  loader: () => import('./containers/DefaultLayout'),
+  loading
+});
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={props => <Component {...props} />} />
-);
-
-function App() {
-  return (
-    <div>
-      <PrivateRoute path="/" component={DefaultLayout} />
-    </div>
-  );
+// Check for token
+if (localStorage.jwtToken) {
+  // Set auth token header auth
+  setAuthToken(localStorage.jwtToken);
+  // Decode token and get user info and exp
+  const decoded = jwt_decode(localStorage.jwtToken);
+  // Set user and isAuthenticated
+  store.dispatch(setCurrentUser(decoded));
 }
 
-export default App;
+class App extends Component {
+
+  render() {
+
+    return (
+      <div>
+        <Route path="/" component={DefaultLayout} />
+      </div>
+    );
+  }
+}
+
+App.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default withRouter(connect(mapStateToProps)(App));
