@@ -4,7 +4,7 @@ const quizService = {
   calPointQuiz: (listQuiz, submistionAnswer) => {
     let numberQuizCorrect = 0;
     listQuiz.forEach((element, index) => {
-        if(element.correctAnswer == submistionAnswer[index]) {
+        if(element.correctAnswer == submistionAnswer[element._id]) {
             numberQuizCorrect++;
         }
     });

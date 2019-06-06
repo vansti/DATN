@@ -24,6 +24,7 @@ class TestQuizForm extends Component {
   submit = (values) => {
     this.setState({issubmit: true})
     values.courseId = this.props.match.params.id
+    
     this.props.submitTestQuiz(values);
   }
 
@@ -68,13 +69,13 @@ class TestQuizForm extends Component {
       date: quizTest.time * 60000,
       isStart: true
     })
-    this.countdownInterval = window.setInterval(() => {
-      if (this.state.date <= 0) {
-        return this.submit()
-      }
+    // this.countdownInterval = window.setInterval(() => {
+    //   if (this.state.date <= 0) {
+    //     return this.submit()
+    //   }
 
-      this.setState(({ date }) => ({ date: date - 1000 }));
-    }, 1000);
+    //   this.setState(({ date }) => ({ date: date - 1000 }));
+    // }, 1000);
   };
 
   componentDidUpdate = () => {
@@ -109,8 +110,8 @@ class TestQuizForm extends Component {
               Thời gian làm bài : &nbsp;
               <span style={{color: 'red'}}>
                 <Countdown
-                  date={this.state.date}
-                  controlled={true}
+                  date={Date.now() + this.state.date}
+                  onComplete={handleSubmit(this.submit)}
                 />
               </span>
             </b>
@@ -130,7 +131,7 @@ class TestQuizForm extends Component {
               />
             {
               quizTest.listQuiz.map((quiz, index) => {
-                let name = 'answer[' + index + ']';
+                let name = 'answer[' + quiz._id + ']';
                 return (
                   <Field
                     name={name}
