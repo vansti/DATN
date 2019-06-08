@@ -73,6 +73,7 @@ router.post(
       text: req.body.text,
       attachFiles: req.body.attachFiles,
       deadline: req.body.deadline,
+      password: req.body.password,
       courseId: req.body.courseId
     });
 

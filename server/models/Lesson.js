@@ -33,7 +33,7 @@ const LessonSchema = new Schema({
   exercises: [
     {
       type: Schema.Types.ObjectId,
-      ref: "exercises"
+      ref: "exercises",
     }
   ],
   quizzes: [
@@ -47,6 +47,9 @@ const LessonSchema = new Schema({
       },
       startTime: {
         type: Date
+      },
+      password: {
+        type: String
       }
     }
   ]
