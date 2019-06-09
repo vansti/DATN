@@ -449,7 +449,8 @@ class StudentIfo extends Component {
                                 </div>
                               </td >
                               <td rowSpan="3">
-                                {course.title}
+                                <b>{course.title}</b><br/>
+                                <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
                               </td>
                               <td className="changeCursor" onClick={this.handleAbsent.bind(this, course._id)}>
                                 Xem ngày vắng

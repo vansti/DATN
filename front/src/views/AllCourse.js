@@ -80,6 +80,7 @@ class Confirm extends Component {
                             <div style={styles.imgbox3}>
                               <img src={course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                             </div>
+                            <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
                 
                             <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
 

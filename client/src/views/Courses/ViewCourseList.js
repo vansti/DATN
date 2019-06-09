@@ -83,7 +83,9 @@ class ViewCourseList extends Component {
   onSearch = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
     updatedList = updatedList.filter((course)=>
-      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      course.code.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
     this.setState({ managecourses: updatedList });
   }
 
@@ -120,7 +122,7 @@ class ViewCourseList extends Component {
               <ReactLoading type='bars' color='#05386B'/>
               :
               <Fragment>
-                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Mã hoặc Tên khóa học . . ."/>
                 <Table style={{marginTop:20}} hover responsive className="table-outline mb-0 d-none d-sm-table" >
                   <tbody>
                     {
@@ -130,6 +132,9 @@ class ViewCourseList extends Component {
                             <div className="text-center">
                               <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
                             </div>
+                          </td>
+                          <td>
+                            {course.code}
                           </td>
                           <td>
                             {course.title}

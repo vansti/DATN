@@ -20,7 +20,8 @@ class Register extends Component {
       password2: '',
       errors: {},
       role: '',
-      phone: ''
+      phone: '',
+      idCard: ''
     };
   }
   componentDidMount() {
@@ -53,6 +54,7 @@ class Register extends Component {
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2,
+      idCard: this.state.idCard,
       role: 'student'
     };
     this.setState({ isLoading: true });
@@ -105,6 +107,15 @@ class Register extends Component {
                         <Input type="text" placeholder="Số điện thoại" name="phone" value={this.state.phone} onChange={this.onChange}/>
                       </InputGroup>
                       {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+
+                      <InputGroup className="mb-3">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="fa fa-id-card" aria-hidden="true"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text" placeholder="Chứng minh nhân dân" name="idCard" value={this.state.idCard} onChange={this.onChange}/>
+                      </InputGroup>
+                      {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
+
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>

@@ -15,6 +15,12 @@ module.exports = function validateRegisterInput(data) {
     errors.name = 'Họ Tên phải ít nhất 2 ký tự';
   }
 
+  if(data.role === 'student')
+  {
+    if(Validator.isEmpty(data.idCard))
+      errors.idCard = 'CMND không được bỏ trống';
+  }
+
   if (!isPhone(data.phone)) {
     errors.phone = 'Số điện thoại không đúng';
   }

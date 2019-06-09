@@ -21,19 +21,21 @@ const validateLoginInput = require('../../validation/login');
 const validateProfileInput = require('../../validation/profile');
 const validateChangePasswordInput = require('../../validation/password');
 const validateAddStudentInput = require('../../validation/addStudent');
-const validateAddJoinedStudentInput = require('../../validation/addJoinedStudent');
+const validateLoginLMSInput = require('../../validation/loginLMS');
 
 
 // User Model
 const User = require('../../models/User');
 const Course = require('../../models/Course');
 const CourseDetail = require('../../models/CourseDetail');
+const School = require('../../models/School');
 
 router.use(cors());
 router.use(formData.parse())
 
 const sendEmail = require('../../email/email.send')
 const templates = require('../../email/email.templates')
+const notify = require('../../email/email.notify')
 
 // @route   POST api/users/register
 // @desc    Register User
@@ -46,32 +48,68 @@ router.post('/register', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ email: req.body.email }).then(user => {
-    if (user) {
-      errors.email = 'Email đã tồn tại';
-      return res.status(400).json(errors);
-    } else {
+  async function run() {
+    try {
+      const findCard = await User.findOne({ idCard: req.body.idCard })
+
+      if (findCard) {
+        errors.idCard = 'CMND đã được dùng để tạo tài khoản';
+        return res.status(404).json(errors);
+      }
+
+      const findEmail = await User.findOne({ email: req.body.email })
+
+      if (findEmail) {
+        errors.email = 'Email đã tồn tại';
+        return res.status(400).json(errors);
+      }
 
       if(req.body.role === 'student')
       {
+        var date = new Date();
+        let code = 'hv' + date.getFullYear().toString().slice(2,4) + req.body.idCard;
         var newUser = new User({
           name: req.body.name,
           email: req.body.email,
           password: req.body.password,
           role: req.body.role,
-          phone: req.body.phone
+          phone: req.body.phone,
+          idCard: req.body.idCard,
+          code: code
         });
       }else{
+
+        if(req.body.code === '')
+        {
+          let errors = {};
+          errors.code = 'Mã đăng nhập không được bỏ trống'
+          return res.status(400).json(errors);
+        }
+
+        const find = 
+        await
+        User.findOne(
+          { code : req.body.code }
+        )
+  
+        if(find)
+        {
+          let errors = {};
+          errors.code = 'Mã này đã tồn tại'
+          return res.status(400).json(errors);
+        }
+
         var newUser = new User({
           name: req.body.name,
           email: req.body.email,
           password: req.body.password,
           role: req.body.role,
           confirmed: true,
-          phone: req.body.phone
+          phone: req.body.phone,
+          code: req.body.code,
+          idCard: req.body.idCard
         });
       }
-
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -80,16 +118,176 @@ router.post('/register', (req, res) => {
           newUser
             .save()
             .then(user=>{
-              sendEmail(user.email, templates.confirm(user._id, user.name))
-              .then(res.json({mes:"Tạo tài khoản thành công"}))
-              .catch(err => console.log(err));
-  
+              if(req.body.role === 'student')
+              {
+                sendEmail(user.email, templates.confirm(user._id, user.name))
+                .then(res.json({mes:"Tạo tài khoản thành công"}))
+                .catch(err => console.log(err));
+              }else{
+                res.json({mes:"Tạo tài khoản thành công"})
+              }
             })
             .catch(err => console.log(err));
         });
       });
+
+    } catch (err) {
+      console.log(err)
     }
-  });
+  }
+
+  run();
+
+});
+
+router.post('/create_payment_url', function (req, res) {
+  var ipAddr = req.headers['x-forwarded-for'] ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
+
+  var dateFormat = require('dateformat');
+
+  var tmnCode = process.env.vnp_TmnCode
+  var secretKey = process.env.vnp_HashSecret
+  var vnpUrl = process.env.vnp_Url
+  var returnUrl = process.env.vnp_ReturnUrl
+
+  var date = new Date();
+
+  var createDate = dateFormat(date, 'yyyymmddHHmmss');
+  var orderId = dateFormat(date, 'HHmmss');
+  var amount = req.body.amount;
+  var bankCode = req.body.bankCode;
+  var orderInfo = req.body.courseId;
+  var orderType = '190000';
+  var locale = 'vn';
+  var currCode = 'VND';
+  var vnp_Params = {};
+  vnp_Params['vnp_Version'] = '2';
+  vnp_Params['vnp_Command'] = 'pay';
+  vnp_Params['vnp_TmnCode'] = tmnCode;
+  vnp_Params['vnp_Locale'] = locale;
+  vnp_Params['vnp_CurrCode'] = currCode;
+  vnp_Params['vnp_TxnRef'] = orderId;
+  vnp_Params['vnp_OrderInfo'] = orderInfo;
+  vnp_Params['vnp_OrderType'] = orderType;
+  vnp_Params['vnp_Amount'] = amount * 100;
+  vnp_Params['vnp_ReturnUrl'] = returnUrl;
+  vnp_Params['vnp_IpAddr'] = ipAddr;
+  vnp_Params['vnp_CreateDate'] = createDate;
+  if(bankCode !== null && bankCode !== ''){
+      vnp_Params['vnp_BankCode'] = bankCode;
+  }
+
+  vnp_Params = sortObject(vnp_Params);
+
+  var querystring = require('qs');
+  var signData = secretKey + querystring.stringify(vnp_Params, { encode: false });
+
+  var sha256 = require('sha256');
+
+  var secureHash = sha256(signData);
+
+  vnp_Params['vnp_SecureHashType'] =  'SHA256';
+  vnp_Params['vnp_SecureHash'] = secureHash;
+  vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: true });
+
+  res.json(vnpUrl)
+});
+
+function sortObject(o) {
+  var sorted = {},
+      key, a = [];
+
+  for (key in o) {
+      if (o.hasOwnProperty(key)) {
+          a.push(key);
+      }
+  }
+
+  a.sort();
+
+  for (key = 0; key < a.length; key++) {
+      sorted[a[key]] = o[a[key]];
+  }
+  return sorted;
+}
+
+
+router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), function (req, res) {
+  var vnp_Params = req.query;
+
+  if(vnp_Params['vnp_ResponseCode'] === '00'){
+
+    async function run() {
+      try {
+
+        const find = 
+        await
+        Course.find(
+          { _id : vnp_Params['vnp_OrderInfo'], students: req.user.id }
+        )
+        
+        if(find.length === 0)
+        {
+        
+          await 
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : vnp_Params['vnp_OrderInfo'] },
+            { 
+              $push: {
+                enrollStudents: {
+                  student: req.user.id,
+                  paymentMethod: 'Thanh toán trực tuyến'
+                }
+              }
+            }
+          )
+  
+          await 
+          Course.findByIdAndUpdate(
+            vnp_Params['vnp_OrderInfo'] ,
+            { 
+              $push: {
+                students: req.user.id
+              }
+            }
+          )
+  
+          await
+          User.findByIdAndUpdate(
+            req.user.id ,
+            { 
+              $push: {
+                courses: vnp_Params['vnp_OrderInfo']
+              }
+            }
+          )
+          
+          const coursedetail = 
+          await
+          CourseDetail.findOne(
+            { 'courseId' : vnp_Params['vnp_OrderInfo'] },
+            { maxStudent: 1, enrollStudents: 1}
+          )
+  
+          if(coursedetail.enrollStudents.length >= coursedetail.maxStudent)
+            await 
+            CourseDetail.findOneAndUpdate(
+              { 'courseId' : req.body.courseId },
+              { isFull: true }
+            )
+        }
+
+        res.json(req.user.code)
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
 });
 
 // @route   POST api/users/add-student
@@ -116,7 +314,7 @@ router.post('/add-student', (req, res) => {
       if(course.isFull === true)
       {
         let errors = {};
-        errors.city = 'Lớp học đã đạt số thành viên tối đa không thể thêm!'
+        errors.password2 = 'Lớp học đã đạt số thành viên tối đa không thể thêm!'
         return res.status(400).json(errors);
       }
 
@@ -126,13 +324,24 @@ router.post('/add-student', (req, res) => {
         return res.status(400).json(errors);
       } 
       
+      const find2 = await User.findOne({ idCard: req.body.idCard })
+      if (find2) {
+        errors.idCard = 'CMND đã tồn tại';
+        return res.status(400).json(errors);
+      } 
+
+      var date = new Date();
+      let code = 'hv' + date.getFullYear().toString().slice(2,4) + req.body.idCard;
+
       var newUser = new User({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
         role: req.body.role,
         confirmed: true,
-        phone: req.body.phone
+        phone: req.body.phone,
+        idCard: req.body.idCard,
+        code: code
       });
 
       await
@@ -151,13 +360,7 @@ router.post('/add-student', (req, res) => {
           $push: {
             enrollStudents: {
               student: newUser._id,
-              paymentMethod: 'Thanh toán tại trung tâm',
-              paymentDetail: {
-                recipient_name: req.body.recipient_name,
-                email: req.body.email2,
-                line1: req.body.line1,
-                city: req.body.city
-              }
+              paymentMethod: 'Thanh toán tại trung tâm'
             }
           }
         }
@@ -211,15 +414,22 @@ router.post('/add-student', (req, res) => {
 // @desc    Add student
 // @access  Public
 router.post('/add-joined-student', (req, res) => {
-  const { errors, isValid } = validateAddJoinedStudentInput(req.body);
-
-  // Check Validation
-  if (!isValid) {
-    return res.status(400).json(errors);
-  }
 
   async function run() {
     try {
+
+      const find = 
+      await
+      Course.findOne(
+        { _id : req.body.courseId, students: req.body.studentId }
+      )
+
+      if(find)
+      {
+        let errors = {};
+        errors.fail = 'Học viên đã có trong khóa học'
+        return res.status(400).json(errors);
+      }
 
       const course =         
       await 
@@ -231,7 +441,7 @@ router.post('/add-joined-student', (req, res) => {
       if(course.isFull === true)
       {
         let errors = {};
-        errors.city = 'Lớp học đã đạt số thành viên tối đa không thể thêm!'
+        errors.fail = 'Lớp học đã đạt số thành viên tối đa không thể thêm!'
         return res.status(400).json(errors);
       }
 
@@ -242,13 +452,7 @@ router.post('/add-joined-student', (req, res) => {
           $push: {
             enrollStudents: {
               student: req.body.studentId,
-              paymentMethod: 'Thanh toán tại trung tâm',
-              paymentDetail: {
-                recipient_name: req.body.recipient_name,
-                email: req.body.email,
-                line1: req.body.line1,
-                city: req.body.city
-              }
+              paymentMethod: 'Thanh toán tại trung tâm'
             }
           }
         }
@@ -332,12 +536,19 @@ router.post('/search-student', (req, res) => {
 
   async function run() {
     try {
-      const user = await User.findOne({ email: req.body.email }, 'email name photo')
+      const user = await User.findOne({ email: req.body.search }, 'code idCard email name photo')
 
       if (!user) {
-        let errors = {};
-        errors.search = 'Không tìm thấy email này';
-        return res.status(404).json(errors);
+        const user2 = await User.findOne({ idCard: req.body.search }, 'code idCard email name photo')
+        
+        if (!user2) {
+          let errors = {};
+          errors.search = 'Không tìm thấy học viên này';
+          return res.status(404).json(errors);
+        }
+
+        res.json(user2)
+
       }
 
       res.json(user)
@@ -432,6 +643,54 @@ router.post('/login', (req, res) => {
   });
 });
 
+// @route   GET api/users/login-lms
+// @desc    Login User / Returning JWT Token
+// @access  Public
+router.post('/login-lms', (req, res) => {
+  const { errors, isValid } = validateLoginLMSInput(req.body);
+
+  // Check Validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  const code = req.body.code;
+  const password = req.body.password;
+
+  // Find User by code
+  User.findOne({ code }).then(user => {
+    // Check for User
+    if (!user) {
+      errors.code = 'Không tìm thấy tài khoản này';
+      return res.status(404).json(errors);
+    }
+
+    // Check Password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        // User Matched
+        const payload = { id: user.id, code: user.code, name: user.name, role: user.role, photo: user.photo, email: user.email }; // Create JWT Payload
+
+        // Sign Token
+        jwt.sign(
+          payload,
+          keys.secretOrKey,
+          //{ expiresIn: 3600 },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: 'Bearer ' + token
+            });
+          }
+        );
+      } else {
+        errors.password = 'Mật khẩu sai';
+        return res.status(400).json(errors);
+      }
+    });
+  });
+});
+
 // @route   GET api/users/current
 // @desc    Return current User
 // @access  Private
@@ -442,7 +701,9 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
       email: req.user.email,
       phone: req.user.phone,
       photo: req.user.photo,
-      role: req.user.role
+      idCard: req.user.idCard,
+      role: req.user.role,
+      code: req.user.code
     });
   }
 );
@@ -468,6 +729,7 @@ router.post(
     if (req.body.email) profileFields.email = req.body.email;
     if (req.body.name) profileFields.name = req.body.name;
     if (req.body.phone) profileFields.phone = req.body.phone;
+    if (req.body.idCard) profileFields.idCard = req.body.idCard;
 
     User.findByIdAndUpdate(req.user.id, profileFields, {new: true})
     .then(res.json({"mes":"Thay đổi thành công"}))
@@ -584,16 +846,27 @@ router.get(
         const coursedetail = await 
           CourseDetail.findOne(
             { 'courseId' : req.params.courseId } ,
-            { enrollStudents: 1 , maxStudent: 1, minStudent: 1, isFull: 1 }
+            { enrollStudents: 1 , maxStudent: 1, minStudent: 1, isFull: 1, isNotifyMail: 1 }
           )
-          .populate('enrollStudents.student', '_id name email photo')
+          .populate('enrollStudents.student', '_id name email photo code phone')
           .lean()
-          
+        
+        const course = await 
+          Course.findById(
+            req.params.courseId  ,
+            { enrollDeadline: 1, code: 1, title: 1 }
+          )
+          .lean()
+
         const result = {
+          code: course.code,
+          title: course.title,
+          enrollDeadline: course.enrollDeadline,
           enrollStudents: coursedetail.enrollStudents,
           maxStudent: coursedetail.maxStudent,
           minStudent: coursedetail.minStudent,
-          isFull: coursedetail.isFull
+          isFull: coursedetail.isFull,
+          isNotifyMail: coursedetail.isNotifyMail          
         }
         res.json(result)
       } catch (err) {
@@ -631,6 +904,231 @@ router.get(
           teacherInCourse: teacherInCourse.teachers
         }
         res.json(result)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
+
+// @route   POST api/users/send-notify-mail/:courseId
+// @desc    gửi mail thông báo cho tất cả học viên trong khóa ko thể mở lớp
+// @access  Private
+router.post(
+  '/send-notify-mail/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    async function run() {
+      try {
+        const school = await School.find();
+        
+        const course = await 
+        Course.findById(
+          req.params.courseId, 
+          { students: 1, title: 1 }
+        )
+        .populate('students', '_id name email')
+        .lean()
+
+        await
+        course.students.forEach(student=>{
+          sendEmail(student.email, notify.confirm(student._id, course._id, student.name, course.title, school[0].name, school[0].address))
+        })
+
+        await
+        CourseDetail.findOneAndUpdate(
+          { courseId: req.params.courseId },
+          { isNotifyMail:  true }
+        )
+
+        res.json({mes:"Đã gửi mail cho các học viên"})
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
+
+// @route   POST api/users/rep-notify-mail/:userId/:courseId
+// @desc    xác nhận mail ko thể mở lớp
+// @access  Private
+router.post(
+  '/rep-notify-mail/:userId/:courseId',
+  (req, res) => {
+    async function run() {
+      try {
+
+        var course_detail = await  
+        CourseDetail.findOne(
+          { 'courseId' : req.params.courseId },
+          {
+            enrollStudents:  
+            {
+              $elemMatch: {
+                'student': req.params.userId
+              }
+            }
+          }
+        ).lean()
+
+        if(course_detail.enrollStudents === undefined)
+        {
+          let errors = {};
+          errors.fail = 'Gửi phản hồi về mail thông báo không thể mở lớp không thành công';
+          return res.status(400).json(errors);
+        }
+
+        await CourseDetail.updateOne(
+          { 'courseId' : req.params.courseId, "enrollStudents.student": req.params.userId },
+          { 
+            $set: 
+            { 
+              "enrollStudents.$.replyMail" :  req.body.replyMail           
+            } 
+          }
+        )
+
+        res.json({mes:"Đã phản hồi mail thành công"})
+
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
+
+// @route   POST api/users/confirm-request/:userId/:courseId
+// @desc    xác nhận mail ko thể mở lớp
+// @access  Private
+router.post(
+  '/confirm-request/:courseId/:enrollStudentsId',
+  (req, res) => {
+    async function run() {
+      try {
+
+        var course_detail = await  
+        CourseDetail.findOne(
+          { 'courseId' : req.params.courseId },
+          {
+            enrollStudents:  
+            {
+              $elemMatch: {
+                '_id': req.params.enrollStudentsId
+              }
+            }
+          }
+        ).lean()
+
+        
+        if(course_detail.enrollStudents[0].replyMail.chosen === 'Rời khỏi khóa học')
+        {
+
+          await
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            { 
+              $pull: {
+                enrollStudents: {
+                  _id: req.params.enrollStudentsId
+                }
+              }
+            }
+          )
+           
+          await
+          Course.findOneAndUpdate(
+            { '_id' : req.params.courseId },
+            { 
+              $pull: {
+                students: course_detail.enrollStudents[0].student
+              }
+            }
+          )
+
+          await
+          User.findOneAndUpdate(
+            { '_id' : course_detail.enrollStudents[0].student },
+            { 
+              $pull: {
+                courses: req.params.courseId
+              }
+            }
+          )
+
+          res.json({mes:"Xác nhận thành công"})
+        }else{
+          await
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            { 
+              $pull: {
+                enrollStudents: {
+                  _id: req.params.enrollStudentsId
+                }
+              }
+            }
+          )
+
+          await
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : course_detail.enrollStudents[0].replyMail.changeCourseId },
+            { 
+              $push: {
+                enrollStudents: {
+                  student: course_detail.enrollStudents[0].student,
+                  paymentMethod: course_detail.enrollStudents[0].paymentMethod
+                }
+              }
+            }
+          )
+
+          await
+          Course.findOneAndUpdate(
+            { '_id' : req.params.courseId },
+            { 
+              $pull: {
+                students: course_detail.enrollStudents[0].student
+              }
+            }
+          )
+
+          await
+          Course.findOneAndUpdate(
+            { '_id' : course_detail.enrollStudents[0].replyMail.changeCourseId },
+            { 
+              $push: {
+                students: course_detail.enrollStudents[0].student
+              }
+            }
+          )
+
+          await
+          User.findOneAndUpdate(
+            { '_id' : course_detail.enrollStudents[0].student },
+            { 
+              $pull: {
+                courses: req.params.courseId
+              }
+            }
+          )
+
+          await
+          User.findOneAndUpdate(
+            { '_id' : course_detail.enrollStudents[0].student },
+            { 
+              $push: {
+                courses: course_detail.enrollStudents[0].replyMail.changeCourseId
+              }
+            }
+          )
+          res.json({mes:"Xác nhận thành công"})
+        }
+
       } catch (err) {
         console.log(err)
       }

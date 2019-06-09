@@ -29,6 +29,7 @@ class ListAttendance extends Component {
     this.state = {
       isOpenModal: false,
       courseTitle: null,
+      courseCode: null,
       loadingUserAttendance: true,
       events: [],
       loadingEvent :true,
@@ -95,12 +96,13 @@ class ListAttendance extends Component {
     });
   }
 
-  onChangeSelectCourse(courseId, courseTitle) {
+  onChangeSelectCourse(courseId, courseTitle, courseCode) {
     this.props.getSchedule(courseId);
     this.props.getAttendance(courseId);
     this.setState({ 
       isOpenModal: false,
       courseTitle,
+      courseCode,
       courseId, 
       selectDate: null,
       users: [],
@@ -231,7 +233,10 @@ class ListAttendance extends Component {
   onSearch = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
     updatedList = updatedList.filter((course)=>
-      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      course.code.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
+
     this.setState({ managecourses: updatedList });
   }
 
@@ -249,7 +254,8 @@ class ListAttendance extends Component {
       events,
       selectDate,
       loadingUserAttendance,
-      courseTitle
+      courseTitle,
+      courseCode
     } = this.state;
 
     var SelectDateChart = <div></div>;
@@ -395,7 +401,7 @@ class ListAttendance extends Component {
             <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
               <ModalHeader  toggle={this.toggleModal}>Chọn khóa học</ModalHeader>
               <ModalBody style={{overflowY:'scroll', height:500}}>
-                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên hoặc Mã khóa học . . ."/>
                 {
                   managecourses.length === 0
                   ?
@@ -404,9 +410,9 @@ class ListAttendance extends Component {
                   <ListGroup>
                   {
                     managecourses.map(course=>
-                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title)}>
+                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title, course.code)}>
                         <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                        <span style={{marginLeft: 10}}>{course.title}</span>
+                        <span style={{fontWeight: 'bold', marginLeft: 10}}>{course.code}</span> - <span>{course.title}</span> 
                       </ListGroupItem>
                     )
                   }
@@ -417,7 +423,7 @@ class ListAttendance extends Component {
             {
               courseTitle &&
               <Alert style={{marginBottom: 20, marginTop: 20, textAlign: 'center', fontWeight:'bold'}} color="primary">
-                Lịch sử điểm danh của {courseTitle}
+                Lịch sử điểm danh của {courseCode} - {courseTitle}
               </Alert>
             }
 

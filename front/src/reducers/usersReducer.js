@@ -1,5 +1,5 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING, GET_PAY_URL, CLEAR_URL, GET_VNPAY_RETURN, CLEAR_VNPAY_RETURN
 } from '../actions/types';
 
 const initialState = {
@@ -12,6 +12,8 @@ const initialState = {
     enrollStudents: [],
     students: []
   },
+  pay_url: '',
+  pay_return: '',
   loading: false
 };
 
@@ -21,6 +23,18 @@ export default function(state = initialState, action) {
       return {
         ...state,
         users: action.payload,        
+        loading: false        
+      };
+    case GET_PAY_URL:
+      return {
+        ...state,
+        pay_url: action.payload,        
+        loading: false        
+      };
+    case GET_VNPAY_RETURN:
+      return {
+        ...state,
+        pay_return: action.payload,        
         loading: false        
       };
     case USERS_LOADING:
@@ -53,6 +67,16 @@ export default function(state = initialState, action) {
           students:[],
           teachers:[]
         }
+      };
+    case CLEAR_URL:
+      return {
+        ...state,
+        pay_url: ''
+      };
+    case CLEAR_VNPAY_RETURN:
+      return {
+        ...state,
+        pay_return: ''
       };
     default:
       return state;

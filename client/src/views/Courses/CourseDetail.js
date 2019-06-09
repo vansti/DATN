@@ -57,7 +57,7 @@ class CourseDetail extends Component {
           :
           <Fragment>
             <CardHeader>
-              <i className="fa fa-align-justify"></i><strong>{courseinfo.course.title}</strong>
+              <strong>{courseinfo.course.code} - {courseinfo.course.title}</strong>
             </CardHeader>
             <CardBody>
               <Nav tabs>

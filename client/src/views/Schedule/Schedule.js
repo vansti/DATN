@@ -115,7 +115,7 @@ class Schedule extends Component {
             <option value="0">Hãy chọn khóa học</option>
               { 
                 currentcourses.map(course=>
-                  <option key={course._id} value={course._id}>{course.title}</option>
+                  <option key={course._id} value={course._id}>{course.code}</option>
                 )
               }
           </Input>

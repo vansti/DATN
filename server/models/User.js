@@ -15,6 +15,12 @@ const UserSchema = new Schema({
   phone: {
     type: String
   },
+  idCard:{
+    type: String
+  },
+  code: {
+    type: String
+  },
   password: {
     type: String,
     required: true

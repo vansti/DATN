@@ -10,7 +10,11 @@ import {
   GET_SUCCESS, 
   GET_ERRORS, 
   CLEAR_SUCCESS, 
-  USERS_LOADING 
+  USERS_LOADING,
+  GET_PAY_URL,
+  CLEAR_URL,
+  GET_VNPAY_RETURN,
+  CLEAR_VNPAY_RETURN
 } from './types';
 
 // Get a list of users
@@ -125,6 +129,71 @@ export const approveTeacher = (courseId, teacherId) => dispatch => {
     );
 };
 
+// 
+export const createOrder = (paymentData) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/create_payment_url`, paymentData)
+    .then(res =>{
+      dispatch({
+        type: GET_PAY_URL,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const vnpayReturn = (query) => dispatch => {
+  axios
+    .get(config.ADDRESS +`/api/users/vnpay_return${query}`)
+    .then(res =>{
+      dispatch({
+        type: GET_VNPAY_RETURN,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const repNotifyMail = (userId, courseId, repData) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/rep-notify-mail/${userId}/${courseId}`, repData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Clear payment url
+export const clearUrl = () => {
+  return {
+    type: CLEAR_URL
+  };
+};
+
+// Clear payment url
+export const clearVnpayReturn = () => {
+  return {
+    type: CLEAR_VNPAY_RETURN
+  };
+};
 
 export const setUsersLoading = () => {
   return {

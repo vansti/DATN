@@ -16,6 +16,8 @@ class CreateAccount extends Component {
       password2: '',
       errors: {},
       role: '',
+      idCard: '',
+      code: '',
       isShowSuccess: false, 
       isLoading: false
     };
@@ -45,7 +47,9 @@ class CreateAccount extends Component {
       phone: this.state.phone,
       password: this.state.password,
       password2: this.state.password2,
-      role: this.state.role
+      role: this.state.role,
+      idCard: this.state.idCard,
+      code: this.state.code
     };
     this.setState({isLoading: true});
     this.props.clearErrors();
@@ -61,6 +65,8 @@ class CreateAccount extends Component {
       password2: '',
       errors: {},
       role: '',
+      idCard: '',
+      code: '',
       isShowSuccess: false
     })
   }
@@ -73,10 +79,11 @@ class CreateAccount extends Component {
         <Container>
           <Row className="justify-content-center">
             <Col md="9" lg="7" xl="6">
-              <Card className="mx-4">
+              <Card className="mx-2">
                 <CardBody className="p-4">
                   <Form onSubmit={this.onSubmit}>
                     <h1>Tạo tài khoản</h1>
+
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
                         <InputGroupText>
@@ -89,19 +96,13 @@ class CreateAccount extends Component {
 
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
-                        <InputGroupText>@</InputGroupText>
+                        <InputGroupText>
+                          <i className="fa fa-pencil" aria-hidden="true"></i>
+                        </InputGroupText>
                       </InputGroupAddon>
-                      <Input type="text" placeholder="Email" autoComplete="email" name="email" value={this.state.email} onChange={this.onChange}/>
+                      <Input type="text" placeholder="Mã đăng nhập"  name="code" value={this.state.code} onChange={this.onChange} />
                     </InputGroup>
-                    {errors.email && <Alert color="danger">{errors.email}</Alert>}
-
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText><i className="icon-phone"></i></InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" placeholder="Số điện thoại" name="phone" value={this.state.phone} onChange={this.onChange}/>
-                    </InputGroup>
-                    {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+                    {errors.code && <Alert color="danger">{errors.code}</Alert>}
 
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
@@ -123,23 +124,48 @@ class CreateAccount extends Component {
                     </InputGroup>                
                     {errors.password2 && <Alert color="danger">{errors.password2}</Alert>}
 
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>@</InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" placeholder="Email" autoComplete="email" name="email" value={this.state.email} onChange={this.onChange}/>
+                    </InputGroup>
+                    {errors.email && <Alert color="danger">{errors.email}</Alert>}
+
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText><i className="icon-phone"></i></InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" placeholder="Số điện thoại" name="phone" value={this.state.phone} onChange={this.onChange}/>
+                    </InputGroup>
+                    {errors.phone && <Alert color="danger">{errors.phone}</Alert>}
+
+                    <InputGroup className="mb-3">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText><i className="fa fa-id-card" aria-hidden="true"></i></InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" placeholder="Chứng minh nhân dân" name="idCard" value={this.state.idCard} onChange={this.onChange}/>
+                    </InputGroup>
+                    {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
+
                     <Label style={{fontWeight:'bold'}}>Chức danh</Label>
                     <InputGroup className="mb-3">
-                      <Col md="1"></Col>
-                      <Col md="10">
-                        <FormGroup check inline>
-                          <Input className="form-check-input" type="radio" id="inline-radio1" name="role" value="ministry" onChange={this.onChange}/>
-                          <Label className="form-check-label" check htmlFor="inline-radio1">Giáo vụ</Label>
-                        </FormGroup>
-                        <FormGroup check inline>
-                          <Input className="form-check-input" type="radio" id="inline-radio2" name="role" value="advisor" onChange={this.onChange}/>
-                          <Label className="form-check-label" check htmlFor="inline-radio2">Cố vấn đào tạo</Label>
-                        </FormGroup>
-                        <FormGroup check inline>
-                          <Input className="form-check-input" type="radio" id="inline-radio3" name="role" value="teacher" onChange={this.onChange}/>
-                          <Label className="form-check-label" check htmlFor="inline-radio3">Giáo viên</Label>
-                        </FormGroup>
-                      </Col>
+                      <FormGroup check inline>
+                        <Input className="form-check-input" type="radio" id="inline-radio1" name="role" value="ministry" onChange={this.onChange}/>
+                        <Label className="form-check-label" check htmlFor="inline-radio1">Phòng giáo vụ</Label>
+                      </FormGroup>
+                      <FormGroup check inline>
+                        <Input className="form-check-input" type="radio" id="inline-radio2" name="role" value="educator" onChange={this.onChange}/>
+                        <Label className="form-check-label" check htmlFor="inline-radio2">Phòng đào tạo</Label>
+                      </FormGroup>
+                      <FormGroup check inline>
+                        <Input className="form-check-input" type="radio" id="inline-radio3" name="role" value="financer" onChange={this.onChange}/>
+                        <Label className="form-check-label" check htmlFor="inline-radio3">Phòng tài vụ</Label>
+                      </FormGroup>
+                      <FormGroup check inline>
+                        <Input className="form-check-input" type="radio" id="inline-radio4" name="role" value="teacher" onChange={this.onChange}/>
+                        <Label className="form-check-label" check htmlFor="inline-radio4">Giáo viên</Label>
+                      </FormGroup>
                     </InputGroup>
                     {errors.role && <Alert color="danger">{errors.role}</Alert>}
 

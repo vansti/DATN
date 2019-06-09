@@ -17,12 +17,7 @@ class AddStudent extends Component {
       password: '',
       password2: '',
       errors: {},
-      role: '',
-      phone: '',
-      recipient_name: '',
-      email2: '',
-      line1: '',
-      city: ''
+      idCard: ''
     };
   }
 
@@ -51,11 +46,8 @@ class AddStudent extends Component {
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2,
-      role: 'student',
-      recipient_name: this.state.recipient_name,
-      email2: this.state.email2,
-      line1: this.state.line1,
-      city: this.state.city
+      idCard: this.state.idCard,
+      role: 'student'
     };
     this.setState({ isLoading: true });
     this.props.addStudent(newUser);
@@ -107,6 +99,14 @@ class AddStudent extends Component {
 
               <InputGroup className="mb-3">
                 <InputGroupAddon addonType="prepend">
+                  <InputGroupText><i className="fa fa-id-card" aria-hidden="true"></i></InputGroupText>
+                </InputGroupAddon>
+                <Input type="text" placeholder="Chứng minh nhân dân" name="idCard" value={this.state.idCard} onChange={this.onChange}/>
+              </InputGroup>
+              {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
+
+              <InputGroup className="mb-3">
+                <InputGroupAddon addonType="prepend">
                   <InputGroupText>
                     <i className="icon-lock"></i>
                   </InputGroupText>
@@ -124,45 +124,6 @@ class AddStudent extends Component {
                 <Input type="password" placeholder="Xác nhận lại mật khẩu" autoComplete="new-password" name="password2" value={this.state.password2} onChange={this.onChange}/>
               </InputGroup>
               {errors.password2 && <Alert color="danger">{errors.password2}</Alert>}
-
-              <h3>Thông tin người thanh toán</h3>
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="icon-user"></i>
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Họ và Tên người thanh toán" name="recipient_name" value={this.state.recipient_name} onChange={this.onChange} />
-              </InputGroup>
-              {errors.recipient_name && <Alert color="danger">{errors.recipient_name}</Alert>}
-
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>@</InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Email người thanh toán" name="email2" value={this.state.email2} onChange={this.onChange} />
-              </InputGroup>
-              {errors.email2 && <Alert color="danger">{errors.email2}</Alert>}
-
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="fa fa-address-card" aria-hidden="true"></i>
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Địa chỉ" name="line1" value={this.state.line1} onChange={this.onChange} />
-              </InputGroup>
-              {errors.line1 && <Alert color="danger">{errors.line1}</Alert>}
-              
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="fa fa-home" aria-hidden="true"></i>                
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Thành phố" name="city" value={this.state.city} onChange={this.onChange} />
-              </InputGroup>
-              {errors.city && <Alert color="danger">{errors.city}</Alert>}
 
               <Button color="success" onClick={this.onSubmit} block>Thêm học viên</Button>
             </Form>

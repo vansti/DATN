@@ -69,7 +69,7 @@ class DefaultHeader extends Component {
                   </DropdownToggle>
                   <DropdownMenu>
                     <DropdownItem header tag="div" className="text-center"><strong>Tài khoản</strong></DropdownItem>
-                    <DropdownItem tag="div">
+                    <DropdownItem tag="div" className="text-center">
                       <b>{profile.name}</b><br/> 
                       <small style={{color:'grey'}}>{profile.email} </small>
                     </DropdownItem>
@@ -95,7 +95,7 @@ class DefaultHeader extends Component {
                   </DropdownToggle>
                   <DropdownMenu>
                     <DropdownItem header tag="div" className="text-center"><strong>Tài khoản</strong></DropdownItem>
-                    <DropdownItem tag="div">
+                    <DropdownItem tag="div" className="text-center">
                       <b>{user.name}</b><br/> 
                       <small style={{color:'grey'}}>{user.email} </small>
                     </DropdownItem>

@@ -3,6 +3,9 @@ const Schema = mongoose.Schema;
 require('dotenv').config();
 
 const CourseSchema = new Schema({
+  code:{
+    type: String
+  },
   title: {
     type: String,
     required: true
@@ -16,6 +19,9 @@ const CourseSchema = new Schema({
   coursePhoto: {
     type: String,
     default: process.env.COURSE_PHOTO_DEFAULT
+  },
+  maxStudent: {
+    type: Number
   },
   pointColumns: [{
     pointName: {

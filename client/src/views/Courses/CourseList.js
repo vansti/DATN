@@ -76,6 +76,9 @@ class CourseList extends Component {
                           </div>
                         </td>
                         <td>
+                          {course.code}
+                        </td>
+                        <td>
                           {course.title}
                         </td>
                       </tr>

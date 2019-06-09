@@ -125,13 +125,15 @@ class ManageCourses extends Component {
   onSearch = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialManagecourses));
     updatedList = updatedList.filter((course)=>
-      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      course.code.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
     this.setState({ managecourses: updatedList });
   }
 
   render() {
     let { managecourses, currentPage, coursesPerPage, loading } = this.state;
-    // const { role } = this.props.auth.user
+    const { role } = this.props.auth.user
 
     // Logic for displaying current courses
     let indexOfLastTodo = currentPage * coursesPerPage;
@@ -159,7 +161,7 @@ class ManageCourses extends Component {
               <ReactLoading type='bars' color='#05386B'/>
               :
               <Fragment>
-                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                <Input type="text" name="search" value={this.state.search} onChange={this.onSearch} placeholder="Mã hoặc Tên khóa học . . ."/>
                 <Table style={{marginTop:20}} responsive className="mb-0 d-none d-sm-table">
                   <tbody>
                     {
@@ -171,29 +173,56 @@ class ManageCourses extends Component {
                             </div>
                           </td>
                           <td>
-                            {course.title}
+                            <b>{course.title}</b><br/>
+                            <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
                           </td>
                           <Fragment>
-                            <td>
-                              <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                Chỉnh sửa
-                              </Button>
-                            </td>
-                            <td>
-                              <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
-                                Quản lý giáo viên
-                              </Button>
-                            </td>
-                            <td>
-                              <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                                Quản lý học sinh
-                              </Button>
-                            </td>
-                            {/* <td>
-                              <Button onClick={this.handleJoinCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                Tham gia
-                              </Button>
-                            </td> */}
+                            {
+                              role === 'ministry'
+                              ?
+                              <Fragment>
+                                <td>
+                                  <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                    Chỉnh sửa
+                                  </Button>
+                                </td>
+                                <td>
+                                  <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
+                                    Quản lý giáo viên
+                                  </Button>
+                                </td>
+                              </Fragment>
+                              :
+                              <Fragment>
+                                {
+                                  role === 'admin'
+                                  ?
+                                  <Fragment>
+                                    <td>
+                                      <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                        Chỉnh sửa
+                                      </Button>
+                                    </td>
+                                    <td>
+                                      <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
+                                        Quản lý giáo viên
+                                      </Button>
+                                    </td>
+                                    <td>
+                                      <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                                        Quản lý học sinh
+                                      </Button>
+                                    </td>
+                                  </Fragment>
+                                  :
+                                  <td>
+                                    <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                                      Quản lý học sinh
+                                    </Button>
+                                  </td>
+                                }
+                              </Fragment>
+                            }
                           </Fragment>
                         </tr>
                       )

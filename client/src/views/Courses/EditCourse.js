@@ -54,7 +54,7 @@ class EditCourse extends Component {
       enrollDeadline: null,
       studyTime: '',
       openingDay: null,
-      endDay:null,
+      endDay: null,
       fee: '',
       info: '',
       file: null,
@@ -62,7 +62,9 @@ class EditCourse extends Component {
       errors: {},
       isLoading: false,
       invalidImg: false,
-      pointColumns: []
+      pointColumns: [],
+      maxStudent: '',
+      minStudent: ''
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -93,7 +95,9 @@ class EditCourse extends Component {
         endDay: courseinfo.course_detail.endDay ? new Date(courseinfo.course_detail.endDay) : null,
         fee: courseinfo.course_detail.fee,
         info: courseinfo.course_detail.info,
-        pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : []
+        pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : [],
+        maxStudent: courseinfo.course_detail.maxStudent,
+        minStudent: courseinfo.course_detail.minStudent
       });
     }
   }
@@ -137,7 +141,11 @@ class EditCourse extends Component {
       enrollDeadline: this.state.enrollDeadline,
       fee: this.state.fee,
       info: this.state.info,
-      pointColumns: this.state.pointColumns
+      pointColumns: this.state.pointColumns,
+      openingDay: this.state.openingDay,
+      endDay: this.state.endDay,
+      maxStudent: this.state.maxStudent,
+      minStudent: this.state.minStudent
     };
     this.props.clearErrors();
     this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
@@ -194,6 +202,10 @@ class EditCourse extends Component {
       pointColumns: this.state.pointColumns.filter((s, sidx) => idx !== sidx)
     });
   };
+
+  onChangeOpeningDay = openingDay => this.setState({ openingDay })
+
+  onChangeEndDay = endDay => this.setState({ endDay })
 
   render() {
     const { errors, loading } = this.state;
@@ -275,6 +287,8 @@ class EditCourse extends Component {
                 <Label>Ngày khai giảng</Label> <br/>
                 <DatePicker
                   selected={this.state.openingDay}
+                  onChange={this.onChangeOpeningDay}
+                  isClearable={true}
                   dateFormat="dd/MM/yyyy"
                   customInput={<Input />}
                 />
@@ -284,6 +298,8 @@ class EditCourse extends Component {
                 <Label>Ngày kết thúc</Label> <br/>
                 <DatePicker
                   selected={this.state.endDay}
+                  onChange={this.onChangeEndDay}
+                  isClearable={true}
                   dateFormat="dd/MM/yyyy"
                   customInput={<Input />}
                 />
@@ -324,6 +340,27 @@ class EditCourse extends Component {
                 <button type="button" onClick={this.handleAddPointColumn} className="btn btn-success">Thêm cột điểm</button>
                 {errors.pointColumns && <Alert color="danger">{errors.pointColumns}</Alert>}
               </FormGroup>
+
+              <FormGroup>
+                <div className="form-row">
+                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối đa </Label>
+                  <div className="col-2">
+                    <Input type="number" min='0' value={this.state.maxStudent} onChange={this.handleChange('maxStudent')}/>
+                  </div>
+                </div>
+              </FormGroup>
+              {errors.maxStudent && <Alert color="danger">{errors.maxStudent}</Alert>}
+
+              <FormGroup>
+                <div className="form-row">
+                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối thiểu </Label>
+                  <div className="col-2">
+                    <Input type="number" min='0' value={this.state.minStudent} onChange={this.handleChange('minStudent')}/>
+                  </div>
+                </div>
+              </FormGroup>
+              {errors.minStudent && <Alert color="danger">{errors.minStudent}</Alert>}
+
               <Label>Giới thiệu nội dung khóa học</Label>
               <CKEditor data={this.state.info} onChange={this.onEditorChange} />
               {errors.info && <Alert color="danger">{errors.info}</Alert>}

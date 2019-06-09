@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import isEmptyObj from '../../validation/is-empty';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
-import { addJoinedStudent, clearSuccess, clearErrors, searchStudent } from '../../actions/userActions'
+import { addJoinedStudent, clearSuccess, clearErrors, searchStudent, clearSearch } from '../../actions/userActions'
 
 class AddJoinedStudent extends Component {
   constructor() {
@@ -14,10 +14,6 @@ class AddJoinedStudent extends Component {
       isLoading: false,
       search: '',
       errors: {},
-      recipient_name: '',
-      email: '',
-      line1: '',
-      city: '',
       loading: false,
       search_student: {}
     };
@@ -36,7 +32,10 @@ class AddJoinedStudent extends Component {
     
     const { search_student } = nextProps.users;
     if(!isEmptyObj(search_student))
+    {
       this.setState({ search_student, loading: false });
+      this.props.clearSearch();
+    }
     
   }
 
@@ -50,21 +49,15 @@ class AddJoinedStudent extends Component {
     if(isEmptyObj(this.state.search_student))
     {
       let errors = {
-        city: 'Hãy tìm kiếm học viên'
+        search: 'Hãy tìm kiếm học viên'
       }
       this.setState({ errors })
     }else{
 
       const newUser = {
         courseId: this.props.match.params.courseId,
-        studentId: this.state.search_student._id,
-        recipient_name: this.state.recipient_name,
-        email: this.state.email,
-        line1: this.state.line1,
-        city: this.state.city
+        studentId: this.state.search_student._id
       };
-  
-      // console.log(newUser)
       this.setState({ isLoading: true });
       this.props.addJoinedStudent(newUser);
       this.props.clearErrors();
@@ -81,9 +74,9 @@ class AddJoinedStudent extends Component {
 
   onSearch = () =>{
     const userData = {
-      email: this.state.search
+      search: this.state.search
     }
-    this.setState({ loading: true })
+    this.setState({ loading: true, search_student: {} })
     this.props.clearErrors();
     this.props.searchStudent(userData)
   }
@@ -106,7 +99,7 @@ class AddJoinedStudent extends Component {
                         <i className="fa fa-search" aria-hidden="true"></i>
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input type="text" name="search" value={this.state.search} onChange={this.onChange} placeholder="Email học viên . . ."/>
+                    <Input type="text" name="search" value={this.state.search} onChange={this.onChange} placeholder="Email / CMND của học viên"/>
                   </InputGroup>
                 </Col>
                 <Col>
@@ -130,6 +123,8 @@ class AddJoinedStudent extends Component {
                   <thead>
                     <tr className="thead-light">
                       <th>Hình đại diện</th>
+                      <th>Mã học viên</th>
+                      <th>Chứng minh nhân dân</th>
                       <th>Email</th>
                       <th>Họ và Tên</th>
                     </tr>
@@ -141,6 +136,8 @@ class AddJoinedStudent extends Component {
                           <img src={search_student.photo} className="img-avatar" alt="" />
                         </div>
                       </th>
+                      <td>{search_student.code}</td>
+                      <td>{search_student.idCard}</td>
                       <td>{search_student.email}</td>
                       <td>{search_student.name}</td>
                     </tr>
@@ -151,44 +148,7 @@ class AddJoinedStudent extends Component {
                   {errors.search && <Alert color="danger">{errors.search}</Alert>}
                 </div>
               }
-              <h3>Thông tin người thanh toán</h3>
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="icon-user"></i>
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Họ và Tên người thanh toán" name="recipient_name" value={this.state.recipient_name} onChange={this.onChange} />
-              </InputGroup>
-              {errors.recipient_name && <Alert color="danger">{errors.recipient_name}</Alert>}
-
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>@</InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Email người thanh toán" name="email" value={this.state.email} onChange={this.onChange} />
-              </InputGroup>
-              {errors.email2 && <Alert color="danger">{errors.email2}</Alert>}
-
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="fa fa-address-card" aria-hidden="true"></i>
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Địa chỉ" name="line1" value={this.state.line1} onChange={this.onChange} />
-              </InputGroup>
-              {errors.line1 && <Alert color="danger">{errors.line1}</Alert>}
-              
-              <InputGroup className="mb-3">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="fa fa-home" aria-hidden="true"></i>                
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input type="text" placeholder="Thành phố" name="city" value={this.state.city} onChange={this.onChange} />
-              </InputGroup>
-              {errors.city && <Alert color="danger">{errors.city}</Alert>}
+              {errors.fail && <Alert color="danger">{errors.fail}</Alert>}
 
               <Button color="success" onClick={this.onSubmit} block>Thêm học viên</Button>
             </Form>
@@ -220,4 +180,4 @@ const mapStateToProps = state => ({
   success: state.success,
   users: state.users
 });
-export default connect(mapStateToProps, { addJoinedStudent, clearSuccess, clearErrors, searchStudent })(AddJoinedStudent); 
+export default connect(mapStateToProps, { addJoinedStudent, clearSuccess, clearErrors, searchStudent, clearSearch })(AddJoinedStudent); 

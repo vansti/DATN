@@ -12,7 +12,8 @@ import {
   CLEAR_SUCCESS, 
   USERS_LOADING,
   CLEAR_ERRORS,
-  SEARCH_STUDENT
+  SEARCH_STUDENT,
+  CLEAR_SEARCH
 } from './types';
 
 // Get a list of users
@@ -182,6 +183,42 @@ export const addJoinedStudent = userData => dispatch => {
     );
 };
 
+// gửi mail thông báo cho học viên
+export const notifyMail = (courseId) => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/send-notify-mail/' + courseId)
+    .then(res =>
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// duyệt yêu cầu học viên
+export const confirmRequest = (courseId, enrollStudentsId) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/confirm-request/${courseId}/${enrollStudentsId}`)
+    .then(res =>
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 export const setUsersLoading = () => {
   return {
     type: USERS_LOADING
@@ -192,6 +229,13 @@ export const setUsersLoading = () => {
 export const clearUsers = () => {
   return {
     type: CLEAR_USER
+  };
+};
+
+// Clear a list of users
+export const clearSearch = () => {
+  return {
+    type: CLEAR_SEARCH
   };
 };
 

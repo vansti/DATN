@@ -14,7 +14,7 @@ class Login extends Component {
     this.state = {
       isShowSuccess: false,
       isLoading: false,
-      email: '',
+      code: '',
       password: '',
       errors: {}
     };
@@ -44,7 +44,7 @@ class Login extends Component {
     e.preventDefault();
 
     const userData = {
-      email: this.state.email,
+      code: this.state.code,
       password: this.state.password
     };
     this.setState({ isLoading: true });
@@ -91,11 +91,11 @@ class Login extends Component {
                               <i className="icon-user"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} />
+                          <Input type="text" name="code" placeholder="Mã đăng nhập" value={this.state.code} onChange={this.onChange} />
                         </InputGroup>
-                        {errors.email_login && <Alert color="danger">{errors.email_login}</Alert>}
+                        {errors.code && <Alert color="danger">{errors.code}</Alert>}
                         {
-                          errors.email_login === 'Hãy xác nhận email của bạn trước khi đăng nhập'
+                          errors.code === 'Hãy xác nhận email của bạn trước khi đăng nhập'
                           && 
                           <div style={{marginBottom: 20}}>
                             <Button onClick={this.onSendMail} color="danger" className="px-4" >Gửi lại mail xác nhận</Button>
@@ -110,7 +110,7 @@ class Login extends Component {
                           </InputGroupAddon>
                           <Input type="password" name="password" placeholder="Mật khẩu" autoComplete="current-password" value={this.state.password} onChange={this.onChange} />
                         </InputGroup>
-                        {errors.password_login && <Alert color="danger">{errors.password_login}</Alert>}
+                        {errors.password && <Alert color="danger">{errors.password}</Alert>}
                         <Button color="primary" className="px-4" onSubmit={this.onSubmit}>Đăng nhập</Button>
                       </Form>
                     </CardBody>

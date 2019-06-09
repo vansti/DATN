@@ -65,3 +65,4 @@ export const GET_LESSON_IN_COURSE = 'GET_LESSON_IN_COURSE';
 
 export const GET_SCHOOL = 'GET_SCHOOL';
 export const SCHOOL_LOADING = 'SCHOOL_LOADING';
+export const CLEAR_SEARCH = 'CLEAR_SEARCH';

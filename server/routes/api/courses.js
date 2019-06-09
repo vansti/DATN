@@ -46,10 +46,12 @@ router.post(
       return res.status(400).json(errors);
     }
     const newCourse = new Course({
+      code: req.body.code,
       title: req.body.title,
       enrollDeadline: req.body.enrollDeadline,
       intro: req.body.intro,
-      pointColumns: req.body.pointColumns
+      pointColumns: req.body.pointColumns,
+      maxStudent: req.body.maxStudent
     });
 
     const newCourseDetail = new CourseDetail({
@@ -64,6 +66,13 @@ router.post(
 
     async function run() {
       try {
+        const findCode = await Course.findOne({ code: req.body.code })
+
+        if (findCode) {
+          errors.code = 'Hãy điền mã khóa học';
+          return res.status(404).json(errors);
+        }
+        
         // Tạo khóa học
         const course = await newCourse.save()
 
@@ -139,7 +148,8 @@ router.post(
               title: req.body.title,
               enrollDeadline: req.body.enrollDeadline,
               intro: req.body.intro,
-              pointColumns: req.body.pointColumns
+              pointColumns: req.body.pointColumns,
+              maxStudent: req.body.maxStudent
             }
           }
         )
@@ -151,7 +161,11 @@ router.post(
             $set: 
             {
               fee: req.body.fee,
-              info: req.body.info
+              info: req.body.info,
+              openingDay: req.body.openingDay,
+              endDay: req.body.endDay,
+              maxStudent: req.body.maxStudent,
+              minStudent: req.body.minStudent
             }
           }
         )
@@ -197,7 +211,7 @@ router.get(
   (req, res) => {
     Course.find(
       { 'enrollDeadline' : {$gte : new Date()}},
-      {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}
+      {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1}
     )
     .sort({created: -1})
     .then(courses => res.json(courses))
@@ -216,7 +230,7 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1}).lean()
 
         var course_detail = await  
         CourseDetail.findOne(
@@ -264,12 +278,12 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1}).lean()
 
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1, isFull: 1,
+          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1, isFull: 1, maxStudent: 1, minStudent: 1,
             enrollStudents:  
             {
               $elemMatch: {
@@ -343,7 +357,7 @@ router.get('/get-active-course', (req, res) => {
 
       var course = await Course.find(
                                       { '_id': { $in: course_detail} },
-                                      'title coursePhoto created'
+                                      'title coursePhoto created code'
                                 )
                                .sort({created: -1})
       res.json(course)
@@ -362,7 +376,7 @@ router.get(
   '/manage-courses',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Course.find({},{coursePhoto: 1, title: 1})
+    Course.find({},{coursePhoto: 1, title: 1, code: 1})
     .then(courses => {
       res.json(courses)
     })

@@ -48,6 +48,7 @@ class EditProfile extends Component {
       email:'',
       photo: '',
       phone: '',
+      idCard: '',
       isShowSuccess: false,
       errors:{},
       isLoading: false,
@@ -76,7 +77,7 @@ class EditProfile extends Component {
 
     if (nextProps.profile.profile) {
       const profile = nextProps.profile.profile
-      this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo})
+      this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo, idCard: profile.idCard})
     }
 
     if (nextProps.success.mes === "Thay đổi thành công") {
@@ -92,7 +93,8 @@ class EditProfile extends Component {
     const profileData = {
       name: this.state.name,
       email: this.state.email,
-      phone: this.state.phone
+      phone: this.state.phone,
+      idCard: this.state.idCard
     };
     this.props.editProfile(profileData, this.state.file);
     this.props.clearErrors();
@@ -156,6 +158,18 @@ class EditProfile extends Component {
                       <Input size="16" type="text" value={this.state.name} onChange={this.handleChange('name')}/>
                     </InputGroup>
                     {errors.name && <Alert color="danger">{errors.name}</Alert>}
+                  </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Chứng minh nhân dân</Label>
+                  <div className="controls">
+                    <InputGroup className="input-prepend">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText><i className="fa fa-id-card"></i></InputGroupText>
+                      </InputGroupAddon>
+                      <Input size="16" type="text" value={this.state.idCard} onChange={this.handleChange('idCard')}/>
+                    </InputGroup>
+                    {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
                   </div>
                 </FormGroup>
                 <FormGroup>

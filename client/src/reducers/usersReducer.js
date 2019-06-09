@@ -1,5 +1,5 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING, SEARCH_STUDENT
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING, SEARCH_STUDENT, CLEAR_SEARCH
 } from '../actions/types';
 
 const initialState = {
@@ -51,6 +51,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         search_student: action.payload,
+        loading: false        
+      };
+    case CLEAR_SEARCH:
+      return {
+        ...state,
+        search_student: {},
         loading: false        
       };
     case CLEAR_USER:

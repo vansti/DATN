@@ -84,7 +84,8 @@ class AddCourse extends Component {
       listId: '',
       listTitle: '',
       maxStudent: '',
-      minStudent: ''
+      minStudent: '',
+      code:''
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -237,9 +238,9 @@ class AddCourse extends Component {
         info: this.state.info,
         pointColumns: this.state.pointColumns,
         events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days),
-        listId: this.state.listId
+        listId: this.state.listId,
+        code: this.state.code
       };
-      // console.log(courseData)
       this.props.clearErrors();
       this.props.addCourse(courseData, this.state.file);
       this.setState({isLoading: true});
@@ -248,6 +249,7 @@ class AddCourse extends Component {
 
   hideAlertSuccess(){
     this.setState({
+      code: '',
       days: [],
       title:'',
       intro: '',
@@ -278,7 +280,9 @@ class AddCourse extends Component {
       loading: true,
       isOpenModal: false,
       listId: '',
-      listTitle: ''
+      listTitle: '',
+      maxStudent: '',
+      minStudent: ''
     })
     document.getElementById("add-course-form").reset();
   }
@@ -380,6 +384,11 @@ class AddCourse extends Component {
             </CardHeader>
             <CardBody>
               <FormGroup>
+                <Label style={{fontWeight: 'bold'}}>Mã khóa học</Label>
+                <Input type="text" value={this.state.code} onChange={this.handleChange('code')}/>
+              </FormGroup>
+              {errors.code && <Alert color="danger">{errors.code}</Alert>}
+              <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Tên khóa học</Label>
                 <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>
               </FormGroup>
@@ -394,7 +403,7 @@ class AddCourse extends Component {
                 <InputGroup>
                   <Input type="number" min='0' value={this.state.fee} onChange={this.handleChange('fee')}/>
                   <InputGroupAddon addonType="append">
-                    <InputGroupText>USD</InputGroupText>
+                    <InputGroupText>VND</InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
               </FormGroup>

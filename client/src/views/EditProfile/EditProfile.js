@@ -30,6 +30,7 @@ class EditProfile extends Component {
       email:'',
       photo: '',
       phone: '',
+      idCard: '',
       isShowSuccess: false,
       errors:{},
       isLoading: false,
@@ -58,7 +59,7 @@ class EditProfile extends Component {
 
     if (nextProps.profile.profile) {
       const profile = nextProps.profile.profile
-      this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo})
+      this.setState({name: profile.name, email: profile.email, phone: profile.phone, photo: profile.photo, code: profile.code, idCard: profile.idCard})
     }
 
     if (nextProps.success.mes === "Thay đổi thành công") {
@@ -74,7 +75,8 @@ class EditProfile extends Component {
     const profileData = {
       name: this.state.name,
       email: this.state.email,
-      phone: this.state.phone
+      phone: this.state.phone,
+      idCard: this.state.idCard
     };
     this.props.editProfile(profileData, this.state.file);
     this.props.clearErrors();
@@ -120,18 +122,19 @@ class EditProfile extends Component {
               </CardHeader>
               <CardBody>
                 <Form className="form-horizontal" id="editform" onSubmit={this.onSubmit}>
+
                   <FormGroup>
-                    <Label>Email</Label>
+                    <Label>Mã số</Label>
                     <div className="controls">
                       <InputGroup className="input-prepend">
                         <InputGroupAddon addonType="prepend">
-                          <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
+                          <InputGroupText><i className="fa fa-pencil"></i></InputGroupText>
                         </InputGroupAddon>
-                        <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
+                        <Input size="16" type="text" value={this.state.code || ''} disabled/>
                       </InputGroup>
-                      {errors.email && <Alert color="danger">{errors.email}</Alert>}
                     </div>
                   </FormGroup>
+
                   <FormGroup>
                     <Label>Họ và Tên</Label>
                     <div className="controls">
@@ -144,6 +147,33 @@ class EditProfile extends Component {
                       {errors.name && <Alert color="danger">{errors.name}</Alert>}
                     </div>
                   </FormGroup>
+
+                  <FormGroup>
+                    <Label>Email</Label>
+                    <div className="controls">
+                      <InputGroup className="input-prepend">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
+                      </InputGroup>
+                      {errors.email && <Alert color="danger">{errors.email}</Alert>}
+                    </div>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>Chứng minh nhân dân</Label>
+                    <div className="controls">
+                      <InputGroup className="input-prepend">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText><i className="fa fa-id-card"></i></InputGroupText>
+                        </InputGroupAddon>
+                        <Input size="16" type="text" value={this.state.idCard} onChange={this.handleChange('idCard')}/>
+                      </InputGroup>
+                      {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
+                    </div>
+                  </FormGroup>
+
                   <FormGroup>
                     <Label>Số điện thoại</Label>
                     <div className="controls">

@@ -89,6 +89,7 @@ class CourseInfo extends Component {
                   <div style={styles.imgbox3}>
                     <img src={courseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                   </div>
+                  <span style={{color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {courseinfo.course.code}</span>
                   <h2 style={{marginTop:10, fontWeight:'bold'}}>{courseinfo.course.title}</h2>
                   <p className="lead">{courseinfo.course.intro}</p>
                 </Container>  
@@ -101,7 +102,7 @@ class CourseInfo extends Component {
                         {courseinfo.course.enrollDeadline}
                       </Moment><br/>
                       <b>Học phí - </b>
-                      <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> USD.<br/>
+                      <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
                       <b>Thời gian học - </b>
                       {courseinfo.course_detail.studyTime}.<br/>
                       <b>Ngày khai giảng - </b>
@@ -127,7 +128,7 @@ class CourseInfo extends Component {
                             :
                             <div>
                               <div style={{color:'red', fontSize:17, fontWeight:'bold', textAlign: 'center'}}>Ghi danh ngay</div>
-                              <p style={{color:'red', fontSize:20, fontWeight:'bold', textAlign: 'center'}}><NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> USD.</p>
+                              <p style={{color:'red', fontSize:20, fontWeight:'bold', textAlign: 'center'}}><NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.</p>
                               <div style={{textAlign: 'center'}}><Payment fee={courseinfo.course_detail.fee}/></div>
                             </div>
                           }
@@ -195,6 +196,7 @@ class CourseInfo extends Component {
                   <div style={styles.imgbox3}>
                     <img src={guestcourseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                   </div>
+                  <span style={{color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {guestcourseinfo.course.code}</span>
                   <h2 style={{marginTop:10, fontWeight:'bold'}}>{guestcourseinfo.course.title}</h2>
                   <p className="lead">{guestcourseinfo.course.intro}</p>
                 </Container>  
@@ -207,7 +209,7 @@ class CourseInfo extends Component {
                         {guestcourseinfo.course.enrollDeadline}
                       </Moment><br/>
                       <b>Học phí - </b>
-                      <NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> USD.<br/>
+                      <NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
                       <b>Thời gian học - </b>
                       {guestcourseinfo.course_detail.studyTime}.<br/>
                       <b>Ngày khai giảng - </b>

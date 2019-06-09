@@ -64,3 +64,7 @@ export const GET_LESSON_IN_COURSE = 'GET_LESSON_IN_COURSE';
 
 export const GET_SCHOOL = 'GET_SCHOOL';
 export const SCHOOL_LOADING = 'SCHOOL_LOADING';
+export const GET_PAY_URL = 'GET_PAY_URL';
+export const CLEAR_URL = 'CLEAR_URL';
+export const GET_VNPAY_RETURN = 'GET_VNPAY_RETURN';
+export const CLEAR_VNPAY_RETURN = 'CLEAR_VNPAY_RETURN';

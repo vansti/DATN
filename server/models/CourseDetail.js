@@ -30,6 +30,10 @@ const CourseDetailSchema = new Schema({
     type: Boolean,
     default: false
   },
+  isNotifyMail:{
+    type: Boolean,
+    default: false
+  },
   enrollStudents:[{
     student: {
       type: mongoose.Schema.ObjectId, ref: 'users'
@@ -37,21 +41,12 @@ const CourseDetailSchema = new Schema({
     paymentMethod:{
       type: String
     },
-    paymentDetail:{
-      recipient_name:{
+    replyMail: {
+      chosen: {
         type: String
       },
-      email:{
-        type: String
-      },
-      payerID:{
-        type: String
-      },
-      line1:{
-        type: String
-      },
-      city:{
-        type: String
+      changeCourseId: {
+        type: mongoose.Schema.ObjectId, ref: 'courses'
       }
     },
     enrollDate: {

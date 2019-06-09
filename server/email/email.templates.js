@@ -3,7 +3,7 @@ require('dotenv').config()
 module.exports = {
 
   confirm: (id, name) => ({
-    subject: 'LMS - XÁC NHẬN MAIL',
+    subject: 'Xác nhận mail',
     html: `
     <html xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
     <head>

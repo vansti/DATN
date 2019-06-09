@@ -20,6 +20,9 @@ import StudentNavigation from '../../navigations/StudentNav';
 import AdminNavigation from '../../navigations/AdminNav';
 import MinistryNavigation from '../../navigations/MinistryNav';
 import AdvisorNavigation from '../../navigations/AdvisorNav';
+import ManagerNavigation from '../../navigations/ManagerNav';
+import FinancerNavigation from '../../navigations/FinancerNav';
+
 // routes config
 import routes from '../../routes';
 
@@ -48,9 +51,11 @@ class DefaultLayout extends Component {
     switch (role.toString()) {
       case 'student': AppSidebarNavRole = <AppSidebarNav navConfig={StudentNavigation} {...this.props} />;break;
       case 'teacher': AppSidebarNavRole = <AppSidebarNav navConfig={TeacherNavigation} {...this.props} />;break;
-      case 'advisor': AppSidebarNavRole = <AppSidebarNav navConfig={AdvisorNavigation} {...this.props} />;break;
+      case 'educator': AppSidebarNavRole = <AppSidebarNav navConfig={AdvisorNavigation} {...this.props} />;break;
       case 'ministry': AppSidebarNavRole = <AppSidebarNav navConfig={MinistryNavigation} {...this.props} />;break;  
-      case 'admin': AppSidebarNavRole = <AppSidebarNav navConfig={AdminNavigation} {...this.props} />;break;     
+      case 'admin': AppSidebarNavRole = <AppSidebarNav navConfig={AdminNavigation} {...this.props} />;break;   
+      case 'manager': AppSidebarNavRole = <AppSidebarNav navConfig={ManagerNavigation} {...this.props} />;break;  
+      case 'financer': AppSidebarNavRole = <AppSidebarNav navConfig={FinancerNavigation} {...this.props} />;break;     
       default: break;
     }
 

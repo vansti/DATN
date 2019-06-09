@@ -51,7 +51,8 @@ class AddSchedule extends Component {
       timeRangeSelectedHandling: "Disabled",
       durationBarVisible: false,
       isOpenModal: false,
-      courseTitle: null
+      courseTitle: null,
+      courseCode: null
     };
   }
 
@@ -80,11 +81,12 @@ class AddSchedule extends Component {
     });
   }
 
-  onChangeSelectCourse(courseId, courseTitle) {
+  onChangeSelectCourse(courseId, courseTitle, courseCode) {
     this.props.getSchedule(courseId)
     this.setState({ 
       courseId,
       courseTitle,
+      courseCode,
       isOpenModal: false
     });
   }
@@ -165,13 +167,15 @@ class AddSchedule extends Component {
   onSearch = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialActivecourses));
     updatedList = updatedList.filter((course)=>
-      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1);
+      course.title.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      course.code.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+    );
     this.setState({ activecourse: updatedList });
   }
 
   render() {
     var {...config } = this.state;
-    var { loadingCourse, activecourse, courseTitle } = this.state;
+    var { loadingCourse, activecourse, courseTitle, courseCode } = this.state;
 
     return (
       <div className="animated fadeIn">
@@ -191,7 +195,7 @@ class AddSchedule extends Component {
             <Modal isOpen={this.state.isOpenModal} toggle={this.toggleModal} className='modal-lg'>
               <ModalHeader  toggle={this.toggleModal}>Chọn khóa học</ModalHeader>
               <ModalBody style={{overflowY:'scroll', height:500}}>
-                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên khóa học . . ."/>
+                <Input style={{marginBottom: 10}} type="text" onChange={this.onSearch} placeholder="Tên hoặc Mã khóa học . . ."/>
                 {
                   activecourse.length === 0
                   ?
@@ -200,9 +204,9 @@ class AddSchedule extends Component {
                   <ListGroup>
                   {
                     activecourse.map(course=>
-                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title)}>
+                      <ListGroupItem key={course._id} color="secondary" tag="button" action onClick={this.onChangeSelectCourse.bind(this, course._id, course.title, course.code)}>
                         <img src={course.coursePhoto} alt="" style={styles.bigAvatar}/>
-                        <span style={{marginLeft: 10}}>{course.title}</span>
+                        <span style={{fontWeight: 'bold', marginLeft: 10}}>{course.code}</span> - <span>{course.title}</span> 
                       </ListGroupItem>
                     )
                   }
@@ -213,7 +217,7 @@ class AddSchedule extends Component {
 
             <div style={{display: this.state.courseId === '0' ? 'none' : 'block'}}>
               <Alert style={{marginBottom: 20, marginTop: 20, textAlign: 'center', fontWeight:'bold'}} color="primary">
-                Thời khóa biểu của {courseTitle}
+                Thời khóa biểu của {courseCode} - {courseTitle}
               </Alert>
               <Button style={{marginBottom: 20}} color="danger" onClick={this.submit}> Lưu </Button>
               {
