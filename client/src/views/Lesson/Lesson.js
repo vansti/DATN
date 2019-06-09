@@ -14,7 +14,10 @@ import {
   Label,
   ListGroup,
   ListGroupItem,
-  Button
+  Button,
+  FormGroup, 
+  Input, 
+  Col
 } from 'reactstrap';
 import ReactLoading from 'react-loading';
 import NoImg from '../../assets/img/NoImg.png';
@@ -34,8 +37,11 @@ class Lesson extends Component {
       files: [],
       exercises: [],
       quizzes: [],
+      quizSelected: '',
+      password: '',
       isShowFail: false,
-      isShowFailstartTime: false
+      isShowFailstartTime: false,
+      isShowCheckPassword: false
     };
   }
 
@@ -77,12 +83,14 @@ class Lesson extends Component {
     var now = new Date();
     var deadline = new Date(quizDeadline);
     var startTime = new Date(quizStartTime);
-
     if(startTime.getTime() <= now.getTime())
     {
       if(deadline.getTime() >= now.getTime())
       {
-        this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${quizId}`);
+        this.setState({
+          isShowCheckPassword: true,
+          quizSelected: quizId
+        })
       }else{
         this.setState({
           isShowFail: true
@@ -100,6 +108,13 @@ class Lesson extends Component {
     this.props.history.push(`/quiz/quiz-detail/${quizId}`);
   }
 
+  hideAlertCheckPassword = () => {
+    this.setState({
+      isShowCheckPassword: false
+    })
+    this.props.history.push(`/courses/${this.props.match.params.id}/lesson/${this.props.match.params.lessonId}/${this.state.quizSelected}`, { password: this.state.password });
+  }
+  
   hideAlertFail = () =>{
     this.setState({
       isShowFail: false
@@ -110,6 +125,10 @@ class Lesson extends Component {
     this.setState({
       isShowFailstartTime: false
     })
+  }
+
+  onChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
   render() {
@@ -255,6 +274,18 @@ class Lesson extends Component {
           	title="Chưa tới thời gian làm trắc nghiệm!"
             show={this.state.isShowFailstartTime}
             onConfirm={this.hideAlertFailstartTime}>
+        </SweetAlert>
+        <SweetAlert
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="primary"
+          	title="Mời bạn nhập mật khẩu!"
+            show={this.state.isShowCheckPassword}
+            onConfirm={this.hideAlertCheckPassword}>
+            <FormGroup row className="justify-content-md-center">
+              <Col md="6">
+                <Input type="text" name="password" value={this.state.password} onChange={this.onChange} placeholder="Mật khẩu..." />
+              </Col>
+            </FormGroup>
         </SweetAlert>
       </div>
     )

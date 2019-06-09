@@ -19,7 +19,8 @@ class SubmitExercise extends Component {
       isLoading: false,
       loading: false,
       submission: '',
-      isShowFail: false
+      isShowFail: false,
+      isShowCheckPassword: false
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
