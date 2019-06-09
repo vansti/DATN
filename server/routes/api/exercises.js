@@ -220,9 +220,8 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     errors.file = 'File phải nhỏ hơn 20 MB!'
     return res.status(404).json(errors);
   }
-
   var dir = './file_upload/' + req.params.exerciseId + '/' + req.user._id + '/'; 
-  
+
   if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, {recursive: true}, err=>{});
   }

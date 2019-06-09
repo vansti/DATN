@@ -1,18 +1,11 @@
 import React, { Component,Fragment } from 'react';
 import { 
-  Card, CardHeader, 
-  CardBody, Button, 
-  Collapse, ListGroupItem, 
-  Row, Col, CardFooter, 
+  ListGroupItem, 
   ListGroup 
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Moment from 'react-moment'; 
-import ExerciseComments from './ExerciseComments';
-import SubmitExercise from './SubmitExercise';
-
-import NoImg from '../../../assets/img/NoImg.png';
+import Exercise from './Exercise';
 
 class ExerciseList extends Component {
   constructor(props) {
@@ -48,7 +41,6 @@ class ExerciseList extends Component {
 
   render() {
     const { exercises } = this.state;
-    const { role } = this.props.auth.user
 
     return (
       <Fragment>
@@ -61,67 +53,7 @@ class ExerciseList extends Component {
             </ListGroup>
             :
             exercises.map((exercise,index) => 
-              <Card className="mb-0" key={index} style={{marginTop:10}}>
-                <CardHeader style={{backgroundColor: 'lightblue'}}>
-                  <Row>
-                    <Col xs="10">
-                      <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion(index)} aria-expanded={this.state.accordion[index]} aria-controls="collapseOne">
-                        <h5 className="m-0 p-0" style={{color: 'black'}}>{exercise.title}</h5>
-                      </Button>
-                      <small>  
-                        <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
-                          {exercise.created}
-                        </Moment>
-                      </small>
-                    </Col>
-                    <Col >
-                      <small>                  
-                        Hạn
-                        <Moment format=" HH:mm ngày DD/MM/YYYY">
-                          {exercise.deadline}
-                        </Moment>
-                      </small>
-                    </Col>
-                  </Row>
-                </CardHeader>
-                <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne">
-                  <CardBody>
-                    {
-                      exercise.text.split('\n').map((itemChild, key) => {
-                        return <span key={key}>{itemChild}<br/></span>
-                      })
-                    }
-                    <br/>
-                    <ListGroup>
-                      {
-                        exercise.attachFiles.map(file=>
-                          <ListGroupItem key={file.id} action tag="a" href={file.url}>
-                            {
-                              file.thumbnail
-                              ?
-                              <img src={file.thumbnail} alt=""/> 
-                              :
-                              <img src={NoImg} style={{width:47}} alt=""/> 
-                            }  
-                            <span style={{marginLeft:10}}>{file.name}</span>
-                          </ListGroupItem>
-                        )
-                      }
-                    </ListGroup>
-                    <br/>
-                    {
-                      role === 'student'
-                      ?
-                      <SubmitExercise exerciseId={exercise._id} exerciseDeadline={exercise.deadline} />
-                      :
-                      null
-                    }
-                  </CardBody>
-                  <CardFooter>
-                    <ExerciseComments exercise={exercise}/>
-                  </CardFooter>   
-                </Collapse>
-              </Card>
+              <Exercise exercise={exercise} index={index} key={index}></Exercise>
             )
           }
         </div>
@@ -131,7 +63,6 @@ class ExerciseList extends Component {
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth
 });
 
 export default  withRouter(connect(mapStateToProps, {  })(ExerciseList));  
