@@ -7,6 +7,7 @@ import icon from '../../../assets/img/e-icon.png'
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../../validation/is-empty';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { Link} from 'react-router-dom';
 
 class Login extends Component {
   constructor() {
@@ -119,6 +120,9 @@ class Login extends Component {
                     <CardBody className="text-center">
                       <div>
                         <p><img alt="Logo" src={icon} style={{width: 100, height: 100}} /></p>
+                        <Link to="/forget">
+                          <Button color="primary" className="mt-3" active tabIndex={-1}>Quên Mã đăng nhập hoặc Mật khẩu</Button>
+                        </Link>
                       </div>
                     </CardBody>
                   </Card>

@@ -49,7 +49,8 @@ const LessonSchema = new Schema({
         type: Date
       },
       password: {
-        type: String
+        type: String,
+        default: ''
       }
     }
   ]

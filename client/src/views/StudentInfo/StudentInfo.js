@@ -15,10 +15,10 @@ var moment = require('moment');
 
 const styles = {
   Avatar: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     margin: 'auto',
-    borderRadius: 40
+    borderRadius: 50
   },
   bigAvatar: {
     height: 60,
@@ -420,7 +420,8 @@ class StudentIfo extends Component {
                       <img src={student.photo} alt="avatar" style={styles.Avatar}/>
                     </Col>
                     <Col>
-                      <h4>{student.name}</h4>
+                      <h4><strong>{student.name}</strong></h4>
+                      <div><strong>Mã số</strong>: {student.code}</div>
                       <div><strong>Email</strong>: {student.email}</div>
                       <div><strong>Số điện thoại</strong>: {student.phone ? student.phone : 'Chưa cập nhật'}</div>
                     </Col>

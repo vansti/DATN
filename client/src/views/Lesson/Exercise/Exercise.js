@@ -11,6 +11,7 @@ import { withRouter } from 'react-router-dom';
 import Moment from 'react-moment'; 
 import ExerciseComments from './ExerciseComments';
 import SubmitExercise from './SubmitExercise';
+import isEmptyObj from '../../../validation/is-empty';
 
 import NoImg from '../../../assets/img/NoImg.png';
 
@@ -19,7 +20,7 @@ class Exercise extends Component {
     super(props);
     this.toggleAccordion = this.toggleAccordion.bind(this);
     this.state = {
-      accordion: true,
+      accordion: false,
       exercises: '',
       wrongPassword: true,
       password: ''
@@ -52,28 +53,50 @@ class Exercise extends Component {
 
   render() {
     const { exercise, index } = this.props;
-    const { role } = this.props.auth.user
+    const { role } = this.props.auth.user;
     return (
       <Fragment>
       {
-        this.state.wrongPassword ?
+        this.state.wrongPassword && !isEmptyObj(exercise.password)
+        ?
         <Card className="mb-0" key={index} style={{marginTop:10}}>
           <CardHeader style={{backgroundColor: 'lightblue'}}>
-            <h5 className="m-0 p-0" style={{color: 'black'}}>{exercise.title}</h5>
+            <Row>
+              <Col xs="10">
+                <Button block color="link" className="text-left m-0 p-0" onClick={() => this.toggleAccordion()} aria-expanded={this.state.accordion} aria-controls="collapseOne">
+                  <h5 className="m-0 p-0" style={{color: 'black'}}>{exercise.title}</h5>
+                </Button>
+                <small>  
+                <Moment format="Đã đăng vào HH:mm ngày DD/MM/YYYY">
+                  {exercise.created}
+                </Moment>
+                </small>
+              </Col>
+              <Col >
+                <small>                  
+                  Hạn
+                  <Moment format=" HH:mm ngày DD/MM/YYYY">
+                    {exercise.deadline}
+                  </Moment>
+                </small>
+              </Col>
+            </Row>
           </CardHeader>
-          <CardBody>
-            <FormGroup row>
-            <Col md="2">
-              <Label>Hãy điền mật khẩu để làm bài: </Label>
-            </Col>
-            <Col md="4">
-              <Input name="password" type="text" onChange={this.onChange}  placeholder="Mật khẩu..."/>
-            </Col>
-            <Col md="3">
-              <Button block color="primary" onClick={this.checkPassword} >Xác nhận</Button>
-            </Col>
-          </FormGroup>
-          </CardBody>
+          <Collapse isOpen={this.state.accordion} data-parent="#accordion" id="collapseOne">
+            <CardBody>
+              <FormGroup row>
+              <Col md="2">
+                <Label style={{marginTop: 10}}>Hãy điền mật khẩu: </Label>
+              </Col>
+              <Col md="4">
+                <Input name="password" type="text" onChange={this.onChange}  placeholder="Mật khẩu..."/>
+              </Col>
+              <Col md="3">
+                <Button block color="primary" onClick={this.checkPassword} >Xác nhận</Button>
+              </Col>
+            </FormGroup>
+            </CardBody>
+          </Collapse>
         </Card>
         :
         <Card className="mb-0" key={index} style={{marginTop:10}}>

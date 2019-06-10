@@ -22,6 +22,7 @@ const validateProfileInput = require('../../validation/profile');
 const validateChangePasswordInput = require('../../validation/password');
 const validateAddStudentInput = require('../../validation/addStudent');
 const validateLoginLMSInput = require('../../validation/loginLMS');
+const validateResetPasswordInput = require('../../validation/resetPassword');
 
 
 // User Model
@@ -36,6 +37,7 @@ router.use(formData.parse())
 const sendEmail = require('../../email/email.send')
 const templates = require('../../email/email.templates')
 const notify = require('../../email/email.notify')
+const resetpassword = require('../../email/email.resetpassword')
 
 // @route   POST api/users/register
 // @desc    Register User
@@ -1128,6 +1130,65 @@ router.post(
           )
           res.json({mes:"Xác nhận thành công"})
         }
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
+
+// @route   POST api/users/send-mail-reset-password/:userId
+// @desc    gửi mail reset password
+// @access  public
+router.post(
+  '/send-mail-reset-password/:userId',
+  (req, res) => {
+    async function run() {
+      try {
+  
+        const user = await User.findById( req.params.userId, 'email name')
+
+        await sendEmail(user.email, resetpassword.confirm(user._id, user.name))
+
+        res.json({mes:"Đã gửi mail"})
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
+
+// @route   POST api/users/reset-password/:userId
+// @desc    reset password
+// @access  public
+router.post(
+  '/reset-password/:userId',
+  (req, res) => {
+    async function run() {
+      try {
+        const { errors, isValid } = validateResetPasswordInput(req.body);
+
+        // Check Validation
+        if (!isValid) {
+          // Return any errors with 400 status
+          return res.status(400).json(errors);
+        }
+
+        const password = req.body.password;
+  
+        await
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(password, salt, (err, hash) => {
+            if (err) throw err;
+            User.findByIdAndUpdate(req.params.userId,{ $set: { password: hash }})
+            .then(res.json({"mes":"Đặt lại mật khẩu thành công"}))
+            .catch(err => console.log(err));
+          });
+        });
 
       } catch (err) {
         console.log(err)

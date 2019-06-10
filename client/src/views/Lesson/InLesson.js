@@ -193,9 +193,15 @@ class InLesson extends Component {
                       </Moment>
                     </small>
                     <br/>
-                    <small>  
-                      Mật khẩu: {exercise.password}
-                    </small>
+                    {
+                      exercise.password
+                      ?
+                      <small>  
+                        Mật khẩu: {exercise.password}
+                      </small>
+                      :
+                      null
+                    }
                   </CardHeader>
                   <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne">
                     <CardBody>
@@ -270,9 +276,15 @@ class InLesson extends Component {
                         </Moment>
                       </small>
                       <br/>
-                      <small>                  
-                        Mật khẩu: {quiz.password}
-                      </small>
+                      {
+                        quiz.password
+                        ?
+                        <small>  
+                          Mật khẩu: {quiz.password}
+                        </small>
+                        :
+                        null
+                      }
                     </CardHeader>
                   </Card>
                 )

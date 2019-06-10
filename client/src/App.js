@@ -24,6 +24,16 @@ const Login = Loadable({
   loading
 });
 
+const ForgetCP = Loadable({
+  loader: () => import('./views/ForgetCP/ForgetCP'),
+  loading
+});
+
+const ResetPassword = Loadable({
+  loader: () => import('./views/ForgetCP/ResetPassword'),
+  loading
+});
+
 // Check for token
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -68,6 +78,8 @@ class App extends Component {
           : <div className="main">
               <Switch location={location}>
                 <Route path="/login" component={Login} />
+                <Route path="/forget" component={ForgetCP} />
+                <Route path="/reset-password/:userId" component={ResetPassword} />
                 <Route component={Login} />
               </Switch>
             </div>

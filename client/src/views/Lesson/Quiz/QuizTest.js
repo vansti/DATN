@@ -76,13 +76,13 @@ class TestQuizForm extends Component {
       date: quizTest.time * 60000,
       isStart: true
     })
-    // this.countdownInterval = window.setInterval(() => {
-    //   if (this.state.date <= 0) {
-    //     return this.submit()
-    //   }
+    this.countdownInterval = window.setInterval(() => {
+      if (this.state.date <= 0) {
+        return this.submit()
+      }
 
-    //   this.setState(({ date }) => ({ date: date - 1000 }));
-    // }, 1000);
+      this.setState(({ date }) => ({ date: date - 1000 }));
+    }, 1000);
   };
 
   componentDidUpdate = () => {

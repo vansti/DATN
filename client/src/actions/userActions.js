@@ -219,6 +219,41 @@ export const confirmRequest = (courseId, enrollStudentsId) => dispatch => {
     );
 };
 
+
+export const sendMailResetPassword = (userId) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/send-mail-reset-password/${userId}`)
+    .then(res =>
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const resetPassword = (userId, passwordData) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/reset-password/${userId}`, passwordData)
+    .then(res =>
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 export const setUsersLoading = () => {
   return {
     type: USERS_LOADING

@@ -84,7 +84,6 @@ router.get('/quiz-detail/:idTestQuiz', passport.authenticate('jwt', { session: f
 // @access  Private
 router.get('/quiz-detail-password', passport.authenticate('jwt', { session: false }), (req, res) => {
   let params = req.query;
-  console.log(params);
   async function run() {
     try {
       let lesson = await Lesson.findById(params.lessonId);
@@ -93,7 +92,6 @@ router.get('/quiz-detail-password', passport.authenticate('jwt', { session: fals
         res.json('Không có bài tập này');
         return;
       }
-
       if(lesson.quizzes[index].password == params.password) {
         quiz = await Quiz.findById(params.testQuizId);
         res.json(quiz);

@@ -102,7 +102,7 @@ class PeopleInCourse extends Component {
                           <td>
                             <div>{user.name}</div>
                             <div className="small text-muted">
-                              {user.email}
+                              {user.code}
                             </div>
                           </td>
                         </tr>
@@ -128,7 +128,7 @@ class PeopleInCourse extends Component {
                           <td>
                             <div>{user.name}</div>
                             <div className="small text-muted">
-                              {user.email}
+                              {user.code}
                             </div>
                           </td>
                         </tr>
