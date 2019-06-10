@@ -810,8 +810,8 @@ router.get(
     async function run() {
       try {
         const course = await Course.findById(req.params.courseid)
-        const teachers = await User.find({'_id': { $in: course.teachers}}, { name: 1, email: 1, photo: 1 })
-        const students = await User.find({'_id': { $in: course.students}}, { name: 1, email: 1, photo: 1 })
+        const teachers = await User.find({'_id': { $in: course.teachers}}, { name: 1, email: 1, photo: 1, code: 1 })
+        const students = await User.find({'_id': { $in: course.students}}, { name: 1, email: 1, photo: 1, code: 1 })
         users.teachers = teachers;
         users.students = students;
         res.json(users)

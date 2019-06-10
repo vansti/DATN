@@ -45,7 +45,7 @@ router.get(
         'courseId' : req.params.courseId
       }
     )
-    .populate('students.userId', '_id name email photo')
+    .populate('students.userId', '_id name email photo code')
     .then(attendance => res.json(attendance))
     .catch(err => console.log(err));
   }
@@ -65,7 +65,7 @@ router.post(
         'date' : req.body.selectDate
       }
     )
-    .populate('students.userId', '_id name email photo')
+    .populate('students.userId', '_id name email photo code')
     .then(attendance => res.json(attendance))
     .catch(err => console.log(err));
   }

@@ -230,7 +230,7 @@ class CheckAttendance extends Component {
             <thead className="thead-light">
               <tr>
                 <th>Hình đại diện</th>
-                <th>Email</th>
+                <th>Mã số sinh viên</th>
                 <th>Họ và Tên</th>
                 <th>Trạng thái</th>
                 <th>Điểm danh</th>
@@ -245,7 +245,7 @@ class CheckAttendance extends Component {
                         <img src={u.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{u.email}</td>
+                    <td>{u.code}</td>
                     <td>{u.name}</td>
                     <td> <Badge className="mr-1" color="dark" pill>Chưa điểm danh</Badge> </td>
                     <td><AppSwitch onChange={this.onChangeSwitch.bind(this, u._id)} className={'mx-1'} variant={'pill'} color={'success'} checked label dataOn={'Có'} dataOff={'Ko'} /></td>
@@ -268,7 +268,7 @@ class CheckAttendance extends Component {
             <thead className="thead-light">
               <tr>
                 <th>Hình đại diện</th>
-                <th>Email</th>
+                <th>Mã số sinh viên</th>
                 <th>Họ và Tên</th>
                 <th>Trạng thái</th>
                 <th>Điểm danh</th>
@@ -283,7 +283,7 @@ class CheckAttendance extends Component {
                         <img src={u.userId.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{u.userId.email}</td>
+                    <td>{u.userId.code}</td>
                     <td>{u.userId.name}</td>
                     <td>{u.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>

@@ -216,7 +216,7 @@ class ListAttendance extends Component {
   onchange = e =>{
     var updatedList = JSON.parse(JSON.stringify(this.state.intialUsers));
     updatedList = updatedList.filter((user)=>
-      user.userId.email.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
+      user.userId.code.toLowerCase().search(e.target.value.toLowerCase()) !== -1 ||
       user.userId.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
     );
     this.setState({users: updatedList});
@@ -336,7 +336,7 @@ class ListAttendance extends Component {
                       <Button color="primary" onClick={this.back}>
                         <i className="fa fa-arrow-left"></i> Trở về
                       </Button>
-                      <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+                      <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Mã số sinh viên hoặc Họ Tên ..."  />
                       <br/>
                       <h4>Không tìm thấy kết quả</h4>
                     </div>
@@ -348,13 +348,13 @@ class ListAttendance extends Component {
           <Button color="primary" onClick={this.back}>
             <i className="fa fa-arrow-left"></i> Trở về
           </Button>
-          <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Email hoặc Họ Tên ..."  />
+          <Input style={{marginTop: 20}} type="text" onChange={this.onchange} placeholder="Mã số sinh viên hoặc Họ Tên ..."  />
           <br/>
           <Table hover bordered striped responsive size="sm">
             <thead>
               <tr>
                 <th>Hình đại diện</th>
-                <th>Email</th>
+                <th>Mã số sinh viên</th>
                 <th>Họ và Tên</th>
                 <th>Trạng thái điểm danh</th>
               </tr>
@@ -368,7 +368,7 @@ class ListAttendance extends Component {
                         <img src={user.userId.photo} className="img-avatar" alt="" />
                       </div>
                     </th>
-                    <td>{user.userId.email}</td> 
+                    <td>{user.userId.code}</td> 
                     <td>{user.userId.name}</td>
                     <td>{user.isPresent === true
                         ?<Badge className="mr-1" color="success" pill>Hiện diện</Badge>
