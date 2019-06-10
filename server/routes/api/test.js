@@ -9,6 +9,7 @@ const validateAddTestQuizInput = require('../../validation/addTestQuiz');
 
 // Model
 const Course = require('../../models/Course');
+const Lesson = require('../../models/Lesson');
 const User = require('../../models/User');
 const Quiz = require('../../models/Quiz');
 const SubQuiz = require('../../models/SubQuiz');
@@ -78,6 +79,38 @@ router.get('/quiz-detail/:idTestQuiz', passport.authenticate('jwt', { session: f
     }).catch(err => console.log(err));
 });
 
+// @route   get api/test/quiz-detail-password
+// @desc    get one quiz
+// @access  Private
+router.get('/quiz-detail-password', passport.authenticate('jwt', { session: false }), (req, res) => {
+  let params = req.query;
+  console.log(params);
+  async function run() {
+    try {
+      let lesson = await Lesson.findById(params.lessonId);
+      let index = quizService.checkvalueKeyExist(lesson.quizzes, 'quizId', params.testQuizId);
+      if( index == -1 ) {
+        res.json('Không có bài tập này');
+        return;
+      }
+
+      if(lesson.quizzes[index].password == params.password) {
+        quiz = await Quiz.findById(params.testQuizId);
+        res.json(quiz);
+      } else {
+        res.json('Mật khẩu sai');
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  run();
+  // .then(quiz => {
+  //     res.json(quiz);
+  // }).catch(err => console.log(err));
+});
+
+
 // @route   get api/test/sub-quiz
 // @desc    get one quiz
 // @access  Private
@@ -87,7 +120,6 @@ router.get('/sub-quiz/:idTestQuiz', passport.authenticate('jwt', { session: fals
             let subQuiz = await SubQuiz.findOne({'quizId': req.params.idTestQuiz});
             subQuiz = subQuiz.studentSubmission.find(
                 object => JSON.stringify(object.userId) == JSON.stringify(req.user._id));
-            console.log(subQuiz);
             res.json(subQuiz);
         } catch (err) {
             console.log(err)

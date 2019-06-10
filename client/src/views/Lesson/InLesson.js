@@ -185,15 +185,17 @@ class InLesson extends Component {
                           </Moment>
                         </small>
                       </Col>
-                      <Col >
-                        <small>                  
-                          Hạn
-                          <Moment format=" HH:mm ngày DD/MM/YYYY">
-                            {exercise.deadline}
-                          </Moment>
-                        </small>
-                      </Col>
                     </Row>
+                    <small>                  
+                      Hạn
+                      <Moment format=" HH:mm ngày DD/MM/YYYY">
+                        {exercise.deadline}
+                      </Moment>
+                    </small>
+                    <br/>
+                    <small>  
+                      Mật khẩu: {exercise.password}
+                    </small>
                   </CardHeader>
                   <Collapse isOpen={this.state.accordion[index]} data-parent="#accordion" id="collapseOne">
                     <CardBody>
@@ -266,6 +268,10 @@ class InLesson extends Component {
                         <Moment format=" HH:mm ngày DD/MM/YYYY">
                           {quiz.deadline}
                         </Moment>
+                      </small>
+                      <br/>
+                      <small>                  
+                        Mật khẩu: {quiz.password}
                       </small>
                     </CardHeader>
                   </Card>

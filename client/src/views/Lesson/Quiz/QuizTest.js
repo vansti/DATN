@@ -61,8 +61,15 @@ class TestQuizForm extends Component {
         {touched && error && <Label className="error">{error}</Label>}
       </FormGroup>
     )
-  }  
+  }
 
+  static contextTypes = {
+    router: () => null
+  }
+
+  back = () => {
+    this.context.router.history.goBack();
+  }
   start = () => {
     const { quizTest } = this.props;
     this.setState({ 
@@ -96,87 +103,102 @@ class TestQuizForm extends Component {
 
     const { handleSubmit, quizTest, submitting, quizDone } = this.props;
     const { isStart } = this.state;
+    
     return (
       <Fragment>
-        <Prompt
-          when={isStart}
-          message={this.submit2}
-        />
         {
-          isStart
-          ?
-          <Form className="form-quiz-test" onSubmit={ handleSubmit(this.submit) } >
-            <b>
-              Thời gian làm bài : &nbsp;
-              <span style={{color: 'red'}}>
-                <Countdown
-                  date={Date.now() + this.state.date}
-                  onComplete={handleSubmit(this.submit)}
-                />
-              </span>
-            </b>
-            <div className="title" >{quizTest.title}</div>
-            {
-              quizTest.description &&
-              <Alert color="secondary">
-                <span>
-                  {quizTest.description}
-                </span>
+          quizTest === 'Mật khẩu sai' ? 
+          <Card>
+            <CardBody>
+              <Alert color="danger">
+                Bạn đã nhập sai mật khẩu, nhấn nút quay lại
               </Alert>
-            }
-            <Field
-                name="quizId"
-                component="input"
-                type="hidden"
-              />
-            {
-              quizTest.listQuiz.map((quiz, index) => {
-                let name = 'answer[' + quiz._id + ']';
-                return (
-                  <Field
-                    name={name}
-                    component={this.renderQuestion}
-                    quiz={quiz}
-                    index={index}
-                    key={index}
-                  />
-                )
-              })
-            }
-            <FormGroup>
-              <Button color="primary" type="submit" disabled={submitting}>Nộp bài</Button>
-            </FormGroup>
-          </Form>
+              <Button color="danger" onClick={this.back}>Quay lại</Button>
+            </CardBody>
+          </Card>
           :
           <Fragment>
-          {
-            isEmptyObj(quizDone)
-            ?
-            <Card>
-              <CardBody>
-                <Button color="danger" onClick={this.start}>Bắt đầu làm trắc nghiệm</Button>
-                <div className="tit" >{quizTest.title}</div>
-                <h5 style={{marginBottom: 20}}>
-                  Thời gian làm bài : {quizTest.time} phút
-                </h5>
+            <Prompt
+              when={isStart}
+              message={this.submit2}
+            />
+            {
+              isStart
+              ?
+              <Form className="form-quiz-test" onSubmit={ handleSubmit(this.submit) } >
+                <b>
+                  Thời gian làm bài : &nbsp;
+                  <span style={{color: 'red'}}>
+                    <Countdown
+                      date={Date.now() + this.state.date}
+                      onComplete={handleSubmit(this.submit)}
+                    />
+                  </span>
+                </b>
+                <div className="title" >{quizTest.title}</div>
                 {
                   quizTest.description &&
-                  <Alert color="warning">
-                    Cảnh báo! Nếu đang làm bài mà thoát ra khỏi trang làm bài khi chưa nộp bài sẽ bị 0 điểm.
+                  <Alert color="secondary">
+                    <span>
+                      {quizTest.description}
+                    </span>
                   </Alert>
                 }
-              </CardBody>
-            </Card>
-            :
-            <Card>
-              <CardBody>
-                <div className="tit" >{quizTest.title}</div>
-                <h5 style={{marginBottom: 20}}>
-                  Điểm của bạn bài làm này: {quizDone.point} điểm
-                </h5>
-              </CardBody>
-            </Card>
-          }
+                <Field
+                    name="quizId"
+                    component="input"
+                    type="hidden"
+                  />
+                {
+                  quizTest.listQuiz.map((quiz, index) => {
+                    let name = 'answer[' + quiz._id + ']';
+                    return (
+                      <Field
+                        name={name}
+                        component={this.renderQuestion}
+                        quiz={quiz}
+                        index={index}
+                        key={index}
+                      />
+                    )
+                  })
+                }
+                <FormGroup>
+                  <Button color="primary" type="submit" disabled={submitting}>Nộp bài</Button>
+                </FormGroup>
+              </Form>
+              :
+              <Fragment>
+              {
+                isEmptyObj(quizDone)
+                ?
+                <Card>
+                  <CardBody>
+                    <Button color="danger" onClick={this.start}>Bắt đầu làm trắc nghiệm</Button>
+                    <div className="tit" >{quizTest.title}</div>
+                    <h5 style={{marginBottom: 20}}>
+                      Thời gian làm bài : {quizTest.time} phút
+                    </h5>
+                    {
+                      quizTest.description &&
+                      <Alert color="warning">
+                        Cảnh báo! Nếu đang làm bài mà thoát ra khỏi trang làm bài khi chưa nộp bài sẽ bị 0 điểm.
+                      </Alert>
+                    }
+                  </CardBody>
+                </Card>
+                :
+                <Card>
+                  <CardBody>
+                    <div className="tit" >{quizTest.title}</div>
+                    <h5 style={{marginBottom: 20}}>
+                      Điểm của bạn bài làm này: {quizDone.point} điểm
+                    </h5>
+                  </CardBody>
+                </Card>
+              }
+              </Fragment>
+            }
           </Fragment>
         }
       </Fragment>

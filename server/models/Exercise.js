@@ -46,6 +46,9 @@ const ExerciseSchema = new Schema({
   deadline:{
     type: Date
   },
+  password: {
+    type: String
+  },
   created: {
     type: Date,
     default: Date.now

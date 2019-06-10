@@ -73,6 +73,7 @@ router.post(
       text: req.body.text,
       attachFiles: req.body.attachFiles,
       deadline: req.body.deadline,
+      password: req.body.password,
       courseId: req.body.courseId
     });
 
@@ -219,9 +220,8 @@ router.post('/:exerciseId/submit', passport.authenticate('jwt', { session: false
     errors.file = 'File phải nhỏ hơn 20 MB!'
     return res.status(404).json(errors);
   }
-
   var dir = './file_upload/' + req.params.exerciseId + '/' + req.user._id + '/'; 
-  
+
   if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, {recursive: true}, err=>{});
   }

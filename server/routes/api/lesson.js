@@ -167,10 +167,10 @@ router.post(
 
     const quiz = {
       quizId: req.params.quizId,
+      password: req.body.password,
       deadline: req.body.deadline,
       startTime: req.body.startTime
     }
-
     const newSubQuiz = new SubQuiz({
       quizId: req.params.quizId,
       courseId: req.params.courseId,

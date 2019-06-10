@@ -123,6 +123,29 @@ export const getDetailQuiz = (testQuizId) => dispatch => {
     );
 }
 
+// Get detail test quiz by id
+export const getDetailQuizByPassword = (lessonId, testQuizId, password) => dispatch => {
+  dispatch(setQuizzesLoading());
+  axios
+    .get(config.ADDRESS +`/api/test/quiz-detail-password/`, {
+      'params': {
+        'lessonId': lessonId,
+        'testQuizId': testQuizId,
+        'password': password
+      }
+    })
+    .then(res => {
+      dispatch({
+        type: GET_QUIZ_DETAIL,
+        payload: res.data
+      })
+    }).catch(err =>{
+      dispatch({
+        type: GET_QUIZ_DETAIL,
+        payload: {}
+      })}
+    );
+}
 export const setQuizzesLoading = () => {
   return {
     type: QUIZ_LOADING

@@ -58,6 +58,7 @@ class QuizModal extends Component {
     this.state.listTestQuiz.forEach(elem => {
       if(elem._id.toString() === quizId.toString())
       {
+        timeData.password = elem.password  
         timeData.deadline = elem.deadLine  
         timeData.startTime = elem.startTime  
       }
@@ -131,6 +132,17 @@ class QuizModal extends Component {
     })
   }
 
+  onChangePassword(quizId, e) {
+    this.state.listTestQuiz.map(elem => {
+      if(elem._id.toString() === quizId.toString())
+        return elem.password = e.target.value;
+      return elem;
+    })
+    this.setState({
+      listTestQuiz: this.state.listTestQuiz
+    })
+  }
+
   onChangeStartTime(quizId, time){
     this.state.listTestQuiz.map(elem => {
       if(elem._id.toString() === quizId.toString())
@@ -174,62 +186,72 @@ class QuizModal extends Component {
                       <CardBody>
                         <Row>
                           <Col xs="10">
-                            <Label style={{marginRight: 10, fontWeight:'bold'}}>Thời gian bắt đầu làm: </Label> 
-                            {
-                              quiz.startTime
-                              ?
-                              <DatePicker
-                                selected={quiz.startTime}
-                                onChange={this.onChangeStartTime.bind(this, quiz._id)}
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={30}
-                                isClearable={true}
-                                dateFormat="dd/MM/yyyy HH:mm aa"
-                                customInput={<Input />}
-                                timeCaption="time"
-                              />
-                              :
-                              <DatePicker
-                                onChange={this.onChangeStartTime.bind(this, quiz._id)}
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={30}
-                                isClearable={true}
-                                dateFormat="dd/MM/yyyy HH:mm aa"
-                                customInput={<Input />}
-                                timeCaption="time"
-                              />
-                            }
-                            <br/>
-                            <Label style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Hạn chót làm bài: </Label> 
-                            {
-                              quiz.deadLine
-                              ?
-                              <DatePicker
-                                selected={quiz.deadLine}
-                                onChange={this.onChangeDeadline.bind(this, quiz._id)}
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={30}
-                                isClearable={true}
-                                dateFormat="dd/MM/yyyy HH:mm aa"
-                                customInput={<Input />}
-                                timeCaption="time"
-                              />
-                              :
-                              <DatePicker
-                                onChange={this.onChangeDeadline.bind(this, quiz._id)}
-                                showTimeSelect
-                                timeFormat="HH:mm"
-                                timeIntervals={30}
-                                isClearable={true}
-                                dateFormat="dd/MM/yyyy HH:mm aa"
-                                customInput={<Input />}
-                                timeCaption="time"
-                              />
-                            }
+                            <div>
+                              <label className="col-md-4"  style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Mật khẩu: </label>
+                              <Input style={{display: 'inline-block', width: 182}} type="text" name="password" value={this.state.password} onChange={this.onChangePassword.bind(this, quiz._id)} placeholder="Mật khẩu..." />
+                {/* {errors.title && <Alert color="danger">{errors.title}</Alert>} */}
+                            </div>
+                            <div>
+                              <Label className="col-md-4" style={{marginRight: 10, fontWeight:'bold'}}>Thời gian bắt đầu làm: </Label> 
+                              {
+                                quiz.startTime
+                                ?
+                                <DatePicker
+                                  className='col-md-12'
+                                  selected={quiz.startTime}
+                                  onChange={this.onChangeStartTime.bind(this, quiz._id)}
+                                  showTimeSelect
+                                  timeFormat="HH:mm"
+                                  timeIntervals={30}
+                                  isClearable={true}
+                                  dateFormat="dd/MM/yyyy HH:mm aa"
+                                  customInput={<Input />}
+                                  timeCaption="time"
+                                />
+                                :
+                                <DatePicker
+                                  className='col-md-12'
+                                  onChange={this.onChangeStartTime.bind(this, quiz._id)}
+                                  showTimeSelect
+                                  timeFormat="HH:mm"
+                                  timeIntervals={30}
+                                  isClearable={true}
+                                  dateFormat="dd/MM/yyyy HH:mm aa"
+                                  customInput={<Input />}
+                                  timeCaption="time"
+                                />
+                              }
+                            </div>
 
+                            <div>
+                              <Label className='col-md-4' style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Hạn chót làm bài: </Label> 
+                              {
+                                quiz.deadLine
+                                ?
+                                <DatePicker
+                                  selected={quiz.deadLine}
+                                  onChange={this.onChangeDeadline.bind(this, quiz._id)}
+                                  showTimeSelect
+                                  timeFormat="HH:mm"
+                                  timeIntervals={30}
+                                  isClearable={true}
+                                  dateFormat="dd/MM/yyyy HH:mm aa"
+                                  customInput={<Input />}
+                                  timeCaption="time"
+                                />
+                                :
+                                <DatePicker
+                                  onChange={this.onChangeDeadline.bind(this, quiz._id)}
+                                  showTimeSelect
+                                  timeFormat="HH:mm"
+                                  timeIntervals={30}
+                                  isClearable={true}
+                                  dateFormat="dd/MM/yyyy HH:mm aa"
+                                  customInput={<Input />}
+                                  timeCaption="time"
+                                />
+                              }
+                            </div>
                           </Col>
                           <Col >
                             <Button color="primary" onClick={this.handleClickQuiz.bind(this, quiz._id)}>

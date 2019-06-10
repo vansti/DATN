@@ -34,6 +34,7 @@ class ExerciseBox extends Component {
       title: '',
       text: '',
       attachFiles: [],
+      password: '',
       deadline: null,
       large: false,
       errors: {},
@@ -61,10 +62,10 @@ class ExerciseBox extends Component {
       text: this.state.text,
       attachFiles: this.state.attachFiles,
       deadline: this.state.deadline,
+      password: this.state.password,
       courseId: this.props.match.params.id,
       lessonId: this.props.match.params.lessonId
     };
-
     this.props.addExercise(exerciseData);
     this.setState({isLoading: true});
     this.props.clearErrors();
@@ -182,6 +183,16 @@ class ExerciseBox extends Component {
               <Col xs="12" md="9">
                 <Input type="textarea" name="text" value={this.state.text} onChange={this.onChange} rows="9" placeholder="Nội dung..." />
                 {errors.text && <Alert color="danger">{errors.text}</Alert>}
+              </Col>
+  
+            </FormGroup>
+            <FormGroup row>
+              <Col md="3">
+                <Label>Mật khẩu</Label>
+              </Col>
+              <Col xs="12" md="9">
+                <Input type="text" name="password" value={this.state.password} onChange={this.onChange} rows="9" placeholder="Mật khẩu..." />
+                {errors.password && <Alert color="danger">{errors.password}</Alert>}
               </Col>
   
             </FormGroup>

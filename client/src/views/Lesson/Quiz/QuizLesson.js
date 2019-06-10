@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 //action
-import { getDetailQuiz, isDoQuiz } from '../../../actions/testQuizAction';
+import { getDetailQuizByPassword, isDoQuiz } from '../../../actions/testQuizAction';
 //component
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Modal, ModalBody } from 'reactstrap';
@@ -29,7 +29,7 @@ class QuizLesson extends Component {
 
   componentDidMount = () => {
     this.props.isDoQuiz(this.props.match.params.id, this.props.match.params.quizId);
-    this.props.getDetailQuiz(this.props.match.params.quizId);
+    this.props.getDetailQuizByPassword(this.props.match.params.lessonId, this.props.match.params.quizId, this.props.location.state.password);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -128,12 +128,12 @@ class QuizLesson extends Component {
 }
 
 QuizLesson.propTypes = {
-  getDetailQuiz : PropTypes.func.isRequired,
+  getDetailQuizByPassword : PropTypes.func.isRequired,
   testQuiz: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
-  getDetailQuiz: bindActionCreators(getDetailQuiz, dispatch),
+  getDetailQuizByPassword: bindActionCreators(getDetailQuizByPassword, dispatch),
   isDoQuiz: bindActionCreators(isDoQuiz, dispatch)
 });
 
