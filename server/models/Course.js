@@ -23,6 +23,16 @@ const CourseSchema = new Schema({
   maxStudent: {
     type: Number
   },
+  days: [
+    {
+      dayName: {
+        type: String
+      },
+      time: [
+        { type: String }
+      ]
+    }
+  ],
   pointColumns: [{
     pointName: {
       type: String

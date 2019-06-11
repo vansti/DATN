@@ -28,6 +28,7 @@ import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
+var moment = require('moment');
 
 const styles = {
   bigAvatar: {
@@ -48,6 +49,7 @@ class EditCourse extends Component {
 
     this.state = {
       loading: true,
+      code: '',
       title: '',
       intro: '',
       coursePhoto: '',
@@ -64,7 +66,8 @@ class EditCourse extends Component {
       invalidImg: false,
       pointColumns: [],
       maxStudent: '',
-      minStudent: ''
+      minStudent: '',
+      days: []
     };
     this.onEditorChange = this.onEditorChange.bind( this );
   }
@@ -86,18 +89,23 @@ class EditCourse extends Component {
       let { courseinfo, loading } = nextProps.courses
       this.setState({ 
         loading,
+        code: courseinfo.course.code,
         title: courseinfo.course.title,
+        days: courseinfo.course.days,
         intro: courseinfo.course.intro,
         coursePhoto: courseinfo.course.coursePhoto,
         enrollDeadline: new Date(courseinfo.course.enrollDeadline),
         studyTime: courseinfo.course_detail.studyTime,
         openingDay: new Date(courseinfo.course_detail.openingDay),
-        endDay: courseinfo.course_detail.endDay ? new Date(courseinfo.course_detail.endDay) : null,
+        endDay: new Date(courseinfo.course_detail.endDay),
+        initialopeningDay: new Date(courseinfo.course_detail.openingDay),
+        innitialendDay: new Date(courseinfo.course_detail.endDay),
         fee: courseinfo.course_detail.fee,
         info: courseinfo.course_detail.info,
         pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : [],
         maxStudent: courseinfo.course_detail.maxStudent,
-        minStudent: courseinfo.course_detail.minStudent
+        minStudent: courseinfo.course_detail.minStudent,
+        eventsLength: courseinfo.schedule ? courseinfo.schedule.events.length : null
       });
     }
   }
@@ -133,23 +141,81 @@ class EditCourse extends Component {
     }
   }
 
+  getDaysBetweenDates(start, end, days) {
+    var result = [];
+    for(var i=0; i< days.length; i++)
+    {
+      var current = new Date(start);
+      current.setDate(current.getDate() + (days[i].dayName - current.getDay() + 7) % 7);
+      while (current < end) {
+        var a = {};
+        a.date = moment(+current).format('YYYY-MM-DD')
+        a.start = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[0] + ':00'
+        a.end = moment(+current).format('YYYY-MM-DD') + 'T' + days[i].time[1] + ':00'
+        a.time = days[i].time
+        result.push(a);
+        current.setDate(current.getDate() + 7);
+      }
+    }
+
+    result.sort(function(a,b){
+      return new Date(a.start) - new Date(b.start);
+    });
+    return result;  
+  }
+
   onSubmit = e => {
     e.preventDefault();
-    const courseData = {
-      title: this.state.title,
-      intro: this.state.intro,
-      enrollDeadline: this.state.enrollDeadline,
-      fee: this.state.fee,
-      info: this.state.info,
-      pointColumns: this.state.pointColumns,
-      openingDay: this.state.openingDay,
-      endDay: this.state.endDay,
-      maxStudent: this.state.maxStudent,
-      minStudent: this.state.minStudent
-    };
-    this.props.clearErrors();
-    this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
-    this.setState({isLoading: true});
+    if( this.state.initialopeningDay.getTime() === this.state.openingDay.getTime() 
+        && this.state.innitialendDay.getTime() === this.state.endDay.getTime() )
+    {
+      const courseData = {
+        title: this.state.title,
+        intro: this.state.intro,
+        enrollDeadline: this.state.enrollDeadline,
+        fee: this.state.fee,
+        info: this.state.info,
+        pointColumns: this.state.pointColumns,
+        openingDay: this.state.openingDay,
+        endDay: this.state.endDay,
+        maxStudent: this.state.maxStudent,
+        minStudent: this.state.minStudent,
+        events: ''
+      };
+      this.props.clearErrors();
+      this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
+      this.setState({isLoading: true});
+    }else{
+      var events = this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days)
+
+      if(events.length !== this.state.eventsLength)
+      {
+        let errors = {
+          endDay: 'Số buổi học khác với số buổi học hiện tại'
+        }
+        this.setState({ errors })
+      }else{
+        const courseData = {
+          title: this.state.title,
+          intro: this.state.intro,
+          enrollDeadline: this.state.enrollDeadline,
+          fee: this.state.fee,
+          info: this.state.info,
+          openingDay: this.state.openingDay,
+          endDay: this.state.endDay,
+          pointColumns: this.state.pointColumns,
+          minStudent: this.state.minStudent,
+          maxStudent: this.state.maxStudent,
+          events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days),
+          days: this.state.days
+        };
+        this.props.clearErrors();
+        this.props.editCourse(this.props.match.params.courseId, courseData, this.state.file);
+        this.setState({isLoading: true});
+      }
+
+    }
+
   }
 
   hideAlertSuccess(){
@@ -224,6 +290,10 @@ class EditCourse extends Component {
               <i className="fa fa-list-alt" aria-hidden="true"></i>Tóm tắt khóa học
             </CardHeader>
             <CardBody>
+              <FormGroup>
+                <Label>Mã khóa học</Label>
+                <Input type="text" value={this.state.code} disabled/>
+              </FormGroup>
               <FormGroup>
                 <Label>Tên khóa học</Label>
                 <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>

@@ -51,7 +51,8 @@ router.post(
       enrollDeadline: req.body.enrollDeadline,
       intro: req.body.intro,
       pointColumns: req.body.pointColumns,
-      maxStudent: req.body.maxStudent
+      maxStudent: req.body.maxStudent,
+      days: req.body.days
     });
 
     const newCourseDetail = new CourseDetail({
@@ -139,36 +140,102 @@ router.post(
 
     async function run() {
       try {
-        await 
-        Course.findByIdAndUpdate(
-          req.params.courseId,
-          {
-            $set: 
+        if(req.body.events === '')
+        {
+          await 
+          Course.findByIdAndUpdate(
+            req.params.courseId,
             {
-              title: req.body.title,
-              enrollDeadline: req.body.enrollDeadline,
-              intro: req.body.intro,
-              pointColumns: req.body.pointColumns,
-              maxStudent: req.body.maxStudent
+              $set: 
+              {
+                title: req.body.title,
+                enrollDeadline: req.body.enrollDeadline,
+                intro: req.body.intro,
+                pointColumns: req.body.pointColumns,
+                maxStudent: req.body.maxStudent
+              }
             }
-          }
-        )
+          )
+  
+          await 
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            {
+              $set: 
+              {
+                fee: req.body.fee,
+                info: req.body.info,
+                openingDay: req.body.openingDay,
+                endDay: req.body.endDay,
+                maxStudent: req.body.maxStudent,
+                minStudent: req.body.minStudent
+              }
+            }
+          )
+        }else{
 
-        await 
-        CourseDetail.findOneAndUpdate(
-          { 'courseId' : req.params.courseId },
+          var schedule = await
+          Schedule.findOne(
+            { courseId: req.params.courseId }
+          )
+          .lean()
+
+          var newEvents = req.body.events;
+          var oldEvents = schedule.events;
+          for(var i=0; i<oldEvents.length; i++)
           {
-            $set: 
-            {
-              fee: req.body.fee,
-              info: req.body.info,
-              openingDay: req.body.openingDay,
-              endDay: req.body.endDay,
-              maxStudent: req.body.maxStudent,
-              minStudent: req.body.minStudent
-            }
+            oldEvents[i].start = newEvents[i].start
+            oldEvents[i].end = newEvents[i].end
+            oldEvents[i].date = newEvents[i].date
+            oldEvents[i].time = newEvents[i].time
+
           }
-        )
+
+          await
+          Schedule.findOneAndUpdate(
+            { courseId: req.params.courseId },
+            {
+              $set: 
+              {
+                events: oldEvents
+              }
+            }
+          )
+
+          await 
+          Course.findByIdAndUpdate(
+            req.params.courseId,
+            {
+              $set: 
+              {
+                title: req.body.title,
+                enrollDeadline: req.body.enrollDeadline,
+                intro: req.body.intro,
+                pointColumns: req.body.pointColumns,
+                maxStudent: req.body.maxStudent,
+                days: req.body.days
+              }
+            }
+          )
+  
+          await 
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            {
+              $set: 
+              {
+                fee: req.body.fee,
+                info: req.body.info,
+                openingDay: req.body.openingDay,
+                endDay: req.body.endDay,
+                maxStudent: req.body.maxStudent,
+                minStudent: req.body.minStudent
+              }
+            }
+          )
+
+        }
+
         
         res.json("Chỉnh sửa khóa học thành công")
       } catch (err) {
@@ -278,7 +345,7 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1, days:1 }).lean()
 
         var course_detail = await  
         CourseDetail.findOne(

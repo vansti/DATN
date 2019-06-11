@@ -214,7 +214,7 @@ class AddCourse extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-
+    console.log(this.state.days)
     if(this.state.days.length === 0)
     {
       this.setState(prevState => ({
@@ -239,7 +239,8 @@ class AddCourse extends Component {
         pointColumns: this.state.pointColumns,
         events: this.getDaysBetweenDates(this.state.openingDay, this.state.endDay, this.state.days),
         listId: this.state.listId,
-        code: this.state.code
+        code: this.state.code,
+        days: this.state.days
       };
       this.props.clearErrors();
       this.props.addCourse(courseData, this.state.file);

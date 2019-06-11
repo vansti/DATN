@@ -173,7 +173,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}change-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chuyển sang khóa học hiện có khác </a>
+                              <a href="${process.env.FRONT_URL}/change-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chuyển sang khóa học hiện có khác </a>
                             </td>
                           </tr>
                         </table>
@@ -193,7 +193,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}out-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Hủy ghi danh và hoàn tiền </a>
+                              <a href="${process.env.FRONT_URL}/out-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Hủy ghi danh và hoàn tiền </a>
                             </td>
                           </tr>
                         </table>
@@ -213,7 +213,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}wait-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chờ dời lịch khai giảng </a>
+                              <a href="${process.env.FRONT_URL}/wait-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chờ dời lịch khai giảng </a>
                             </td>
                           </tr>
                         </table>
