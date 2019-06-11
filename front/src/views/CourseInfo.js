@@ -97,22 +97,42 @@ class CourseInfo extends Component {
                   <hr/>
                   <Row>
                     <Col xs="9">
-                      <b>Hạn đăng ký - </b>
-                      <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                        {courseinfo.course.enrollDeadline}
-                      </Moment><br/>
-                      <b>Học phí - </b>
-                      <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
-                      <b>Thời gian học - </b>
-                      {courseinfo.course_detail.studyTime}.<br/>
-                      <b>Ngày khai giảng - </b>
-                      <Moment format="[ngày] DD [thg] MM, YYYY.">
-                        {courseinfo.course_detail.openingDay}
-                      </Moment><br/>
-                      <b>Ngày kết thúc - </b>
-                      <Moment format="[ngày] DD [thg] MM, YYYY.">
-                        {courseinfo.course_detail.endDay}
-                      </Moment><br/>
+                      <div>
+                        <b>Hạn đăng ký - </b>
+                        <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
+                          {courseinfo.course.enrollDeadline}
+                        </Moment>
+                      </div>
+
+                      <div className="info">
+                        <b>Học phí - </b>
+                        <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
+                      </div>
+
+                      <div className="info">
+                        <b>Thời gian học - </b>
+                        {courseinfo.course_detail.studyTime}.
+                      </div>
+
+                      <div className="info">
+                        <b>Ngày khai giảng - </b>
+                        <Moment format="[ngày] DD [thg] MM, YYYY.">
+                          {courseinfo.course_detail.openingDay}
+                        </Moment>
+                      </div>
+
+                      <div className='info'>
+                        <b>Ngày kết thúc - </b>
+                        <Moment format="[ngày] DD [thg] MM, YYYY.">
+                          {courseinfo.course_detail.endDay}
+                        </Moment>
+                      </div>
+                      
+                      <div className='info'>
+                        <b>Đã ghi danh - </b>
+                        {courseinfo.course.students.length} / {courseinfo.course_detail.maxStudent}
+                      </div>
+
                     </Col>
                     <Col>
                       {

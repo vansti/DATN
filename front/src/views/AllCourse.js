@@ -83,6 +83,7 @@ class Confirm extends Component {
                             <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
                 
                             <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
+                            <div className="topright"> Đã ghi danh: {course.students.length} / {course.maxStudent}</div>
 
                           </CardHeader>
                           <CardBody>

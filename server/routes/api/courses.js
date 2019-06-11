@@ -278,7 +278,7 @@ router.get(
   (req, res) => {
     Course.find(
       { 'enrollDeadline' : {$gte : new Date()}},
-      {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1}
+      {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1, maxStudent:1, students: 1}
     )
     .sort({created: -1})
     .then(courses => res.json(courses))
@@ -297,7 +297,7 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1}).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1, students: 1}).lean()
 
         var course_detail = await  
         CourseDetail.findOne(
@@ -345,7 +345,7 @@ router.get(
       try {
 
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1, days:1 }).lean()
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1, days:1, students: 1 }).lean()
 
         var course_detail = await  
         CourseDetail.findOne(

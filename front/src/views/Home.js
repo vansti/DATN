@@ -155,7 +155,7 @@ class Home extends Component {
       activeIndex,
       shortIntro
     } = this.state
-
+    console.log(allcourses)
     const slides = items.map((item) => {
       return (
         <CarouselItem
@@ -228,7 +228,7 @@ class Home extends Component {
                   <img src={emo} alt="avatar" style={{width: 70, height: 70}}/>
                 </div>
                 :
-                <div>
+                <div>                
                   <Row style={{marginTop:70}}>
                     {
                       allcourses.map(course =>
@@ -240,7 +240,7 @@ class Home extends Component {
                             </div>
                             <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>                
                             <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
-
+                            <div className="topright"> Đã ghi danh: {course.students.length} / {course.maxStudent}</div>
                           </CardHeader>
                           <CardBody>
                             <b><i className="fa fa-clock-o" aria-hidden="true"></i>&ensp;&ensp;Hạn đăng ký - </b>
