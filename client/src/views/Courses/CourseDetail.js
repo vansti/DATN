@@ -37,10 +37,11 @@ class CourseDetail extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.courses) {
       const { courseinfo, loading } = nextProps.courses
-      this.setState({
-        courseinfo,
-        loading
-      })
+      if(this.props.match.params.id === courseinfo.course._id)
+        this.setState({
+          courseinfo,
+          loading
+        })
     }
   }
 

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Container, Row } from 'reactstrap';
-import { vnpayReturn, clearVnpayReturn } from '../actions/userActions';
+import { vnpayReturn, clearVnpayReturn, getApproveListStudent } from '../actions/userActions';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../validation/is-empty';
 import smile from '../assets/img/smile.png'
+import { getAllCourse } from '../actions/courseActions';
 
 class VnPay extends Component {
   constructor() {
@@ -21,8 +22,10 @@ class VnPay extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!isEmptyObj(nextProps.users.pay_return)) {
-      this.setState({ loading: false, idStudent: nextProps.users.pay_return })
-      this.props.clearVnpayReturn()
+      this.setState({ loading: false, idStudent: nextProps.users.pay_return.studentCode })
+      this.props.clearVnpayReturn();
+      this.props.getAllCourse();
+      this.props.getApproveListStudent(nextProps.users.pay_return.courseId);
     }
   }
 
@@ -57,7 +60,8 @@ class VnPay extends Component {
 }
 
 const mapStateToProps = state => ({
-  users: state.users
+  users: state.users,
+  auth: state.auth
 });
 
-export default connect(mapStateToProps, { vnpayReturn, clearVnpayReturn })(VnPay);
+export default connect(mapStateToProps, { vnpayReturn, clearVnpayReturn, getAllCourse, getApproveListStudent })(VnPay);

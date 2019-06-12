@@ -26,10 +26,11 @@ class ApproveStudent extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.users) {
       const { approve_list, loading } = nextProps.users
-      this.setState({ 
-        approve_list, 
-        loading 
-      });
+      if(this.props.match.params.courseId === approve_list.courseId)
+        this.setState({ 
+          approve_list, 
+          loading 
+        });
     }
 
     if (nextProps.success.mes === "Đã gửi mail cho các học viên") {

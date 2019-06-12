@@ -87,26 +87,27 @@ class EditCourse extends Component {
     if (!isEmptyObj(nextProps.courses))
     {
       let { courseinfo, loading } = nextProps.courses
-      this.setState({ 
-        loading,
-        code: courseinfo.course.code,
-        title: courseinfo.course.title,
-        days: courseinfo.course.days,
-        intro: courseinfo.course.intro,
-        coursePhoto: courseinfo.course.coursePhoto,
-        enrollDeadline: new Date(courseinfo.course.enrollDeadline),
-        studyTime: courseinfo.course_detail.studyTime,
-        openingDay: new Date(courseinfo.course_detail.openingDay),
-        endDay: new Date(courseinfo.course_detail.endDay),
-        initialopeningDay: new Date(courseinfo.course_detail.openingDay),
-        innitialendDay: new Date(courseinfo.course_detail.endDay),
-        fee: courseinfo.course_detail.fee,
-        info: courseinfo.course_detail.info,
-        pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : [],
-        maxStudent: courseinfo.course_detail.maxStudent,
-        minStudent: courseinfo.course_detail.minStudent,
-        eventsLength: courseinfo.schedule ? courseinfo.schedule.events.length : null
-      });
+      if(this.props.match.params.courseId === courseinfo.course._id)
+        this.setState({ 
+          loading,
+          code: courseinfo.course.code,
+          title: courseinfo.course.title,
+          days: courseinfo.course.days,
+          intro: courseinfo.course.intro,
+          coursePhoto: courseinfo.course.coursePhoto,
+          enrollDeadline: new Date(courseinfo.course.enrollDeadline),
+          studyTime: courseinfo.course_detail.studyTime,
+          openingDay: new Date(courseinfo.course_detail.openingDay),
+          endDay: new Date(courseinfo.course_detail.endDay),
+          initialopeningDay: new Date(courseinfo.course_detail.openingDay),
+          innitialendDay: new Date(courseinfo.course_detail.endDay),
+          fee: courseinfo.course_detail.fee,
+          info: courseinfo.course_detail.info,
+          pointColumns: courseinfo.course.pointColumns ? courseinfo.course.pointColumns : [],
+          maxStudent: courseinfo.course_detail.maxStudent,
+          minStudent: courseinfo.course_detail.minStudent,
+          eventsLength: courseinfo.schedule ? courseinfo.schedule.events.length : null
+        });
     }
   }
 

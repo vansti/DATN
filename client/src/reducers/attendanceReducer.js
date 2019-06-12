@@ -5,6 +5,7 @@ import {
 const initialState = {
   loading: false,
   today_attendance: {
+    _id: '',
     students:[]
   },
   attendance: [],

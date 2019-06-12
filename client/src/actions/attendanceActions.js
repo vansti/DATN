@@ -11,6 +11,9 @@ import {
   GET_TODAY_ATTENDANCE
 } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // Add Attendance
 export const addAttendance= (newAttendance) => dispatch => {
   axios
@@ -57,39 +60,33 @@ export const clearAttendance = () => {
 // Get Attendance
 export const getAttendance = (courseId) => dispatch => {
   dispatch(setAttendacneLoading());
-  axios
-    .get(config.ADDRESS + '/api/attendance/get-attendance/' + courseId)
-    .then(res =>{
+  socket.emit("attendance", courseId);
+  socket.on("get_attendance", 
+    res =>{
       dispatch({
         type: GET_ATTENDANCE,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_ATTENDANCE,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // Get Attendance
-export const getTodayAttendance = (courseId, date) => dispatch => {
+export const getTodayAttendance = (courseId, selectDate) => dispatch => {
   dispatch(setAttendacneLoading());
-  axios
-    .post(config.ADDRESS +'/api/attendance/get-today-attendance/' + courseId, date)
-    .then(res =>{
+  const data ={
+    courseId,
+    selectDate
+  }
+  socket.emit("today_attendance", data);
+  socket.on("get_today_attendance", 
+    res =>{
       dispatch({
         type: GET_TODAY_ATTENDANCE,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_TODAY_ATTENDANCE,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 export const setAttendacneLoading = () => {

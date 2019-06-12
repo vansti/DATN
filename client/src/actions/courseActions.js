@@ -16,6 +16,9 @@ import {
   GET_GUEST_COURSE_INFO
 } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // Add Course
 export const addCourse = (courseData, fileData) => dispatch => {
   axios
@@ -32,6 +35,7 @@ export const addCourse = (courseData, fileData) => dispatch => {
             type: GET_SUCCESS,
             payload: {data: 'Thêm khóa học thành công'}
           })
+        dispatch(getAllCourse());
         });
       }
       else
@@ -67,6 +71,7 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
             type: GET_SUCCESS,
             payload: {data: 'Chỉnh sửa khóa học thành công'}
           })
+          dispatch(getAllCourse());
         });
       }
       else
@@ -75,6 +80,7 @@ export const editCourse = (courseId, courseData, fileData) => dispatch => {
           type: GET_SUCCESS,
           payload: {data: 'Chỉnh sửa khóa học thành công'}
         })
+        dispatch(getAllCourse());
       }
 
     })
@@ -152,20 +158,15 @@ export const setAllCourseLoading = () => {
 // lấy hết khóa học chưa hết hạn ghi danh
 export const getAllCourse = () => dispatch => {
   dispatch(setAllCourseLoading())
-  axios
-    .get(config.ADDRESS +'/api/courses/all-course')
-    .then(res =>
+  socket.emit("all_course");
+  socket.on("get_all_course", 
+    res =>{
       dispatch({
         type: GET_ALL_COURSES,
-        payload: res.data
+        payload: res
       })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_ALL_COURSES,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // lấy thông tin chi tiết của 1 khóa học
@@ -190,20 +191,15 @@ export const getGuestCourseInfo = (courseId) => dispatch => {
 // lấy thông tin chi tiết của 1 khóa học
 export const getCourseInfo = (courseId) => dispatch => {
   dispatch(setAllCourseLoading())
-  axios
-    .get(config.ADDRESS +`/api/courses/course-info/${courseId}`)
-    .then(res =>
+  socket.emit("course_info", courseId);
+  socket.on("get_course_info", 
+    res =>{
       dispatch({
         type: GET_COURSE_INFO,
-        payload: res.data
+        payload: res
       })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_COURSE_INFO,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // lấy tất cả các khóa học

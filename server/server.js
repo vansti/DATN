@@ -78,8 +78,12 @@ app.use('/api/lesson', lesson);
 
 const port = process.env.PORT || 5000;
 
-server = app.listen(port, ()=> console.log(`Server starting on ${port}`));
-
+const http = require("http");
+const server = http.createServer(app);
 const io = socketIO(server);
+const socketEvents = require('./socketEvents');
 
-const socketEvents = require('./socketEvents')(io);
+socketEvents(io);
+
+
+server.listen(port, ()=> console.log(`Server starting on ${port}`));

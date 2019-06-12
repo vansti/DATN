@@ -16,6 +16,9 @@ import {
   CLEAR_SEARCH
 } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
   dispatch(setUsersLoading());
@@ -75,20 +78,15 @@ export const getApproveListTeacher = (courseId) => dispatch => {
 // lấy danh sách học viên ghi danh và danh sách giáo viên dc duyệt của 1 khóa học
 export const getApproveListStudent = (courseId) => dispatch => {
   dispatch(setUsersLoading());
-  axios
-    .get(config.ADDRESS +'/api/users/approve-list/student/' + courseId)
-    .then(res =>
+  socket.emit("student_approve_list", courseId);
+  socket.on("get_student_approve_list", 
+    res =>{
       dispatch({
         type: GET_APPROVE_LIST_STUDENT,
-        payload: res.data
+        payload: res
       })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_APPROVE_LIST_STUDENT,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 // Approve Student to Course
 export const approveStudent = (courseId, studentId) => dispatch => {

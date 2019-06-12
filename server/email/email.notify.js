@@ -2,7 +2,7 @@ require('dotenv').config()
 
 module.exports = {
 
-  confirm: (userId, courseId, name, courseTitle, schoolName, schoolAddress) => ({
+  confirm: (student, course, school) => ({
     subject: 'Thông báo không đủ học viên để mở lớp',
     html: `
     <!DOCTYPE html>
@@ -113,7 +113,7 @@ module.exports = {
     
       <!-- start preheader -->
       <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-        A preheader is the short summary text that follows the subject line when an email is viewed in the inbox.
+        Xin chào ${student.name}, chúng tôi rất tiếc phải thông báo khóa học "${course.title}" với Mã khóa học "${course.code}" bạn đã ghi danh hiện không đủ học viên để có thể khai giảng.
       </div>
       <!-- end preheader -->
     
@@ -158,7 +158,7 @@ module.exports = {
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                   <p style="margin: 0;">
-                    Xin chào ${name}, chúng tôi rất tiếc phải thông báo khóa học "${courseTitle}" bạn đã ghi danh hiện không đủ học viên để có thể khai giảng, bạn hãy vui lòng lựa chọn một trong các phương án sau 
+                    Xin chào <b>${student.name}</b>, chúng tôi rất tiếc phải thông báo khóa học "<b>${course.title}</b>" với Mã khóa học "<b>${course.code}</b>" bạn đã ghi danh hiện không đủ học viên để có thể khai giảng, bạn hãy vui lòng lựa chọn một trong các phương án sau 
                   </p>
                 </td>
               </tr>
@@ -173,7 +173,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/change-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chuyển sang khóa học hiện có khác </a>
+                              <a href="${process.env.FRONT_URL}/change-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chuyển sang khóa học hiện có khác </a>
                             </td>
                           </tr>
                         </table>
@@ -193,7 +193,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/out-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Hủy ghi danh và hoàn tiền </a>
+                              <a href="${process.env.FRONT_URL}/out-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Hủy ghi danh và hoàn tiền </a>
                             </td>
                           </tr>
                         </table>
@@ -213,7 +213,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/wait-course/${userId}/${courseId}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chờ dời lịch khai giảng </a>
+                              <a href="${process.env.FRONT_URL}/wait-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chờ dời lịch khai giảng </a>
                             </td>
                           </tr>
                         </table>
@@ -255,8 +255,8 @@ module.exports = {
               <!-- start permission -->
               <tr>
                 <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                  <p style="margin: 0;">${schoolName}.</p>
-                  <p style="margin: 0;">${schoolAddress}.</p>
+                  <p style="margin: 0;">${school.name}.</p>
+                  <p style="margin: 0;">${school.address}.</p>
 
                 </td>
               </tr>

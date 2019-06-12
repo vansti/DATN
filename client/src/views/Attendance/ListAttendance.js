@@ -55,7 +55,8 @@ class ListAttendance extends Component {
         ]
       ],
       loadingAttendance: false,
-      attendance: []
+      attendance: [],
+      select: false
     };
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleToSudentInfo = this.handleToSudentInfo.bind(this);
@@ -76,23 +77,18 @@ class ListAttendance extends Component {
   }
   
   handleChangeDate(selectDate) {
-    var date = {
-      selectDate
-    };
-
-    this.props.getTodayAttendance(this.state.courseId, date);
+    this.props.getTodayAttendance(this.state.courseId, selectDate);
     this.setState({
-      selectDate
+      selectDate,
+      select: true
     });
   }
 
   handleChangeDateChart = (selectDate) => {
-    var date = {
-      selectDate: moment(selectDate).format('YYYY-MM-DD')
-    };
-    this.props.getTodayAttendance(this.state.courseId, date);
+    this.props.getTodayAttendance(this.state.courseId, moment(selectDate).format('YYYY-MM-DD'));
     this.setState({
-      selectDate: moment(selectDate).format('YYYY-MM-DD')
+      selectDate: moment(selectDate).format('YYYY-MM-DD'),
+      select: true
     });
   }
 
@@ -126,10 +122,11 @@ class ListAttendance extends Component {
 
     const { schedule, loading } = nextProps.schedule
     if(!isEmptyObj(schedule))
-      this.setState({ 
-        events: schedule.events,
-        loadingEvent: loading
-      });
+      if(schedule.courseId === this.state.courseId)
+        this.setState({ 
+          events: schedule.events,
+          loadingEvent: loading
+        });
     this.setState({
       loadingEvent: loading 
     });  
@@ -147,48 +144,84 @@ class ListAttendance extends Component {
       const { loading, today_attendance } = nextProps.attendance
 
       if(today_attendance === null)
+      {
+        if(this.state.select === true)
+          this.setState({
+            intialUsers: [],
+            users: [],
+            loadingUserAttendance: loading,
+            select: false
+          })
         this.setState({
-          intialUsers: [],
-          users: [],
-          loadingUserAttendance: loading
+          loadingUserAttendance: false,
+          select: false
         })
-      else
-        this.setState({
-          intialUsers: today_attendance.students,
-          users: today_attendance.students,
-          loadingUserAttendance: loading
-        })
+      }
+      else{
+        if(today_attendance.date === this.state.selectDate && today_attendance.courseId === this.state.courseId)
+        {
+          this.setState({
+            intialUsers: today_attendance.students,
+            users: today_attendance.students,
+            loadingUserAttendance: loading,
+            select: false
+          })
+        }
+      }
+      this.setState({ loadingUserAttendance: loading })
     }
 
     if (!isEmptyObj(nextProps.attendance)) {
       const { loading, attendance } = nextProps.attendance
+      if(!isEmptyObj(attendance))
+      {
+        if(attendance.courseId === this.state.courseId)
+        {
+          this.setState({
+            attendance: attendance.attendance,
+            loadingAttendance: loading,
+            chartData: [
+              [
+                {
+                  type: "date",
+                  id: "Date"
+                },
+                {
+                  type: "number",
+                  id: "Absent"
+                }
+              ]
+            ]
+          })
+    
+          attendance.attendance.forEach(element => {
+            var tempList = [];
+            tempList.push(new Date(element.date))
+            var count = 0
+            element.students.forEach(student=>{
+              if(student.isPresent === false)
+                count++
+            })
+            tempList.push(count)
+            this.setState(prevState => ({
+              chartData: [...prevState.chartData, tempList]
+            }))
+          })
+    
+          var dateList = [];
+          attendance.attendance.forEach(element => {
+            dateList.push(new Date(element.date))
+          })
+          this.setState({
+            highlightDates: dateList
+          })
+        }
 
+      }
       this.setState({
-        attendance,
         loadingAttendance: loading
       })
 
-      attendance.forEach(element => {
-        var tempList = [];
-        tempList.push(new Date(element.date))
-        var count = 0
-        element.students.forEach(student=>{
-          if(student.isPresent === false)
-            count++
-        })
-        tempList.push(count)
-        this.setState(prevState => ({
-          chartData: [...prevState.chartData, tempList]
-        }))
-      })
-
-      var dateList = [];
-      nextProps.attendance.attendance.forEach(element => {
-        dateList.push(new Date(element.date))
-      })
-      this.setState({
-        highlightDates: dateList
-      })
     }
   }
 

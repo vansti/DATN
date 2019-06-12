@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import { Col, Container, Row } from 'reactstrap';
-import { repNotifyMail, clearSuccess } from '../actions/userActions';
+import { repNotifyMail, clearSuccess, getApproveListStudent, clearErrors } from '../actions/userActions';
 import logo from '../assets/img/e-icon.png'
+import isEmptyObj from '../validation/is-empty';
 
 class OutCourse extends Component {
   constructor() {
     super();
     this.state = {
-      isLoading: true
+      isLoading: true,
+      errors: {}
     };
   }
 
@@ -28,11 +30,17 @@ class OutCourse extends Component {
     if (nextProps.success.mes === 'Đã phản hồi mail thành công') {
       this.setState({ isLoading: false })
       this.props.clearSuccess()
+      this.props.getApproveListStudent(this.props.match.params.courseId)
+    }
+
+    if (!isEmptyObj(nextProps.errors)) {
+      this.setState({ errors: nextProps.errors, isLoading: false });
+      this.props.clearErrors()
     }
   }
 
   render() {
-    const { isLoading } = this.state
+    const { isLoading, errors } = this.state
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -45,8 +53,14 @@ class OutCourse extends Component {
               <Col md="6">
                 <img src={logo} alt='Logo' height="150" width="150" />
                 <div style={{textAlign: 'center', fontFamily:'Roboto Slab, serif', fontSize:30, fontWeight:'bold'}}>
-                  Cảm ơn bạn, yêu cầu hủy ghi danh của bạn đã được gửi về Trung Tâm, mời bạn đến Trung Tâm để được tư vấn và hoàn tiền
-                </div>         
+                {
+                  errors.fail
+                  ?
+                  'Bạn đã không còn là học viên của khóa học này, hãy kiểm tra lại'
+                  :
+                  'Cảm ơn bạn, yêu cầu chờ dời lịch khai giảng của bạn đã được gửi về Trung Tâm'
+                }
+                </div>        
               </Col>
             }
           </Row>
@@ -58,7 +72,8 @@ class OutCourse extends Component {
 }
 
 const mapStateToProps = state => ({
-  success: state.success
+  success: state.success,
+  errors: state.errors
 });
 
-export default connect(mapStateToProps, { repNotifyMail, clearSuccess })(OutCourse);
+export default connect(mapStateToProps, { repNotifyMail, clearSuccess, getApproveListStudent, clearErrors })(OutCourse);

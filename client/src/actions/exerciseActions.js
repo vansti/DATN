@@ -17,6 +17,8 @@ import {
   GET_EXERPOINT 
 } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
 
 export const getExercisePoint = (id) => dispatch => {
   dispatch(setExercisesLoading());
@@ -119,20 +121,15 @@ export const addComment = (commentData, exerciseId) => dispatch => {
 // get comment
 export const getComments = (exerciseId) => dispatch => {
   dispatch(setCommentsLoading());
-  axios
-    .get(config.ADDRESS +`/api/exercises/get-comments/${exerciseId}`)
-    .then(res =>
+  socket.emit("comments", exerciseId);
+  socket.on("get_comments", 
+    res =>{
       dispatch({
         type: GET_COMMENT,
-        payload: res.data
+        payload: res
       })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_COMMENT,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 export const setCommentsLoading = () => {

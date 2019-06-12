@@ -13,6 +13,9 @@ import {
   GET_LESSON_IN_COURSE
 } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // Add Lesson List
 export const addLessonList= (newLessonList) => dispatch => {
   axios
@@ -34,20 +37,15 @@ export const addLessonList= (newLessonList) => dispatch => {
 // get Lesson List
 export const getLessonList = () => dispatch => {
   dispatch(setLessonLoading());
-  axios
-    .get(config.ADDRESS +'/api/lesson/get-lesson-list')
-    .then(res =>{
+  socket.emit("lesson_list");
+  socket.on("get_lesson_list", 
+    res =>{
       dispatch({
         type: GET_LESSON_LIST,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_LESSON_LIST,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // get Lesson in a List
@@ -109,20 +107,19 @@ export const getListLessonTotal= (lessonTotal) => dispatch => {
 // lấy 1 bài học trong khóa học
 export const getLessonIncourse= (courseId, lessonId) => dispatch => {
   dispatch(setLessonLoading());
-  axios
-  .get(config.ADDRESS +`/api/lesson/get-lesson-in-course/${courseId}/${lessonId}`)
-    .then(res =>{
+  const dataId = {
+    courseId,
+    lessonId
+  }
+  socket.emit("lesson_in_course", dataId);
+  socket.on("get_lesson_in_course", 
+    res =>{
       dispatch({
         type: GET_LESSON_IN_COURSE,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_LESSON_IN_COURSE,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 export const addQuizLesson = (courseId, lessonId, quizId, deadlineData) => dispatch => {

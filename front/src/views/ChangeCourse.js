@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import { Container, Table, Button, Card, CardBody, Modal, ModalBody } from 'reactstrap';
 import { getAllCourse } from '../actions/courseActions';
-import { repNotifyMail, clearSuccess } from '../actions/userActions';
+import { repNotifyMail, clearSuccess, getApproveListStudent, clearErrors } from '../actions/userActions';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 const styles = {
   bigAvatar: {
-    height: 60,
-    width: 60,
+    height: 70,
+    width: 70,
     margin: 'auto',
     border: '1px solid #ddd',
     borderRadius: 5
@@ -23,7 +23,8 @@ class ChangeCourse extends Component {
     this.state = {
       loading: true,
       allcourses: [],
-      isShowSuccess: false
+      isShowSuccess: false,
+      isShowError: false
     };
   }
 
@@ -43,6 +44,12 @@ class ChangeCourse extends Component {
     if (nextProps.success.mes === 'Đã phản hồi mail thành công') {
       this.setState({ isLoading: false, isShowSuccess: true })
       this.props.clearSuccess()
+      this.props.getApproveListStudent(this.props.match.params.courseId)
+    }
+
+    if (nextProps.errors.fail === 'Yêu cầu của bạn không thành công') {
+      this.setState({ isShowError: true, isLoading: false });
+      this.props.clearErrors()
     }
   }
 
@@ -60,6 +67,12 @@ class ChangeCourse extends Component {
   hideAlertSuccess(){
     this.setState({
       isShowSuccess: false
+    })
+  }
+
+  hideAlertError(){
+    this.setState({
+      isShowError: false
     })
   }
 
@@ -98,7 +111,8 @@ class ChangeCourse extends Component {
                             </td>
                             <td>
                               <b>{course.title}</b><br/>
-                              <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
+                              <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span><br/>
+                              <span style={{color:'#FF6347', fontWeight:'bold'}}>Đã ghi danh: {course.students.length} / {course.maxStudent}</span>
                             </td>
                             <td>
                               <Button onClick={()=>window.open(`/course-info/${course._id}`)} className="btn-pill" color="secondary">
@@ -136,6 +150,14 @@ class ChangeCourse extends Component {
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}>
         </SweetAlert>
+        <SweetAlert
+          	danger
+          	confirmBtnText="OK"
+          	confirmBtnBsStyle="danger"
+          	title='Không thể gửi yêu cầu chuyển lớp'
+            show={this.state.isShowError}
+            onConfirm={this.hideAlertError.bind(this)}>
+        </SweetAlert>
       </div>
     );
   }
@@ -144,7 +166,8 @@ class ChangeCourse extends Component {
 
 const mapStateToProps = state => ({
   success: state.success,
-  courses: state.courses  
+  courses: state.courses,
+  errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllCourse, repNotifyMail, clearSuccess })(ChangeCourse);
+export default connect(mapStateToProps, { getAllCourse, repNotifyMail, clearSuccess, getApproveListStudent, clearErrors })(ChangeCourse);

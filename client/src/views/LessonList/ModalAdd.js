@@ -23,7 +23,7 @@ class ModalAdd extends Component {
     this.state = {
       isShowSuccess: false,
       title: '',
-      noLesson: 1,
+      noLesson: '1',
       errors:{}
     };
 
@@ -34,7 +34,7 @@ class ModalAdd extends Component {
     this.setState({
       large: !this.state.large,
       title: '',
-      noLesson: 1
+      noLesson: '1'
     });
   }
 

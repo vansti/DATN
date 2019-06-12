@@ -43,6 +43,7 @@ class CourseInfo extends Component {
   componentDidMount = () => {
     if(this.props.auth.isAuthenticated)
     {
+      this.props.getGuestCourseInfo(this.props.match.params.courseId);
       this.props.getCourseInfo(this.props.match.params.courseId);
     }else{
       this.props.getGuestCourseInfo(this.props.match.params.courseId);
@@ -52,11 +53,12 @@ class CourseInfo extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.courses) {
       const { guestcourseinfo, courseinfo, loading } = nextProps.courses
-      this.setState({
-        guestcourseinfo,
-        courseinfo,
-        loading
-      })
+      if(this.props.match.params.courseId === guestcourseinfo.course._id)
+        this.setState({
+          guestcourseinfo,
+          courseinfo,
+          loading
+        })
     }
 
     if (nextProps.success.mes === 'đăng nhập thành công') {
@@ -87,11 +89,11 @@ class CourseInfo extends Component {
               <main className="main">
                 <Container>
                   <div style={styles.imgbox3}>
-                    <img src={courseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
+                    <img src={guestcourseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                   </div>
-                  <span style={{color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {courseinfo.course.code}</span>
-                  <h2 style={{marginTop:10, fontWeight:'bold'}}>{courseinfo.course.title}</h2>
-                  <p className="lead">{courseinfo.course.intro}</p>
+                  <span style={{color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {guestcourseinfo.course.code}</span>
+                  <h2 style={{marginTop:10, fontWeight:'bold'}}>{guestcourseinfo.course.title}</h2>
+                  <p className="lead">{guestcourseinfo.course.intro}</p>
                 </Container>  
                 <Container fluid>
                   <hr/>
@@ -100,37 +102,37 @@ class CourseInfo extends Component {
                       <div>
                         <b>Hạn đăng ký - </b>
                         <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                          {courseinfo.course.enrollDeadline}
+                          {guestcourseinfo.course.enrollDeadline}
                         </Moment>
                       </div>
 
                       <div className="info">
                         <b>Học phí - </b>
-                        <NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
+                        <NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
                       </div>
 
                       <div className="info">
                         <b>Thời gian học - </b>
-                        {courseinfo.course_detail.studyTime}.
+                        {guestcourseinfo.course_detail.studyTime}.
                       </div>
 
                       <div className="info">
                         <b>Ngày khai giảng - </b>
                         <Moment format="[ngày] DD [thg] MM, YYYY.">
-                          {courseinfo.course_detail.openingDay}
+                          {guestcourseinfo.course_detail.openingDay}
                         </Moment>
                       </div>
 
                       <div className='info'>
                         <b>Ngày kết thúc - </b>
                         <Moment format="[ngày] DD [thg] MM, YYYY.">
-                          {courseinfo.course_detail.endDay}
+                          {guestcourseinfo.course_detail.endDay}
                         </Moment>
                       </div>
                       
                       <div className='info'>
                         <b>Đã ghi danh - </b>
-                        {courseinfo.course.students.length} / {courseinfo.course_detail.maxStudent}
+                        {guestcourseinfo.course.students.length} / {guestcourseinfo.course_detail.maxStudent}
                       </div>
 
                     </Col>
@@ -161,7 +163,7 @@ class CourseInfo extends Component {
                   <Container>
                     <h4 style={{fontWeight:'bold'}}>Giới thiệu nội dung khóa học</h4>
                   </Container>
-                  <div dangerouslySetInnerHTML={ { __html: courseinfo.course_detail.info} }></div>
+                  <div dangerouslySetInnerHTML={ { __html: guestcourseinfo.course_detail.info} }></div>
 
                   <hr/>
                   <Container>
@@ -177,7 +179,7 @@ class CourseInfo extends Component {
                     </thead>
                     <tbody>
                       {
-                        courseinfo.schedule.events.map(e=>
+                        guestcourseinfo.schedule.events.map(e=>
                           <tr key={e._id}>
                             <td>
                               {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
@@ -224,22 +226,42 @@ class CourseInfo extends Component {
                   <hr/>
                   <Row>
                     <Col xs="9">
-                      <b>Hạn đăng ký - </b>
-                      <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
-                        {guestcourseinfo.course.enrollDeadline}
-                      </Moment><br/>
-                      <b>Học phí - </b>
-                      <NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
-                      <b>Thời gian học - </b>
-                      {guestcourseinfo.course_detail.studyTime}.<br/>
-                      <b>Ngày khai giảng - </b>
-                      <Moment format="[ngày] DD [thg] MM, YYYY.">
-                        {guestcourseinfo.course_detail.openingDay}
-                      </Moment><br/>
-                      <b>Ngày kết thúc - </b>
-                      <Moment format="[ngày] DD [thg] MM, YYYY.">
-                        {guestcourseinfo.course_detail.endDay}
-                      </Moment><br/>
+                      <div>
+                        <b>Hạn đăng ký - </b>
+                        <Moment format="HH:mm [ngày] DD [thg] MM, YYYY.">
+                          {guestcourseinfo.course.enrollDeadline}
+                        </Moment>
+                      </div>
+
+                      <div className="info">
+                        <b>Học phí - </b>
+                        <NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> VND.<br/>
+                      </div>
+
+                      <div className="info">
+                        <b>Thời gian học - </b>
+                        {guestcourseinfo.course_detail.studyTime}.
+                      </div>
+
+                      <div className="info">
+                        <b>Ngày khai giảng - </b>
+                        <Moment format="[ngày] DD [thg] MM, YYYY.">
+                          {guestcourseinfo.course_detail.openingDay}
+                        </Moment>
+                      </div>
+
+                      <div className='info'>
+                        <b>Ngày kết thúc - </b>
+                        <Moment format="[ngày] DD [thg] MM, YYYY.">
+                          {guestcourseinfo.course_detail.endDay}
+                        </Moment>
+                      </div>
+                      
+                      <div className='info'>
+                        <b>Đã ghi danh - </b>
+                        {guestcourseinfo.course.students.length} / {guestcourseinfo.course_detail.maxStudent}
+                      </div>
+
                     </Col>
                     <Col>
                       <LoginModal/>

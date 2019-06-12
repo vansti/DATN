@@ -28,10 +28,11 @@ class LessonList extends Component {
 
     const { schedule, loading } = nextProps.schedule
     if(!isEmptyObj(schedule))
-      this.setState({ 
-        events: schedule.events,
-        loading 
-      });
+      if(schedule.courseId === this.props.match.params.id)
+        this.setState({ 
+          events: schedule.events,
+          loading 
+        });
     this.setState({
       loading 
     });  

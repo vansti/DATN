@@ -27,6 +27,7 @@ class ExerciseComments extends Component {
       isLoading: false,
       loading: true,
       comments: [],
+      _id: ''
     };
 
     this.toggleLarge = this.toggleLarge.bind(this);
@@ -36,7 +37,6 @@ class ExerciseComments extends Component {
     this.setState({
       large: !this.state.large,
     });
-    this.props.getEventSchedule(this.props.match.params.id, this.props.match.params.lessonId);
   }
 
   onChange = e => {
@@ -61,11 +61,15 @@ class ExerciseComments extends Component {
 
     if (!isEmptyObj(nextProps.comments)) {
       const { exercise_comments, loading } = nextProps.comments
-      const { comments } = exercise_comments
-      this.setState({
-        comments,
-        loading
-      })
+      const { _id, comments } = exercise_comments
+      if(_id === this.props.exercise._id)
+      {
+        this.setState({
+          _id,
+          comments,
+          loading
+        })
+      }
     }
   }
 
@@ -120,9 +124,6 @@ class ExerciseComments extends Component {
                       </Col>
                       <Col>
                         <b>{comment.user.name} </b>
-                        <small style={{color:'#A8A8A8'}}>
-                          ( {comment.user.email} )
-                        </small>
                         <small style={{marginLeft:20, color:'#A8A8A8'}}>
                           <Moment format="HH:mm [ngày] DD [thg] MM, YYYY">
                             {comment.created}

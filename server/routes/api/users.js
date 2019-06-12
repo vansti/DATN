@@ -281,8 +281,11 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
               { isFull: true }
             )
         }
-
-        res.json(req.user.code)
+        const result = {
+          studentCode: req.user.code,
+          courseId: vnp_Params['vnp_OrderInfo']
+        }
+        res.json(result)
 
       } catch (err) {
         console.log(err)
@@ -928,14 +931,14 @@ router.post(
         const course = await 
         Course.findById(
           req.params.courseId, 
-          { students: 1, title: 1 }
+          { students: 1, title: 1, code: 1 }
         )
         .populate('students', '_id name email')
         .lean()
 
         await
         course.students.forEach(student=>{
-          sendEmail(student.email, notify.confirm(student._id, course._id, student.name, course.title, school[0].name, school[0].address))
+          sendEmail(student.email, notify.confirm(student, course, school[0]))
         })
 
         await
@@ -979,7 +982,7 @@ router.post(
         if(course_detail.enrollStudents === undefined)
         {
           let errors = {};
-          errors.fail = 'Gửi phản hồi về mail thông báo không thể mở lớp không thành công';
+          errors.fail = 'Yêu cầu của bạn không thành công';
           return res.status(400).json(errors);
         }
 

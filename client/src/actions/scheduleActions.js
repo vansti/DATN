@@ -3,6 +3,9 @@ import config from './config';
 
 import { GET_SUCCESS, GET_ERRORS, GET_SCHEDULE , SCHEDULE_LOADING, GET_EVENT_SCHEDULE, CLEAR_SUCCESS } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // Add Schedule
 export const addSchedule= (newSchedule) => dispatch => {
   axios
@@ -24,39 +27,33 @@ export const addSchedule= (newSchedule) => dispatch => {
 // get Schedule
 export const getSchedule= (courseId) => dispatch => {
   dispatch(setScheduleLoading());
-  axios
-    .get(config.ADDRESS +'/api/schedule/get-schedule/'+ courseId)
-    .then(res =>{
+  socket.emit("schedule", courseId);
+  socket.on("get_schedule", 
+    res =>{
       dispatch({
         type: GET_SCHEDULE,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_SCHEDULE,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // get Event Schedule
 export const getEventSchedule = (courseId, eventId) => dispatch => {
   dispatch(setScheduleLoading());
-  axios
-    .get(config.ADDRESS +`/api/schedule/get-event-schedule/${courseId}/${eventId}`)
-    .then(res =>{
+  const dataId = {
+    courseId,
+    eventId
+  }
+  socket.emit("event_schedule", dataId);
+  socket.on("get_event_schedule", 
+    res =>{
       dispatch({
         type: GET_EVENT_SCHEDULE,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_EVENT_SCHEDULE,
-        payload: {}
-      })
-    );
+    }
+  );
 };
 
 // edit Event Schedule

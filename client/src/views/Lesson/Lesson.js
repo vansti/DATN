@@ -58,20 +58,22 @@ class Lesson extends Component {
     const { lesson_in_course, loading } = nextProps.lesson
     if(!isEmptyObj(lesson_in_course))
     {
-      var { text, content, files, exercises, quizzes } = lesson_in_course
-
-      var accordion = [];
-      exercises.map(()=>accordion.push(false))
-
-      this.setState({ 
-        text,
-        content,
-        files,
-        exercises,
-        accordion,
-        quizzes,
-        loading 
-      });
+      var { text, content, files, exercises, quizzes, _id } = lesson_in_course
+      if(this.props.match.params.lessonId === _id)
+      {
+        var accordion = [];
+        exercises.map(()=>accordion.push(false))
+  
+        this.setState({ 
+          text,
+          content,
+          files,
+          exercises,
+          accordion,
+          quizzes,
+          loading 
+        });
+      }
     }
     this.setState({ 
       loading

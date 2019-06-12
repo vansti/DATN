@@ -5,6 +5,7 @@ import isEmptyObj from '../../validation/is-empty';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import ReactLoading from 'react-loading';
 import { addJoinedStudent, clearSuccess, clearErrors, searchStudent, clearSearch } from '../../actions/userActions'
+import { getCourseInfo, getAllCourse } from '../../actions/courseActions'
 
 class AddJoinedStudent extends Component {
   constructor() {
@@ -22,7 +23,9 @@ class AddJoinedStudent extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.success.mes === 'Thêm học viên thành công') {
       this.setState({ isShowSuccess: true, isLoading: false })
-      this.props.clearSuccess()
+      this.props.clearSuccess();
+      this.props.getAllCourse();
+      this.props.getCourseInfo(this.props.match.params.courseId);
     }
 
     if (!isEmptyObj(nextProps.errors)) {
@@ -180,4 +183,4 @@ const mapStateToProps = state => ({
   success: state.success,
   users: state.users
 });
-export default connect(mapStateToProps, { addJoinedStudent, clearSuccess, clearErrors, searchStudent, clearSearch })(AddJoinedStudent); 
+export default connect(mapStateToProps, { addJoinedStudent, clearSuccess, clearErrors, searchStudent, clearSearch, getCourseInfo, getAllCourse })(AddJoinedStudent); 

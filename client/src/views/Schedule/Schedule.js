@@ -73,10 +73,11 @@ class Schedule extends Component {
 
       if(!isEmptyObj(schedule))
       {
-        this.setState({ 
-          events: schedule.events,
-          loading 
-        });
+        if(schedule.courseId === this.state.courseId)
+          this.setState({ 
+            events: schedule.events,
+            loading 
+          });
       }
       this.setState({ 
         loading 

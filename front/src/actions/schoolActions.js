@@ -3,6 +3,9 @@ import config from './config';
 
 import { GET_SUCCESS, GET_ERRORS, CLEAR_ERRORS, CLEAR_SUCCESS, GET_SCHOOL, SCHOOL_LOADING } from './types';
 
+import socketIOClient from "socket.io-client";
+var socket = socketIOClient(config.ADDRESS);
+
 // edit school
 export const editSchool= (schoolData) => dispatch => {
   axios
@@ -29,21 +32,16 @@ export const setSchoolLoading = () => {
 
 // get school
 export const getSchool = () => dispatch => {
-  dispatch(setSchoolLoading());  
-  axios
-    .get(config.ADDRESS +'/api/school/get')
-    .then(res =>{
+  dispatch(setSchoolLoading()); 
+  socket.emit("school");
+  socket.on("get_school", 
+    res =>{
       dispatch({
         type: GET_SCHOOL,
-        payload: res.data
+        payload: res
       })
-    })
-    .catch(err =>
-      dispatch({
-        type: GET_SCHOOL,
-        payload: {}
-      })
-    );
+    }
+  ); 
 };
 
 // Clear errors
