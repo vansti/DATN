@@ -190,34 +190,44 @@ class MyInfo extends Component {
             <tbody>
               {
                 student_absent_list.absentlist.map(element=>
-                  <tr key={element._id} className="changeCursor"  onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
-                    <td >
-                      <Moment format="DD/MM/YYYY">
-                        {element.date}
-                      </Moment>
-                    </td >
-                    <td>
+                  <Fragment key={element._id}>
                     {
                       element.event
-                        ? 
-                        <Fragment>
-                          <Moment format="HH:mm - ">
-                            {element.event.start}
+                      ?
+                      <tr  className="changeCursor"  onClick={this.handleToLesson.bind(this, student_absent_list.courseId, element.event.lessonId._id)}>
+                        <td >
+                          <Moment format="DD/MM/YYYY">
+                            {element.date}
                           </Moment>
-                          <Moment format="HH:mm">
-                            {element.event.end}
+                        </td >
+                        <td>
+                          <Fragment>
+                            <Moment format="HH:mm - ">
+                              {element.event.start}
+                            </Moment>
+                            <Moment format="HH:mm">
+                              {element.event.end}
+                            </Moment>
+                          </Fragment>
+                        </td>
+                        <td>
+                          {element.event.lessonId.text}
+                        </td>
+                      </tr>
+                      :
+                      <tr>
+                        <td >
+                          <Moment format="DD/MM/YYYY">
+                            {element.date}
                           </Moment>
-                        </Fragment>
-                        : 
-                        <small style={{color:'#A8A8A8'}}>
-                          Chưa cập nhật
-                        </small>
-                      }
-                    </td>
-                    <td>
-                      {element.event.lessonId.text}
-                    </td>
-                  </tr>
+                        </td >
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                      </tr>
+                    }
+                  </Fragment>
                 )
               }
             </tbody>

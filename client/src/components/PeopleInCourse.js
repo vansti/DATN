@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import {  Row, Col, Container, Table } from 'reactstrap';
+import {  Row, Col, Container, Table, Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import { withRouter } from 'react-router-dom';
 import isEmptyObj from '../validation/is-empty';
 import { getUsers } from '../actions/userActions';
+import ModalInfo from './ModalInfo';
 
 class PeopleInCourse extends Component {
   constructor(props) {
@@ -45,14 +46,14 @@ class PeopleInCourse extends Component {
     const { role } = this.props.auth.user
 
     return (
-      <Container>
+      <Container fluid>
         <Row>
           {
             loading
             ?
             <ReactLoading type='bars' color='#05386B' />
             :
-            <Col sm="12" md={{ size: 6, offset: 3 }}>
+            <Col sm="12" md={{ size: 10, offset: 1 }}>
               <h3>Giáo viên</h3>
               <Table responsive hover className="table-outline mb-0 d-none d-sm-table">
                 <tbody>
@@ -69,7 +70,7 @@ class PeopleInCourse extends Component {
                           </div>
                         </td>
                         <td>
-                          <div>{user.name}</div>
+                          <div><b>{user.name}</b></div>
                           <div className="small text-muted">
                             {user.email}
                           </div>
@@ -79,9 +80,7 @@ class PeopleInCourse extends Component {
                   }
                 </tbody>
               </Table>
-              <br/>
-              <br/>
-              <h3>Học viên</h3>
+              <h3 style={{marginTop: 50}}>Học viên</h3>
               {
                 role === 'student'
                 ?
@@ -100,7 +99,7 @@ class PeopleInCourse extends Component {
                             </div>
                           </td>
                           <td>
-                            <div>{user.name}</div>
+                            <div><b>{user.name}</b></div>
                             <div className="small text-muted">
                               {user.code}
                             </div>
@@ -119,17 +118,25 @@ class PeopleInCourse extends Component {
                       <tr><td></td><td>Chưa có học viên</td></tr>
                       :
                       students.map(user =>
-                        <tr key={user._id} onClick={this.handleToSudentInfo.bind(this, user._id)} className="changeCursor">
+                        <tr key={user._id}>
                           <td>                      
                             <div className="avatar">
                               <img src={user.photo} className="img-avatar" alt="" />
                             </div>
                           </td>
                           <td>
-                            <div>{user.name}</div>
+                            <div><b>{user.name}</b></div>
                             <div className="small text-muted">
                               {user.code}
                             </div>
+                          </td>
+                          <td>
+                            <ModalInfo userId={user._id} courseId={this.props.match.params.id} />
+                          </td>
+                          <td>
+                            <Button color="danger" onClick={this.handleToSudentInfo.bind(this, user._id)}>
+                              Thông tin chung
+                            </Button>
                           </td>
                         </tr>
                       )
