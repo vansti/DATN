@@ -27,8 +27,8 @@ class Payment extends Component {
     }
 
     if (!isEmptyObj(nextProps.users.pay_url)) {
-      // window.vnpay.open({width: 768, height: 600, url: nextProps.users.pay_url});
-      window.location.href = nextProps.users.pay_url
+      window.vnpay.open({width: 768, height: 600, url: nextProps.users.pay_url});
+      // window.location.href = nextProps.users.pay_url
       this.props.clearUrl();
     }
   }

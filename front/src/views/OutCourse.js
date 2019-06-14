@@ -58,7 +58,7 @@ class OutCourse extends Component {
                   ?
                   'Bạn đã không còn là học viên của khóa học này, hãy kiểm tra lại'
                   :
-                  'Cảm ơn bạn, yêu cầu chờ dời lịch khai giảng của bạn đã được gửi về Trung Tâm'
+                  'Cảm ơn bạn, yêu cầu hủy ghi danh của bạn đã được gửi về Trung Tâm, hãy đến Trung Tâm để được tư vấn và hoàn tiền'
                 }
                 </div>        
               </Col>
