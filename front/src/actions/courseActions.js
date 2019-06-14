@@ -13,7 +13,8 @@ import {
   GET_MANAGE_COURSES, 
   ALLCOURSE_LOADING,
   GET_ACTIVE_COURSES,
-  GET_GUEST_COURSE_INFO
+  GET_GUEST_COURSE_INFO,
+  COURSE_INFO_LOADING
 } from './types';
 
 import socketIOClient from "socket.io-client";
@@ -165,6 +166,12 @@ export const getAllCourse = () => dispatch => {
   );
 };
 
+export const setCourseInfoLoading = () => {
+  return {
+    type: COURSE_INFO_LOADING
+  };
+};
+
 // lấy thông tin chi tiết của 1 khóa học
 export const getGuestCourseInfo = (courseId) => dispatch => {
   dispatch(setAllCourseLoading())
@@ -181,7 +188,7 @@ export const getGuestCourseInfo = (courseId) => dispatch => {
 
 // lấy thông tin chi tiết của 1 khóa học
 export const getCourseInfo = (courseId) => dispatch => {
-  dispatch(setAllCourseLoading())
+  dispatch(setCourseInfoLoading())
   axios
     .get(config.ADDRESS +`/api/courses/course-info/${courseId}`)
     .then(res =>

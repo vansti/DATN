@@ -24,6 +24,33 @@ class Dashboard extends Component {
     var Content = null ;
 
     switch (role.toString()) {
+      case 'manager': 
+        Content = 
+          <div style={{ marginTop:30 }}>
+            <Button color="secondary" size="lg" block onClick={this.handleMycourse}>
+              <span style={{fontFamily:'Baloo Bhai, cursive'}}>
+                Tạo tài khoản
+              </span>
+            </Button>
+            <Button color="secondary" size="lg" block onClick={()=> this.props.history.push(`/school-info`)}>
+              <span style={{fontFamily:'Baloo Bhai, cursive'}}>
+                Thông tin trung tâm
+              </span>
+            </Button>
+          </div>
+        break;
+
+      case 'financer': 
+        Content = 
+          <div style={{ marginTop:30 }}>
+            <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/manage-courses`)}>
+              <span style={{fontFamily:'Baloo Bhai, cursive'}}>
+                Quản lý học viên
+              </span>
+            </Button>
+          </div>
+        break;
+
       case 'student': 
         Content = 
           <div style={{ marginTop:30 }}>
@@ -46,7 +73,7 @@ class Dashboard extends Component {
         </div>
       break;
 
-      case 'advisor': 
+      case 'educator': 
         Content = 
         <div style={{ marginTop:20 }}>
           <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/lesson-list`)}>

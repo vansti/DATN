@@ -68,3 +68,4 @@ export const GET_PAY_URL = 'GET_PAY_URL';
 export const CLEAR_URL = 'CLEAR_URL';
 export const GET_VNPAY_RETURN = 'GET_VNPAY_RETURN';
 export const CLEAR_VNPAY_RETURN = 'CLEAR_VNPAY_RETURN';
+export const COURSE_INFO_LOADING = 'COURSE_INFO_LOADING';
