@@ -12,6 +12,10 @@ module.exports = function validateAddLessonListInput(data) {
     errors.noLesson = 'Hãy điền số bài học';
   }
 
+  if (Number(data.noLesson) <= 0) {
+    errors.noLesson = 'Số bài học phải lớn hơn 0';
+  }
+
   return {
     errors, 
     isValid: isEmpty(errors)

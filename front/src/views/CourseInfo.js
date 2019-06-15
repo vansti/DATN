@@ -146,21 +146,29 @@ class CourseInfo extends Component {
                       :
                       <div>
                         {
-                          courseinfo.course_detail.isFull === true
+                          guestcourseinfo.course_detail.isFull === true
                           ?
                           <Alert color='danger' style={{textAlign: 'center', fontWeight: 'bold'}}>Khóa học đã hết chỗ</Alert>                        
                           :
                           <div>
                             <div style={{color:'red', fontSize:17, fontWeight:'bold', textAlign: 'center'}}>Ghi danh ngay</div>
-                            <p style={{color:'red', fontSize:20, fontWeight:'bold', textAlign: 'center'}}><NumberFormat thousandSeparator={true} value={courseinfo.course_detail.fee} displayType={'text'}/> VND.</p>
-                            <div style={{textAlign: 'center'}}><Payment fee={courseinfo.course_detail.fee}/></div>
+                            <p style={{color:'red', fontSize:20, fontWeight:'bold', textAlign: 'center'}}><NumberFormat thousandSeparator={true} value={guestcourseinfo.course_detail.fee} displayType={'text'}/> VND.</p>
+                            <div style={{textAlign: 'center'}}><Payment fee={guestcourseinfo.course_detail.fee}/></div>
                           </div>
                         }
                       </div>
                     }
                     </Fragment>
                     :
-                    <LoginModal/>
+                    <div>
+                    {
+                      guestcourseinfo.course_detail.isFull === true
+                      ?
+                      <Alert color='danger' style={{textAlign: 'center', fontWeight: 'bold'}}>Khóa học đã hết chỗ</Alert>                        
+                      :
+                      <LoginModal/>
+                    }
+                    </div>
                   }
                   </Col>
                 </Row>

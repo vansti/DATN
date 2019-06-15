@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../validation/is-empty';
 import smile from '../assets/img/smile.png'
-import { getAllCourse } from '../actions/courseActions';
+import { getAllCourse, getGuestCourseInfo } from '../actions/courseActions';
 
 class VnPay extends Component {
   constructor() {
@@ -26,6 +26,7 @@ class VnPay extends Component {
       this.props.clearVnpayReturn();
       this.props.getAllCourse();
       this.props.getApproveListStudent(nextProps.users.pay_return.courseId);
+      this.props.getGuestCourseInfo(nextProps.users.pay_return.courseId);
     }
   }
 
@@ -64,4 +65,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { vnpayReturn, clearVnpayReturn, getAllCourse, getApproveListStudent })(VnPay);
+export default connect(mapStateToProps, { vnpayReturn, clearVnpayReturn, getAllCourse, getApproveListStudent, getGuestCourseInfo })(VnPay);

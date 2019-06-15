@@ -155,7 +155,7 @@ class Home extends Component {
       activeIndex,
       shortIntro
     } = this.state
-    console.log(allcourses)
+    
     const slides = items.map((item) => {
       return (
         <CarouselItem

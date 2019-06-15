@@ -414,7 +414,7 @@ class EditCourse extends Component {
 
               <FormGroup>
                 <div className="form-row">
-                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối đa </Label>
+                  <Label className="col-3">Số lượng học viên tối đa </Label>
                   <div className="col-2">
                     <Input type="number" min='0' value={this.state.maxStudent} onChange={this.handleChange('maxStudent')}/>
                   </div>
@@ -424,7 +424,7 @@ class EditCourse extends Component {
 
               <FormGroup>
                 <div className="form-row">
-                  <Label className="col-3" style={{fontWeight: 'bold'}}>Số lượng học viên tối thiểu </Label>
+                  <Label className="col-3">Số lượng học viên tối thiểu </Label>
                   <div className="col-2">
                     <Input type="number" min='0' value={this.state.minStudent} onChange={this.handleChange('minStudent')}/>
                   </div>

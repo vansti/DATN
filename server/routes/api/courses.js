@@ -140,6 +140,33 @@ router.post(
 
     async function run() {
       try {
+        const course = await Course.findById(req.params.courseId)
+
+        if(Number(req.body.maxStudent) > course.students.length)
+        {
+          await 
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            {
+              $set: 
+              {
+                isFull: false
+              }
+            }
+          )
+        }else{
+          await 
+          CourseDetail.findOneAndUpdate(
+            { 'courseId' : req.params.courseId },
+            {
+              $set: 
+              {
+                isFull: true
+              }
+            }
+          )
+        }
+
         if(req.body.events === '')
         {
           await 

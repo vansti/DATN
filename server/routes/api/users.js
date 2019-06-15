@@ -277,7 +277,7 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
           if(coursedetail.enrollStudents.length >= coursedetail.maxStudent)
             await 
             CourseDetail.findOneAndUpdate(
-              { 'courseId' : req.body.courseId },
+              { 'courseId' : vnp_Params['vnp_OrderInfo'] },
               { isFull: true }
             )
         }
