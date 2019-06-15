@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const keys = require('../../config/keys');
 const passport = require('passport');
 require('dotenv').config()
+const moment = require('moment');
 
 const formData = require('express-form-data')
 var cloudinary = require('cloudinary');
@@ -38,6 +39,7 @@ const sendEmail = require('../../email/email.send')
 const templates = require('../../email/email.templates')
 const notify = require('../../email/email.notify')
 const resetpassword = require('../../email/email.resetpassword')
+const info = require('../../email/email.info')
 
 // @route   POST api/users/register
 // @desc    Register User
@@ -247,6 +249,7 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
             }
           )
   
+          const course = 
           await 
           Course.findByIdAndUpdate(
             vnp_Params['vnp_OrderInfo'] ,
@@ -257,6 +260,7 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
             }
           )
   
+          const user = 
           await
           User.findByIdAndUpdate(
             req.user.id ,
@@ -271,7 +275,7 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
           await
           CourseDetail.findOne(
             { 'courseId' : vnp_Params['vnp_OrderInfo'] },
-            { maxStudent: 1, enrollStudents: 1}
+            { maxStudent: 1, enrollStudents: 1, openingDay: 1 }
           )
   
           if(coursedetail.enrollStudents.length >= coursedetail.maxStudent)
@@ -280,6 +284,12 @@ router.get('/vnpay_return', passport.authenticate('jwt', { session: false }), fu
               { 'courseId' : vnp_Params['vnp_OrderInfo'] },
               { isFull: true }
             )
+
+          const school = await School.find();
+          
+          await
+          sendEmail(user.email, info.confirm(user, course, school[0], moment(coursedetail.openingDay).format("[ngày] DD [thg] MM, YYYY")))
+
         }
         const result = {
           studentCode: req.user.code,
