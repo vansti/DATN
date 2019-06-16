@@ -158,7 +158,7 @@ module.exports = {
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                   <p style="margin: 0;">
-                    Xin chào <b>${student.name}</b>, chúng tôi rất tiếc phải thông báo khóa học "<b>${course.title}</b>" với Mã khóa học "<b>${course.code}</b>" bạn đã ghi danh hiện không đủ học viên để có thể khai giảng, bạn hãy vui lòng lựa chọn một trong các phương án sau 
+                    Xin chào <b>${student.name}</b>, chúng tôi rất tiếc phải thông báo khóa học "<b>${course.title}</b>" với Mã khóa học "<b>${course.code}</b>" bạn đã ghi danh hiện không đủ học viên để có thể khai giảng, mời bạn nhấn vào link bên dưới để lựa chọn các phương án của chúng tôi
                   </p>
                 </td>
               </tr>
@@ -173,47 +173,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/change-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chuyển sang khóa học hiện có khác </a>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <!-- end button -->
-    
-              <!-- start button -->
-              <tr>
-                <td align="left" bgcolor="#ffffff">
-                  <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                      <td align="center" bgcolor="#ffffff" style="padding: 12px;">
-                        <table border="0" cellpadding="0" cellspacing="0">
-                          <tr>
-                            <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/out-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Hủy ghi danh và hoàn tiền </a>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <!-- end button -->
-
-              <!-- start button -->
-              <tr>
-                <td align="left" bgcolor="#ffffff">
-                  <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                      <td align="center" bgcolor="#ffffff" style="padding: 12px;">
-                        <table border="0" cellpadding="0" cellspacing="0">
-                          <tr>
-                            <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.FRONT_URL}/wait-course/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"> Chờ dời lịch khai giảng </a>
+                              <a href="${process.env.CLIENT_URL}/choose-option/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Chọn phương án khi không thể mở lớp</a>
                             </td>
                           </tr>
                         </table>
@@ -227,7 +187,7 @@ module.exports = {
               <!-- start copy -->
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                  <p style="margin: 0;">Xin cảm ơn,<br> Phòng tài vụ</p>
+                  <p style="margin: 0;">Xin cảm ơn</p>
                 </td>
               </tr>
               <!-- end copy -->

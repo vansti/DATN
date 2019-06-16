@@ -992,7 +992,7 @@ router.post(
         if(course_detail.enrollStudents === undefined)
         {
           let errors = {};
-          errors.fail = 'Yêu cầu của bạn không thành công';
+          errors.fail = 'Bạn đã không còn trong khóa học này';
           return res.status(400).json(errors);
         }
 
@@ -1017,6 +1017,37 @@ router.post(
   }
 );
 
+// @route   POST api/users/get-notify-mail/:userId/:courseId
+// @desc    lấy thông tin xác nhận mail ko thể mở lớp
+// @access  Private
+router.get(
+  '/get-rep-notify-mail/:userId/:courseId',
+  (req, res) => {
+    async function run() {
+      try {
+
+        var course_detail = await  
+        CourseDetail.findOne(
+          { 'courseId' : req.params.courseId },
+          {
+            enrollStudents:  
+            {
+              $elemMatch: {
+                'student': req.params.userId
+              }
+            }
+          }
+        ).lean()
+
+        res.json(course_detail)
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run();
+  }
+);
 // @route   POST api/users/confirm-request/:userId/:courseId
 // @desc    xác nhận mail ko thể mở lớp
 // @access  Private

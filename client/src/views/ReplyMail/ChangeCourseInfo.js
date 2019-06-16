@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Table, Button } from 'reactstrap';
+import { Container, Row, Col, Table, Button, Modal, ModalBody } from 'reactstrap';
 import { getCourseInfo } from '../../actions/courseActions';
+import { repNotifyMail, clearSuccess, getApproveListStudent, clearErrors } from '../../actions/userActions';
 import Moment from 'react-moment'; 
 import NumberFormat from 'react-number-format';
 import ReactLoading from 'react-loading';
+import SweetAlert from 'react-bootstrap-sweetalert';
 import 'moment/locale/vi';
 
 var moment = require('moment');
@@ -21,12 +23,14 @@ const styles = {
   }
 }
 
-class CourseInfo extends Component {
+class ChangeCourseInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
       courseinfo: [],
-      loading: true
+      loading: true,
+      isShowSuccess: false,
+      isShowError: false
     };
   }
 
@@ -47,6 +51,41 @@ class CourseInfo extends Component {
       })
     }
 
+    if (nextProps.success.mes === 'Đã phản hồi mail thành công') {
+      this.setState({ isLoading: false, isShowSuccess: true })
+      this.props.clearSuccess()
+      this.props.getApproveListStudent(this.props.match.params.courseId)
+    }
+
+    if (nextProps.errors.fail === 'Yêu cầu của bạn không thành công') {
+      this.setState({ isShowError: true, isLoading: false });
+      this.props.clearErrors()
+    }
+
+  }
+
+  handleClickChange(courseId, courseCode){
+    const repData = {
+      replyMail: {
+        chosen: `Chuyển sang lớp "${courseCode}"`,
+        changeCourseId: courseId
+      }
+    }
+
+    this.props.repNotifyMail(this.props.match.params.userId, this.props.match.params.courseId, repData)
+  }
+
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false
+    })
+    this.props.history.push(`/choose-option/${this.props.match.params.userId}/${this.props.match.params.courseId}`)
+  }
+
+  hideAlertError(){
+    this.setState({
+      isShowError: false
+    })
   }
 
   render() {
@@ -93,7 +132,7 @@ class CourseInfo extends Component {
                     {courseinfo.course.students.length} / {courseinfo.course_detail.maxStudent}
                 </Col>
                 <Col>
-                  <Button color="danger">
+                  <Button color="danger" onClick={this.handleClickChange.bind(this, courseinfo.course._id, courseinfo.course.code)} >
                     <b>Chuyển sang khóa học này</b>
                   </Button>
                 </Col>
@@ -144,12 +183,37 @@ class CourseInfo extends Component {
             <br/>
           </Fragment>
         }
+        <Modal isOpen={this.state.isLoading} className='modal-sm' >
+          <ModalBody className="text-center">
+            <h3>Đang xử lý</h3>
+            <br/>
+            <div style={{marginLeft:100}}><ReactLoading type='bars' color='#05386B' height={100} width={50} /></div>
+          </ModalBody>
+        </Modal>
+        <SweetAlert
+            success
+            confirmBtnText="OK"
+            confirmBtnBsStyle="success"
+            title='Yêu cầu chuyển lớp của bạn đã được gửi'
+            show={this.state.isShowSuccess}
+            onConfirm={this.hideAlertSuccess.bind(this)}>
+        </SweetAlert>
+        <SweetAlert
+            danger
+            confirmBtnText="OK"
+            confirmBtnBsStyle="danger"
+            title='Không thể gửi yêu cầu chuyển lớp'
+            show={this.state.isShowError}
+            onConfirm={this.hideAlertError.bind(this)}>
+        </SweetAlert>
       </div>
     )
   }
 }
 
 const mapStateToProps = state => ({
-  courses: state.courses
+  success: state.success,
+  courses: state.courses,
+  errors: state.errors
 });
-export default connect(mapStateToProps, { getCourseInfo })(CourseInfo); 
+export default connect(mapStateToProps, { getCourseInfo, repNotifyMail, clearSuccess, getApproveListStudent, clearErrors })(ChangeCourseInfo); 

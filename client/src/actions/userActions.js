@@ -13,7 +13,8 @@ import {
   USERS_LOADING,
   CLEAR_ERRORS,
   SEARCH_STUDENT,
-  CLEAR_SEARCH
+  CLEAR_SEARCH,
+  GET_REP_MAIL_INFO
 } from './types';
 
 import socketIOClient from "socket.io-client";
@@ -244,6 +245,41 @@ export const resetPassword = (userId, passwordData) => dispatch => {
         payload: res.data
       })
     )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const repNotifyMail = (userId, courseId, repData) => dispatch => {
+  axios
+    .post(config.ADDRESS +`/api/users/rep-notify-mail/${userId}/${courseId}`, repData)
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const getrepNotifyMail = (userId, courseId) => dispatch => {
+  dispatch(setUsersLoading());
+  axios
+    .get(config.ADDRESS +`/api/users/get-rep-notify-mail/${userId}/${courseId}`)
+    .then(res =>{
+      dispatch({
+        type: GET_REP_MAIL_INFO,
+        payload: res.data
+      })
+    })
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

@@ -1,5 +1,5 @@
 import {
-  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING, SEARCH_STUDENT, CLEAR_SEARCH
+  GET_USERS, CLEAR_USER, GET_STUDENT, GET_APPROVE_LIST_STUDENT, GET_APPROVE_LIST_TEACHER, USERS_LOADING, SEARCH_STUDENT, CLEAR_SEARCH, GET_REP_MAIL_INFO
 } from '../actions/types';
 
 const initialState = {
@@ -13,7 +13,8 @@ const initialState = {
     students: []
   },
   search_student: {},
-  loading: false
+  loading: false,
+  rep_mail_info: {}
 };
 
 export default function(state = initialState, action) {
@@ -66,6 +67,12 @@ export default function(state = initialState, action) {
           students:[],
           teachers:[]
         }
+      };
+    case GET_REP_MAIL_INFO:
+      return {
+        ...state,
+        rep_mail_info: action.payload,
+        loading: false        
       };
     default:
       return state;

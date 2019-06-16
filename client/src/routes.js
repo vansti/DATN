@@ -17,7 +17,6 @@ const ListAttendance = React.lazy(() => import('./views/Attendance/ListAttendanc
 const AddSchedule = React.lazy(() => import('./views/Schedule/AddSchedule'));
 const Schedule = React.lazy(() => import('./views/Schedule/Schedule'));
 const StudentInfo = React.lazy(() => import('./views/StudentInfo/StudentInfo'));
-const AllCourses = React.lazy(() => import('./views/Courses/AllCourses'));
 const CourseInfo = React.lazy(() => import('./views/Courses/CourseInfo'));
 const ManageCourses = React.lazy(() => import('./views/Courses/ManageCourses'));
 const ApproveStudent = React.lazy(() => import('./views/Courses/ApproveStudent'));
@@ -38,7 +37,9 @@ const AddQuizCSV = React.lazy(() => import('./views/Quiz/AddQuizCSV'));
 const CreateAccount = React.lazy(() => import('./views/CreateAccount/CreateAccount'));
 const ViewCourseList = React.lazy(() => import('./views/Courses/ViewCourseList'));
 const SchoolInfo = React.lazy(() => import('./views/SchoolInfo/SchoolInfo'));
-
+const ReplyMail = React.lazy(() => import('./views/ReplyMail/ReplyMail'));
+const ChangeCourse = React.lazy(() => import('./views/ReplyMail/ChangeCourse'));
+const ChangeCourseInfo = React.lazy(() => import('./views/ReplyMail/ChangeCourseInfo'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -60,7 +61,6 @@ const routes = [
   { path: '/add-schedule', exact: true, name: 'Chỉnh sửa thời khóa biểu', component: AddSchedule },
   { path: '/schedule', exact: true, name: 'Xem thời khóa biểu', component: Schedule },
   { path: '/student-info/:id', exact: true, name: 'Thông tin học viên', component: StudentInfo },
-  { path: '/course-info', exact: true, name: 'Danh sách các khóa học hiện có', component: AllCourses },
   { path: '/course-info/:id', exact: true, name: 'Thông tin khóa học', component: CourseInfo },
   { path: '/manage-courses', exact: true, name: 'Quản lý khóa học', component: ManageCourses },
   { path: '/score/:courseId/:exerciseId', exact: true, name: 'Chấm điểm', component: ScoreExercise },
@@ -80,7 +80,10 @@ const routes = [
   { path: '/my-info', exact: true, name: 'Thông tin cá nhân', component: MyInfo },
   { path: '/quiz/add/csv', exact: true, name: 'Thêm bằng tập tin csv', component: AddQuizCSV },
   { path: '/create-account', exact: true, name: 'Tạo tài khoản', component: CreateAccount },
-  { path: '/school-info', exact: true, name: 'Thông tin trung tâm', component: SchoolInfo }
+  { path: '/school-info', exact: true, name: 'Thông tin trung tâm', component: SchoolInfo },
+  { path: '/choose-option/:userId/:courseId', exact: true, name: 'Chọn phương án không thể mở lớp', component: ReplyMail },
+  { path: '/choose-option/:userId/:courseId/change-course', exact: true, name: 'Chuyển sang khóa học khác', component: ChangeCourse },
+  { path: '/choose-option/:userId/:courseId/change-course/:id', exact: true, name: 'Thông tin khóa học', component: ChangeCourseInfo }
 
 ];
 
