@@ -18,6 +18,7 @@
     "classnames": "^2.2.6",
     "core-js": "^2.6.1",
     "daypilot-pro-react": "https://npm.daypilot.org/daypilot-pro-react/trial/2019.1.3572.tar.gz",
+    "dotenv": "^8.0.0",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "flag-icon-css": "^3.2.1",

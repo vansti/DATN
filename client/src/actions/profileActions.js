@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from './config';
+import config from '../config';
 
 import { GET_ERRORS, GET_PROFILE, CLEAR_ERRORS, GET_SUCCESS, CLEAR_SUCCESS} from './types';
 

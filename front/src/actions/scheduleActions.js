@@ -1,5 +1,5 @@
 import axios from 'axios';
-import config from './config';
+import config from '../config';
 
 import { GET_SUCCESS, GET_ERRORS, GET_SCHEDULE , SCHEDULE_LOADING, GET_EVENT_SCHEDULE, CLEAR_SUCCESS } from './types';
 

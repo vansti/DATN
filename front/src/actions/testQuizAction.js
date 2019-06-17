@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SubmissionError } from 'redux-form';
 import isEmpty from '../validation/is-empty';
-import config from './config';
+import config from '../config';
 
 import {
   GET_ERRORS,
