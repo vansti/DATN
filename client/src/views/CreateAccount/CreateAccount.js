@@ -148,8 +148,8 @@ class CreateAccount extends Component {
                     </InputGroup>
                     {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
 
-                    <Label style={{fontWeight:'bold'}}>Chức danh</Label>
-                    <InputGroup className="mb-3">
+                    <b>Chức danh</b>
+                    <Container>
                       <FormGroup check inline>
                         <Input className="form-check-input" type="radio" id="inline-radio1" name="role" value="ministry" onChange={this.onChange}/>
                         <Label className="form-check-label" check htmlFor="inline-radio1">Phòng giáo vụ</Label>
@@ -159,14 +159,10 @@ class CreateAccount extends Component {
                         <Label className="form-check-label" check htmlFor="inline-radio2">Phòng đào tạo</Label>
                       </FormGroup>
                       <FormGroup check inline>
-                        <Input className="form-check-input" type="radio" id="inline-radio3" name="role" value="financer" onChange={this.onChange}/>
-                        <Label className="form-check-label" check htmlFor="inline-radio3">Phòng tài vụ</Label>
-                      </FormGroup>
-                      <FormGroup check inline>
                         <Input className="form-check-input" type="radio" id="inline-radio4" name="role" value="teacher" onChange={this.onChange}/>
                         <Label className="form-check-label" check htmlFor="inline-radio4">Giáo viên</Label>
                       </FormGroup>
-                    </InputGroup>
+                    </Container>
                     {errors.role && <Alert color="danger">{errors.role}</Alert>}
 
                     <Button color="success" onClick={this.onSubmit} block>Tạo Tài Khoản</Button>

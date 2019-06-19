@@ -31,8 +31,7 @@ class QuizModal extends Component {
       isOpenModal: false,
       isLoading: false,
       isShowSuccess: false,
-      isShowError: false,
-      password: ''
+      isShowError: false
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.handleClickQuiz = this.handleClickQuiz.bind(this);
@@ -189,10 +188,10 @@ class QuizModal extends Component {
                           <Col xs="10">
                             <div>
                               <label className="col-md-4"  style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Mật khẩu: </label>
-                              <Input style={{display: 'inline-block', width: 182}} type="text" name="password" value={this.state.password} onChange={this.onChangePassword.bind(this, quiz._id)} placeholder="Mật khẩu..." />
+                              <Input style={{display: 'inline-block', width: 182}} type="text" name="password" value={quiz.password} onChange={this.onChangePassword.bind(this, quiz._id)}/>
                             </div>
                             <div>
-                              <Label className="col-md-4" style={{marginRight: 10, fontWeight:'bold'}}>Thời gian bắt đầu làm: </Label> 
+                              <Label className="col-md-4" style={{marginRight: 10, fontWeight:'bold', marginTop:10}}>Thời gian bắt đầu làm: </Label> 
                               {
                                 quiz.startTime
                                 ?

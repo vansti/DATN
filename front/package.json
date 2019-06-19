@@ -75,12 +75,15 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 9",
-    "not op_mini all"
-  ],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [  
+    ]
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",

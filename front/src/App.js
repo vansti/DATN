@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { setCurrentUser } from './actions/authActions';
 import setAuthToken from './utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import store from './store/store';
+import store from './store/store'; 
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 

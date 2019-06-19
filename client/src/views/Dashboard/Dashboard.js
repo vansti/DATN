@@ -40,17 +40,6 @@ class Dashboard extends Component {
           </div>
         break;
 
-      case 'financer': 
-        Content = 
-          <div style={{ marginTop:30 }}>
-            <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/manage-courses`)}>
-              <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-                Quản lý học viên
-              </span>
-            </Button>
-          </div>
-        break;
-
       case 'student': 
         Content = 
           <div style={{ marginTop:30 }}>
@@ -73,35 +62,9 @@ class Dashboard extends Component {
         </div>
       break;
 
-      case 'educator': 
-        Content = 
-        <div style={{ marginTop:20 }}>
-          <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/lesson-list`)}>
-            <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-              Danh sách bài học
-            </span>
-          </Button>
-          <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/view-courses`)}>
-            <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-              Danh sách khóa học
-            </span>
-          </Button>
-          <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/list-attendance`)}>
-            <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-              Lịch sử điểm danh
-            </span>
-          </Button>
-        </div>
-      break;
-
       case 'ministry': 
         Content = 
         <div style={{ marginTop:20 }}>
-          <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/add-course`)}>
-            <span style={{fontFamily:'Baloo Bhai, cursive'}}>
-              Thêm khóa học
-            </span>
-          </Button>
           <Button color="secondary" size="lg" block onClick={()=>this.props.history.push(`/manage-courses`)}>
             <span style={{fontFamily:'Baloo Bhai, cursive'}}>
               Quản lý khóa học

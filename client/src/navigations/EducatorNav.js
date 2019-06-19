@@ -11,6 +11,16 @@ export default {
       icon: 'icon-list',
     },
     {
+      name: 'Thêm khóa học',
+      url: '/add-course',
+      icon: 'fa fa-plus',
+    },
+    {
+      name: 'Quản lý khóa học',
+      url: '/manage-courses',
+      icon: 'fa fa-wrench',
+    },
+    {
       name: 'Danh sách khóa học',
       url: '/view-courses',
       icon: 'fa fa-book',

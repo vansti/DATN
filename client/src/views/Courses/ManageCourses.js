@@ -191,36 +191,19 @@ class ManageCourses extends Component {
                                     Quản lý giáo viên
                                   </Button>
                                 </td>
+                                <td>
+                                  <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
+                                    Quản lý học sinh
+                                  </Button>
+                                </td>
                               </Fragment>
                               :
                               <Fragment>
-                                {
-                                  role === 'admin'
-                                  ?
-                                  <Fragment>
-                                    <td>
-                                      <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
-                                        Chỉnh sửa
-                                      </Button>
-                                    </td>
-                                    <td>
-                                      <Button onClick={this.handelManageTeacher.bind(this, course._id)} className="btn-pill" color="secondary">
-                                        Quản lý giáo viên
-                                      </Button>
-                                    </td>
-                                    <td>
-                                      <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                                        Quản lý học sinh
-                                      </Button>
-                                    </td>
-                                  </Fragment>
-                                  :
-                                  <td>
-                                    <Button onClick={this.handleClickApprove.bind(this, course._id)} className="btn-pill" color="secondary">
-                                      Quản lý học sinh
-                                    </Button>
-                                  </td>
-                                }
+                                <td>
+                                  <Button onClick={this.handleEditCourse.bind(this, course._id)} className="btn-pill" color="secondary">
+                                    Chỉnh sửa
+                                  </Button>
+                                </td>
                               </Fragment>
                             }
                           </Fragment>
