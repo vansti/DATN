@@ -10,7 +10,8 @@ exports = module.exports = (io) => {
   io.on("connection", socket => {
     
     socket.on("lesson_list", () => {
-      LessonList.find({},'title lesson._id lesson.text')
+      LessonList.find({},'title lesson._id lesson.text created')
+      .sort({created: -1})
       .then(list => {
         io.sockets.emit("get_lesson_list", list);
       });
