@@ -50,7 +50,7 @@ router.get(
   '/get-lesson-list',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    LessonList.find({},'title lesson._id lesson.text').then(list=>res.json(list)).catch(err => console.log(err));
+    LessonList.find({},'title lesson._id lesson.text').sort({created: -1}).then(list=>res.json(list)).catch(err => console.log(err));
   }
 );
 

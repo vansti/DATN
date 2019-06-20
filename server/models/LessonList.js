@@ -30,7 +30,11 @@ const LessonListSchema = new Schema({
         }
       ]
     }
-  ]
+  ],
+  created:{
+    type: Date,
+    default : Date.now
+  }
 })
 
 module.exports = LessonList = mongoose.model('lessonlist', LessonListSchema)
