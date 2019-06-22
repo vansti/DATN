@@ -47,7 +47,7 @@ export const addTestQuizCSV = (testQuizData) => dispatch => {
     });
 };
 
-export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
+export const submitTestQuiz = (submisstionQuiz) => dispatch => {
   return axios
     .post(config.ADDRESS +'/api/test/sub-quiz', submisstionQuiz)
     .then(res => {
@@ -59,7 +59,7 @@ export const submitTestQuiz = (submisstionQuiz, history) => dispatch => {
       })
     })
     .catch(err =>{
-      throw new SubmissionError(err.response.data);
+      console.log(err.response.data);
     });
 };
 

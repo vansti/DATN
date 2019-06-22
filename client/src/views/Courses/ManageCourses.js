@@ -178,7 +178,7 @@ class ManageCourses extends Component {
                           </td>
                           <Fragment>
                             {
-                              role === 'ministry'
+                              role === 'ministry' || role === 'admin'
                               ?
                               <Fragment>
                                 <td>

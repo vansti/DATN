@@ -78,8 +78,7 @@
       "not dead",
       "not op_mini all"
     ],
-    "development": [  
-    ]
+    "development": []
   },
   "jest": {
     "collectCoverageFrom": [

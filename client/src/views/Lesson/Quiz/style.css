@@ -151,12 +151,19 @@
   width: 100%;
   max-width: 100%;
   padding: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 10px;
   font-size: 1.5rem;
   line-height: inherit;
   color: inherit;
   font-weight: 600;
 }
+.form-quiz-test .subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 10px;
+  color: cornflowerblue;
+}
+
 .form-quiz-test ul{
   padding-left: 20px;
 }

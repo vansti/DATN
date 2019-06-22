@@ -37,7 +37,7 @@ class QuizLesson extends Component {
     let typeAlert = '';
     if(nextProps.success.data !== undefined && nextProps.success.data !== this.props.success.data) {
       if (nextProps.success.data.message === 'success') {
-        alert = 'Số điểm của bạn là: ' + nextProps.success.data.data + 'điểm';
+        alert = 'Số điểm của bạn là: ' + nextProps.success.data.data + ' điểm';
         typeAlert = 'success';
       } else {
         typeAlert = 'error';
@@ -95,10 +95,10 @@ class QuizLesson extends Component {
         {
           this.state.typeAlert === 'success' ?
           (<SweetAlert
-            success
+            custom
             confirmBtnText="Quay lại"
-            confirmBtnBsStyle='success'
-            title={ this.state.alert }
+            confirmBtnBsStyle="primary"
+            title={this.state.alert}
             show={this.state.isShowSuccess}
             onConfirm={this.hideAlertSuccess.bind(this)}
             >

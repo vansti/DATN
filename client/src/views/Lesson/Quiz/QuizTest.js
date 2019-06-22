@@ -10,6 +10,19 @@ import Countdown from "react-countdown-now";
 import { Prompt } from 'react-router'
 import isEmptyObj from '../../../validation/is-empty';
 
+
+// Random component
+const Completionist = () => <span>Hết giờ!</span>;
+
+// Renderer callback with condition
+const renderer = ({ hours, minutes, seconds, completed }) => {
+  if (completed) {
+    return <Completionist />;
+  } else {
+    return <span>{hours}:{minutes}:{seconds}</span>;
+  }
+};
+
 class TestQuizForm extends Component {
   constructor(props) {
     super(props);
@@ -23,8 +36,11 @@ class TestQuizForm extends Component {
 
   submit = (values) => {
     this.setState({issubmit: true})
+
+    if(values.answer === undefined)
+      values.answer = []
+
     values.courseId = this.props.match.params.id
-    
     this.props.submitTestQuiz(values);
   }
 
@@ -77,7 +93,7 @@ class TestQuizForm extends Component {
       isStart: true
     })
     this.countdownInterval = window.setInterval(() => {
-      if (this.state.date <= 0) {
+      if (this.state.date <= 0 && this.state.issubmit === false) {
         return this.submit()
       }
 
@@ -89,7 +105,6 @@ class TestQuizForm extends Component {
     window.onbeforeunload = () => {
       if(this.state.issubmit === false && this.state.isStart === true){
         this.submit2()
-        console.log('a')
       }
         
       else
@@ -118,55 +133,54 @@ class TestQuizForm extends Component {
           </Card>
           :
           <Fragment>
-            <Prompt
-              when={isStart}
-              message={this.submit2}
-            />
+            <Prompt when={isStart} message={this.submit2} />
             {
               isStart
               ?
-              <Form className="form-quiz-test" onSubmit={ handleSubmit(this.submit) } >
-                <b>
-                  Thời gian làm bài : &nbsp;
-                  <span style={{color: 'red'}}>
-                    <Countdown
-                      date={Date.now() + this.state.date}
-                      onComplete={handleSubmit(this.submit)}
-                    />
-                  </span>
-                </b>
-                <div className="title" >{quizTest.title}</div>
-                {
-                  quizTest.description &&
-                  <Alert color="secondary">
-                    <span>
-                      {quizTest.description}
-                    </span>
-                  </Alert>
-                }
-                <Field
-                    name="quizId"
-                    component="input"
-                    type="hidden"
-                  />
-                {
-                  quizTest.listQuiz.map((quiz, index) => {
-                    let name = 'answer[' + quiz._id + ']';
-                    return (
-                      <Field
-                        name={name}
-                        component={this.renderQuestion}
-                        quiz={quiz}
-                        index={index}
-                        key={index}
+              <Fragment>
+                <div className="sticky">
+                  <b>
+                    <span style={{color: 'red'}}>
+                      <Countdown
+                        date={Date.now() + this.state.date}
+                        onComplete={handleSubmit(this.submit)}
+                        renderer={renderer}
                       />
-                    )
-                  })
-                }
-                <FormGroup>
-                  <Button color="primary" type="submit" disabled={submitting}>Nộp bài</Button>
-                </FormGroup>
-              </Form>
+                    </span>
+                  </b>
+                </div>
+                <Form className="form-quiz-test" onSubmit={ handleSubmit(this.submit) } >
+                  <div className="title" >{quizTest.title}</div>
+                  {
+                    quizTest.description &&
+                    <div className="subtitle">
+                      {quizTest.description}
+                    </div>
+                  }
+                  <Field
+                      name="quizId"
+                      component="input"
+                      type="hidden"
+                    />
+                  {
+                    quizTest.listQuiz.map((quiz, index) => {
+                      let name = 'answer[' + quiz._id + ']';
+                      return (
+                        <Field
+                          name={name}
+                          component={this.renderQuestion}
+                          quiz={quiz}
+                          index={index}
+                          key={index}
+                        />
+                      )
+                    })
+                  }
+                  <FormGroup>
+                    <Button color="primary" type="submit" disabled={submitting}>Nộp bài</Button>
+                  </FormGroup>
+                </Form>
+              </Fragment>
               :
               <Fragment>
               {
