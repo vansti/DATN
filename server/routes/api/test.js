@@ -6,6 +6,8 @@ require('dotenv').config()
 
 // Load Input Validation
 const validateAddTestQuizInput = require('../../validation/addTestQuiz');
+const validateAddMoreQuizInput = require('../../validation/addMoreQuiz');
+const validateEditQuizInput = require('../../validation/editQuiz');
 
 // Model
 const Course = require('../../models/Course');
@@ -39,6 +41,98 @@ router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, re
     .save()
     .then(res.json({mes: 'Thêm bài kiểm tra thành công'}))
     .catch(err => console.log(err));
+
+});
+
+// @route   POST api/test/add-quiz
+// @desc    teachcer create test quiz
+// @access  Private
+router.post('/add-more-quiz/:quizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+  const { errors, isValid } = validateAddMoreQuizInput(req.body);
+  // Check Validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+  Quiz.updateOne(
+    { _id: req.params.quizId },
+    {
+      $push: {
+        listQuiz: {
+           $each: req.body.listQuiz
+        }
+      }
+    }
+  )    
+  .then(res.json({ mes: 'Thêm câu hỏi vào bài kiểm tra thành công' }))
+  .catch(err => console.log(err));
+
+});
+
+// @route   POST api/test/add-more-quiz-csv/:quizId
+// @desc    teachcer create test quiz
+// @access  Private
+router.post('/add-more-quiz-csv/:quizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+
+  Quiz.updateOne(
+    { _id: req.params.quizId },
+    {
+      $push: {
+        listQuiz: {
+           $each: req.body.listQuiz
+        }
+      }
+    }
+  )    
+  .then(res.json({ mes: 'Thêm câu hỏi thành công' }))
+  .catch(err => console.log(err));
+
+});
+
+// @route   POST api/test/edit-quiz/:quizId
+// @desc    teachcer create test quiz
+// @access  Private
+router.post('/edit-quiz/:quizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+
+  const { errors, isValid } = validateEditQuizInput(req.body.quiz);
+  // Check Validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  Quiz.updateOne(
+    { _id: req.params.quizId, "listQuiz._id": req.body.quiz._id },
+    {
+      $set: 
+      { 
+        "listQuiz.$.question" :  req.body.quiz.question,
+        "listQuiz.$.answers" :  req.body.quiz.answers,    
+        "listQuiz.$.correctAnswer" :  req.body.quiz.correctAnswer,      
+        "listQuiz.$.explanation" :  req.body.quiz.explanation     
+      } 
+    }
+  )    
+  .then(res.json({ mes: 'Thay đổi câu hỏi thành công' }))
+  .catch(err => console.log(err));
+
+});
+
+// @route   POST api/test/delete-quiz/:quizId/:listquizId
+// @desc    delete quiz
+// @access  Private
+router.post('/delete-quiz/:quizId/:listquizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+
+  Quiz.updateOne(
+    { _id: req.params.quizId },
+    { 
+      $pull: {
+        listQuiz: {
+          _id: req.params.listquizId
+        }
+      }
+    }
+  )    
+  .then(res.json({ mes: 'Xóa câu hỏi thành công' }))
+  .catch(err => console.log(err));
 
 });
 

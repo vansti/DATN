@@ -67,7 +67,7 @@ class AddQuizCSV extends Component {
     return (
       <div className="animated fadeIn">
         <ListGroup style={{marginTop:10, width: 180}}>
-          <ListGroupItem action tag="a" href='https://drive.google.com/file/d/19_2QxB7x54ADzRrUWS_lQgqGSX7SlwqV/view?usp=sharing'>
+          <ListGroupItem action className='changeCursor' onClick={()=>window.open('https://drive.google.com/file/d/19_2QxB7x54ADzRrUWS_lQgqGSX7SlwqV/view?usp=sharing')}>
             <span style={{marginLeft:10}}>Template file CSV</span>
           </ListGroupItem>
         </ListGroup>

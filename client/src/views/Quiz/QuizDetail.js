@@ -4,15 +4,21 @@ import { connect } from 'react-redux';
 //action
 import { getDetailQuiz } from '../../actions/testQuizAction';
 //component
-import { Card, CardHeader, CardBody, FormGroup, Alert } from 'reactstrap';
+import { Card, CardHeader, CardBody, FormGroup, Alert, Button, Container } from 'reactstrap';
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../../validation/is-empty';
+import ModalEditQuiz from './ModalEditQuiz';
+import DeleteQuiz from './DeleteQuiz';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 class QuizDetail extends Component {
   constructor (props) {
     super(props);
     this.state = {
       quizDetail: {},
+      isShowSuccess: false,
+      isShowSuccessDel: false,
+      isShowError: false,
       loading: true
     };
   }
@@ -32,6 +38,44 @@ class QuizDetail extends Component {
     this.setState({
       loading 
     });  
+
+    if (nextProps.success.mes === "Thay đổi câu hỏi thành công") {
+      this.setState({
+        isShowSuccess: true
+      })
+    }
+
+    if (nextProps.success.mes === "Xóa câu hỏi thành công") {
+      this.setState({
+        isShowSuccessDel: true
+      })
+    }
+
+    if (nextProps.errors.err === "Hãy điền hết những nội dung yêu cầu") {
+      this.setState({
+        isShowError: true
+      })
+    }
+  }
+
+  hideAlertSuccess(){
+    this.setState({
+      isShowSuccess: false
+    })
+    this.props.getDetailQuiz(this.props.match.params.id);
+  }
+
+  hideAlertSuccessDel(){
+    this.setState({
+      isShowSuccessDel: false
+    })
+    this.props.getDetailQuiz(this.props.match.params.id);
+  }
+
+  hideAlertError(){
+    this.setState({
+      isShowError: false
+    })
   }
 
   render(){
@@ -48,6 +92,10 @@ class QuizDetail extends Component {
             <b>{quizDetail.title}</b>
           </CardHeader>
           <CardBody>
+            <Container>
+              <Button color="primary" onClick={()=>this.props.history.push(`/quiz/quiz-detail/${this.props.match.params.id}/add-quiz`)}>Nhập câu hỏi mới</Button>
+              <Button color="primary" onClick={()=>this.props.history.push(`/quiz/quiz-detail/${this.props.match.params.id}/add-quiz-csv`)} style={{marginLeft: 20}}>Import file CSV câu hỏi mới</Button>
+            </Container>
             {
               quizDetail.description &&
               <Alert color="secondary">
@@ -76,12 +124,38 @@ class QuizDetail extends Component {
                     <br/>
                     Giải thích: <span>{quiz.explanation}</span>
                   </Alert>
+                  <ModalEditQuiz quiz={quiz} />
+                  <DeleteQuiz quizId={quiz._id} />
                 </FormGroup>
               )
             }
           </CardBody>
         </Card>
       }
+      <SweetAlert
+          success
+          confirmBtnText="OK"
+          confirmBtnBsStyle="success"
+          title="Thay đổi câu hỏi thành công!"
+          show={this.state.isShowSuccess}
+          onConfirm={this.hideAlertSuccess.bind(this)}>
+      </SweetAlert>
+      <SweetAlert
+          success
+          confirmBtnText="OK"
+          confirmBtnBsStyle="success"
+          title="Đã xóa!"
+          show={this.state.isShowSuccessDel}
+          onConfirm={this.hideAlertSuccessDel.bind(this)}>
+      </SweetAlert>
+      <SweetAlert
+          danger
+          confirmBtnText="OK"
+          confirmBtnBsStyle="danger"
+          title="Hãy điền hết nội dung yêu cầu"
+          show={this.state.isShowError}
+          onConfirm={this.hideAlertError.bind(this)}>
+      </SweetAlert>
       </div>
     )
   }
@@ -92,7 +166,9 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  testQuiz: state.testQuiz  
+  testQuiz: state.testQuiz,
+  success: state.success,
+  errors: state.errors
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(QuizDetail);

@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Field, FieldArray, reduxForm } from 'redux-form';
 import { Col, Button, Form, FormGroup, Label, InputGroup, Input, Alert } from 'reactstrap';
-import { addTestQuiz } from '../../../actions/testQuizAction';
-class AddTestQuizForm extends Component {
+import { withRouter } from 'react-router-dom';
+import { addMoreQuiz } from '../../actions/testQuizAction';
+
+class AddMoreQuizForm extends Component {
   submit = (values) => {
-    return this.props.addTestQuiz(values);
+    return this.props.addMoreQuiz(this.props.match.params.id, values);
   }
   
   renderInputFieldInline = ({ input, label, type, id='', meta: { touched, error } }) => {
@@ -116,28 +118,9 @@ class AddTestQuizForm extends Component {
     const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
       <Form name="text-form" onSubmit={ handleSubmit(this.submit) } >
-        <Field
-          name="testTitle"
-          type="text"
-          component={this.renderInputFieldInline}
-          label="Tiêu đề bài kiểm tra"
-        />
-        <Field
-          name="testDescription"
-          type="textarea"
-          component={this.renderInputFieldInline}
-          label="Tóm tắt bài kiểm tra"
-        />
-        <Field
-          name="testTime"
-          type="number"
-          min='0'
-          component={this.renderInputFieldInline}
-          label="Thời gian làm ( phút )"
-        />
 	      <FieldArray name="listQuiz" component={this.renderQuizzes} />
 	      <FormGroup>
-	        <Button color="primary" type="submit" disabled={pristine || submitting}>Tạo bài</Button>{' '}
+	        <Button color="primary" type="submit" disabled={pristine || submitting}>Lưu</Button>{' '}
 	        <Button color="secondary" type="button" disabled={pristine || submitting} onClick={reset}>
 	          Xóa tất cả
 	        </Button>
@@ -147,8 +130,8 @@ class AddTestQuizForm extends Component {
   }
 }
 
-AddTestQuizForm = reduxForm({ form: 'addTestQuizForm' })(AddTestQuizForm);
+AddMoreQuizForm = reduxForm({ form: 'AddMoreQuizForm' })(AddMoreQuizForm);
 
-AddTestQuizForm = connect( state => {return {}}, { addTestQuiz } )(AddTestQuizForm)
+AddMoreQuizForm = connect( state => { return {} }, { addMoreQuiz } )(AddMoreQuizForm)
 
-export default AddTestQuizForm;
+export default withRouter(AddMoreQuizForm);

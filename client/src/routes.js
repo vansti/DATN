@@ -40,6 +40,8 @@ const SchoolInfo = React.lazy(() => import('./views/SchoolInfo/SchoolInfo'));
 const ReplyMail = React.lazy(() => import('./views/ReplyMail/ReplyMail'));
 const ChangeCourse = React.lazy(() => import('./views/ReplyMail/ChangeCourse'));
 const ChangeCourseInfo = React.lazy(() => import('./views/ReplyMail/ChangeCourseInfo'));
+const AddMoreQuiz = React.lazy(() => import('./views/Quiz/AddMoreQuiz'));
+const AddMoreQuizCSV = React.lazy(() => import('./views/Quiz/AddMoreQuizCSV'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -83,7 +85,9 @@ const routes = [
   { path: '/school-info', exact: true, name: 'Thông tin trung tâm', component: SchoolInfo },
   { path: '/choose-option/:userId/:courseId', exact: true, name: 'Chọn phương án không thể mở lớp', component: ReplyMail },
   { path: '/choose-option/:userId/:courseId/change-course', exact: true, name: 'Chuyển sang khóa học khác', component: ChangeCourse },
-  { path: '/choose-option/:userId/:courseId/change-course/:id', exact: true, name: 'Thông tin khóa học', component: ChangeCourseInfo }
+  { path: '/choose-option/:userId/:courseId/change-course/:id', exact: true, name: 'Thông tin khóa học', component: ChangeCourseInfo },
+  { path: '/quiz/quiz-detail/:id/add-quiz', exact: true, name: 'Nhập câu hỏi mới', component: AddMoreQuiz },
+  { path: '/quiz/quiz-detail/:id/add-quiz-csv', exact: true, name: 'Import CSV câu hỏi mới', component: AddMoreQuizCSV }
 
 ];
 

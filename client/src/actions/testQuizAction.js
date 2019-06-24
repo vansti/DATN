@@ -33,6 +33,20 @@ export const addTestQuiz = (testQuizData) => dispatch => {
     });
 };
 
+export const addMoreQuiz = (quizId, quizData) => dispatch => {
+  return axios
+    .post(config.ADDRESS + '/api/test/add-more-quiz/' + quizId, quizData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      throw new SubmissionError(err.response.data);
+    });
+};
+
 export const addTestQuizCSV = (testQuizData) => dispatch => {
   return axios
     .post(config.ADDRESS +'/api/test/add-quiz-csv', testQuizData)
@@ -44,6 +58,54 @@ export const addTestQuizCSV = (testQuizData) => dispatch => {
     })
     .catch(err =>{
       console.log(err.response.data);
+    });
+};
+
+export const addMoreQuizCSV = (quizId, quizData) => dispatch => {
+  return axios
+    .post(config.ADDRESS + '/api/test/add-more-quiz-csv/' + quizId, quizData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      console.log(err.response.data);
+    });
+};
+
+export const editQuiz = (quizId, quizData) => dispatch => {
+  return axios
+    .post(config.ADDRESS + '/api/test/edit-quiz/' + quizId, quizData)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    });
+};
+
+export const deleteQuiz = (quizId, listquizId) => dispatch => {
+  return axios
+    .post(`${config.ADDRESS}/api/test/delete-quiz/${quizId}/${listquizId}`)
+    .then(res => {
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>{
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
     });
 };
 
