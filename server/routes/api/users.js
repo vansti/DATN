@@ -144,6 +144,58 @@ router.post('/register', (req, res) => {
 
 });
 
+router.post('/start', (req, res) => {
+
+  async function run() {
+    try {
+
+      const findAdmin = await User.findOne({ role: 'admin' })
+
+      if (findAdmin) {
+        return res.json({ mes:"Đã tạo tài khoản" });
+      }
+
+      var admin = new User({
+        name: 'admin',
+        password: '123456',
+        role: 'admin',
+        code: 'admin'
+      });
+
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(admin.password, salt, (err, hash) => {
+          if (err) throw err;
+          admin.password = hash;
+          admin.save();
+        });
+      });
+
+      var manager = new User({
+        name: 'giám đốc',
+        password: '123456',
+        role: 'manager',
+        code: 'giamdoc'
+      });
+
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(manager.password, salt, (err, hash) => {
+          if (err) throw err;
+          manager.password = hash;
+          manager.save();
+        });
+      });
+
+      res.json({ mes:"Tạo tài khoản thành công" });
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
+
+});
+
 router.post('/create_payment_url', function (req, res) {
   var ipAddr = req.headers['x-forwarded-for'] ||
       req.connection.remoteAddress ||

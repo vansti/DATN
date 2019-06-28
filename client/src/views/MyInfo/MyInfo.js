@@ -334,7 +334,7 @@ class MyInfo extends Component {
           <tbody>
           {
             schedule.events.map(e=>
-              <tr key={e._id} className="changeCursor" onClick={this.handleToLesson.bind(this, schedule.courseId, e._id)}>
+              <tr key={e._id} className="changeCursor" onClick={this.handleToLesson.bind(this, schedule.courseId, e.lessonId)}>
                 <td>
                   {this.capitalizeFirstLetter(moment(e.date).locale('vi').format("dddd, [ngày] DD [thg] MM, YYYY"))}
                 </td>

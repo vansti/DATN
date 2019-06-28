@@ -20,6 +20,24 @@ import {
 import socketIOClient from "socket.io-client";
 var socket = socketIOClient(config.ADDRESS);
 
+// Create admin, giám đốc account
+export const start = () => dispatch => {
+  axios
+    .post(config.ADDRESS +'/api/users/start')
+    .then(res =>{
+      dispatch({
+        type: GET_SUCCESS,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 // Get a list of users
 export const getUsers = (courseid) => dispatch => {
   dispatch(setUsersLoading());

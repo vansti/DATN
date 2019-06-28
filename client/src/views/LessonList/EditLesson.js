@@ -145,7 +145,7 @@ class EditLesson extends Component {
               <Label style={{fontWeight:'bold'}}>
                 Tiêu đề buổi học
               </Label>
-              <Input type="text" value={text} onChange={this.handleChange('text')}/>
+              <Input type="text" value={text} onChange={this.handleChange('text')} spellCheck="false"/>
             </FormGroup>
             <FormGroup>
               <Label style={{fontWeight:'bold'}}>

@@ -386,23 +386,23 @@ class AddCourse extends Component {
             <CardBody>
               <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Mã khóa học</Label>
-                <Input type="text" value={this.state.code} onChange={this.handleChange('code')}/>
+                <Input type="text" value={this.state.code} onChange={this.handleChange('code')} spellCheck="false"/>
               </FormGroup>
               {errors.code && <Alert color="danger">{errors.code}</Alert>}
               <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Tên khóa học</Label>
-                <Input type="text" value={this.state.title} onChange={this.handleChange('title')}/>
+                <Input type="text" value={this.state.title} onChange={this.handleChange('title')} spellCheck="false"/>
               </FormGroup>
               {errors.title && <Alert color="danger">{errors.title}</Alert>}
               <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Giới thiệu ngắn về khóa học</Label>
-                <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')}/>
+                <Input rows="3" type="textarea" value={this.state.intro} onChange={this.handleChange('intro')} spellCheck="false"/>
               </FormGroup>
               {errors.intro && <Alert color="danger">{errors.intro}</Alert>}
               <FormGroup>
                 <Label style={{fontWeight: 'bold'}}>Học phí</Label>
                 <InputGroup>
-                  <Input type="number" min='0' value={this.state.fee} onChange={this.handleChange('fee')}/>
+                  <Input type="number" min='0' value={this.state.fee} onChange={this.handleChange('fee')} spellCheck="false"/>
                   <InputGroupAddon addonType="append">
                     <InputGroupText>VND</InputGroupText>
                   </InputGroupAddon>
@@ -584,6 +584,7 @@ class AddCourse extends Component {
                           <input
                             className="form-control col"
                             type="number"
+                            min='0'
                             placeholder={`Tỉ lệ điểm`}
                             value={pointColumn.pointRate}
                             onChange={this.handlePointColumnPointRateChange(idx)}

@@ -155,7 +155,7 @@ class EditProfile extends Component {
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText><i className="fa fa-envelope"></i></InputGroupText>
                         </InputGroupAddon>
-                        <Input size="16" type="text" value={this.state.email} onChange={this.handleChange('email')}/>
+                        <Input size="16" type="text" value={this.state.email || ''} onChange={this.handleChange('email')}/>
                       </InputGroup>
                       {errors.email && <Alert color="danger">{errors.email}</Alert>}
                     </div>
@@ -168,7 +168,7 @@ class EditProfile extends Component {
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText><i className="fa fa-id-card"></i></InputGroupText>
                         </InputGroupAddon>
-                        <Input size="16" type="text" value={this.state.idCard} onChange={this.handleChange('idCard')}/>
+                        <Input size="16" type="text" value={this.state.idCard || ''} onChange={this.handleChange('idCard')}/>
                       </InputGroup>
                       {errors.idCard && <Alert color="danger">{errors.idCard}</Alert>}
                     </div>

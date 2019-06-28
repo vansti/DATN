@@ -82,21 +82,21 @@ class Register extends Component {
                   <CardBody className="p-4">
                     <Form onSubmit={this.onSubmit}>
                       <h1>Đăng ký</h1>
-                      <p className="text-muted">Tạo tài khoản nếu bạn là học viên</p>
+                      <p className="text-muted">Tạo tài khoản để ghi danh vào khóa học</p>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" placeholder="Họ và Tên" autoComplete="username" name="name" value={this.state.name} onChange={this.onChange} />
+                        <Input type="text" placeholder="Họ và Tên" autoComplete="username" name="name" value={this.state.name} onChange={this.onChange} spellCheck="false" />
                       </InputGroup>
                       {errors.name && <Alert color="danger">{errors.name}</Alert>}
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>@</InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" placeholder="Email" autoComplete="email" name="email" value={this.state.email} onChange={this.onChange}/>
+                        <Input type="text" placeholder="Email" autoComplete="email" name="email" value={this.state.email} onChange={this.onChange} spellCheck="false"/>
                       </InputGroup>
                       {errors.email && <Alert color="danger">{errors.email}</Alert>}
 

@@ -8,6 +8,7 @@ import emo from '../assets/img/emo.png';
 
 const styles = {
   imgbox3: {
+    marginTop: 15,
     position: 'relative',
     height: 150
   },
@@ -80,7 +81,7 @@ class Confirm extends Component {
                             <div style={styles.imgbox3}>
                               <img src={course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                             </div>
-                            <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
+                            <h6 style={{color:'#1E90FF', fontWeight:'bold', marginTop: 10}}>{course.code}</h6>                            
                 
                             <h5 style={{marginTop:10, fontWeight:'bold'}}>{course.title}</h5>
                             <div className="topright"> Đã ghi danh: {course.students.length} / {course.maxStudent}</div>

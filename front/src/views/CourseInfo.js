@@ -89,7 +89,7 @@ class CourseInfo extends Component {
                 <div style={styles.imgbox3}>
                   <img src={guestcourseinfo.course.coursePhoto} alt="avatar" style={styles.bigAvatar}/>
                 </div>
-                <span style={{color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {guestcourseinfo.course.code}</span>
+                <h5 style={{marginTop:20, color:'#1E90FF', fontSize:20, fontWeight:'bold'}}>Mã khóa học: {guestcourseinfo.course.code}</h5>
                 <h2 style={{marginTop:10, fontWeight:'bold'}}>{guestcourseinfo.course.title}</h2>
                 <p className="lead">{guestcourseinfo.course.intro}</p>
               </Container>  

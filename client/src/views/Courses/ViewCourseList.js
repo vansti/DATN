@@ -134,10 +134,8 @@ class ViewCourseList extends Component {
                             </div>
                           </td>
                           <td>
-                            {course.code}
-                          </td>
-                          <td>
-                            {course.title}
+                            <b>{course.title}</b><br/>
+                            <span style={{color:'#1E90FF', fontWeight:'bold'}}>Mã khóa học: {course.code}</span>
                           </td>
                         </tr>
                       )

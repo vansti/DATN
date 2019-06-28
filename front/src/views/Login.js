@@ -92,7 +92,7 @@ class Login extends Component {
                               <i className="icon-user"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} />
+                          <Input type="email" name="email" placeholder="Email" autoComplete="email" value={this.state.email} onChange={this.onChange} spellCheck="false" />
                         </InputGroup>
                         {errors.email_login && <Alert color="danger">{errors.email_login}</Alert>}
                         {

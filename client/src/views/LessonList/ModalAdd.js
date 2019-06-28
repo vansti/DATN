@@ -95,7 +95,7 @@ class ModalAdd extends Component {
                 <Label>Tiêu đề danh sách</Label>
               </Col>
               <Col>
-                <Input type="text" name="title" value={this.state.title} onChange={this.onChange} placeholder="Tiêu đề..." required/> 
+                <Input type="text" name="title" value={this.state.title} onChange={this.onChange} placeholder="Tiêu đề..." required spellCheck="false"/> 
               </Col>
             </FormGroup>
             {errors.title && <Alert color="danger">{errors.title}</Alert>}

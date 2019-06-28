@@ -34,6 +34,11 @@ const ResetPassword = Loadable({
   loading
 });
 
+const Start = Loadable({
+  loader: () => import('./views/Start/Start'),
+  loading
+});
+
 // Check for token
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -79,6 +84,7 @@ class App extends Component {
               <Switch location={location}>
                 <Route path="/login" component={Login} />
                 <Route path="/forget" component={ForgetCP} />
+                <Route path="/start" component={Start} />
                 <Route path="/reset-password/:userId" component={ResetPassword} />
                 <Route component={Login} />
               </Switch>

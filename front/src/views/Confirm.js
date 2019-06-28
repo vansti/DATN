@@ -38,7 +38,7 @@ class Confirm extends Component {
             {
               isLoading
               ?
-              <ReactLoading type='bars' color='#05386B' />
+              <ReactLoading type='spinningBubbles' color='#05386B' />
               :
               <Fragment>
                 {
