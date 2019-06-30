@@ -3,7 +3,7 @@ import {withRouter, Link } from 'react-router-dom';
 import { DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import { AppHeaderDropdown, AppNavbarBrand } from '@coreui/react';
-import logo from '../../assets/img/e-icon.png'
+import logo from '../../assets/img/Ai-Edu.png'
 import Auth from '../../store/auth';
 import { getCurrentProfile } from '../../actions/profileActions';
 import isEmptyObj from '../../validation/is-empty';

@@ -4,7 +4,7 @@ import { DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reacts
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/e-icon.png'
+import logo from '../../assets/img/Ai-Edu.png'
 import { getCurrentProfile } from '../../actions/profileActions';
 
 const defaultProps = {};

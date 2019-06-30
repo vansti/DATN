@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGr
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser, clearErrors, resendMail, clearSuccess } from '../actions/authActions';
-import icon from '../assets/img/e-icon.png'
+import icon from '../assets/img/Ai-Edu.png'
 import ReactLoading from 'react-loading';
 import isEmptyObj from '../validation/is-empty';
 import SweetAlert from 'react-bootstrap-sweetalert';
