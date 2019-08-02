@@ -24,6 +24,9 @@ const SubExerciseSchema = new Schema({
       },
       submitTime: {
         type: Date
+      },
+      note:{
+        type: String        
       }
     }
   ]

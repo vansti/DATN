@@ -169,11 +169,31 @@ module.exports = {
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                   <p style="margin: 0;">
                     Mã số học viên của bạn là : <b>${student.code}</b>. <br/>
-                    Mật khẩu đăng nhập vào hệ thống LMS là mật khẩu của bạn hiện tại
+                    Mật khẩu đăng nhập vào LMS (${process.env.LMSAIEDU_URL}) là mật khẩu của bạn hiện tại
                   </p>
                 </td>
               </tr>
               <!-- end copy -->
+
+              <!-- start button -->
+              <tr>
+                <td align="left" bgcolor="#ffffff">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                      <td align="center" bgcolor="#ffffff" style="padding: 12px;">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
+                              <a href="${process.env.LMSAIEDU_URL}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Tới trang LMS</a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- end button -->
 
               <!-- start copy -->
               <tr>

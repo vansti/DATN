@@ -15,7 +15,10 @@ module.exports = function validateEditCourseInput(data) {
 
   if (Validator.isEmpty(data.fee)) 
     errors.fee = 'Hãy điền học phí';  
-  
+
+  if (Validator.isEmpty(data.infrastructure)) 
+    errors.infrastructure = 'Hãy Chọn cơ sở giảng dạy';
+
   if (Validator.isEmpty(data.info)) 
     errors.info = 'Hãy điền nội dung khoa học'; 
 

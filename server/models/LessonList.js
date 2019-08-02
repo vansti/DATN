@@ -5,6 +5,10 @@ const LessonListSchema = new Schema({
   title: {
     type: String
   },
+  certification: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'certification'
+  },
   lesson: [
     {
       text: {

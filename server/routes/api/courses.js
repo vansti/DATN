@@ -5,6 +5,7 @@ const passport = require('passport');
 var cloudinary = require('cloudinary');
 require('dotenv').config();
 const formData = require('express-form-data');
+const moment = require('moment');
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -27,6 +28,10 @@ const SubQuiz = require('../../models/SubQuiz');
 const Schedule = require('../../models/Schedule');
 const LessonList = require('../../models/LessonList');
 const Lesson = require('../../models/Lesson');
+const School = require('../../models/School');
+
+const sendEmail = require('../../email/email.send')
+const changedate = require('../../email/email.changedate')
 
 router.use(cors());
 router.use(formData.parse())
@@ -52,7 +57,10 @@ router.post(
       intro: req.body.intro,
       pointColumns: req.body.pointColumns,
       maxStudent: req.body.maxStudent,
-      days: req.body.days
+      days: req.body.days,
+      infrastructure: req.body.infrastructure,
+      minScore: req.body.minScore,
+      minAbsent: req.body.minAbsent
     });
 
     const newCourseDetail = new CourseDetail({
@@ -114,6 +122,18 @@ router.post(
         newSchedule.courseId = course._id
         await newSchedule.save();
         const coursedetail = await newCourseDetail.save() 
+
+        await Course.findByIdAndUpdate(
+          course._id,
+          {
+            $set: 
+            {
+              certification : lessonlist.certification,
+              coursedetail : coursedetail._id
+            }
+          }
+        )
+
         res.json(coursedetail)
       } catch (err) {
         console.log(err)
@@ -179,7 +199,10 @@ router.post(
                 enrollDeadline: req.body.enrollDeadline,
                 intro: req.body.intro,
                 pointColumns: req.body.pointColumns,
-                maxStudent: req.body.maxStudent
+                maxStudent: req.body.maxStudent,
+                infrastructure: req.body.infrastructure,
+                minScore: req.body.minScore,
+                minAbsent: req.body.minAbsent
               }
             }
           )
@@ -240,7 +263,10 @@ router.post(
                 intro: req.body.intro,
                 pointColumns: req.body.pointColumns,
                 maxStudent: req.body.maxStudent,
-                days: req.body.days
+                days: req.body.days,
+                infrastructure: req.body.infrastructure,
+                minScore: req.body.minScore,
+                minAbsent: req.body.minAbsent
               }
             }
           )
@@ -260,6 +286,22 @@ router.post(
               }
             }
           )
+
+          // gửi mail thông báo dời lịch khai giảng
+          const school = await School.find();
+
+          const course = await 
+          Course.findById(
+            req.params.courseId, 
+            { students: 1, title: 1, code: 1 }
+          )
+          .populate('students', '_id name email')
+          .lean()
+  
+          await
+          course.students.forEach(student=>{
+            sendEmail(student.email, changedate.confirm(student, course, school[0], moment(req.body.openingDay).format("[ngày] DD [tháng] MM, YYYY")))
+          })
 
         }
 
@@ -307,6 +349,7 @@ router.get(
       { 'enrollDeadline' : {$gte : new Date()}},
       {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1, maxStudent:1, students: 1}
     )
+    .populate('infrastructure')
     .sort({created: -1})
     .then(courses => res.json(courses))
     .catch(err => console.log(err));
@@ -316,49 +359,7 @@ router.get(
 // @route   GET api/courses/guest-course-info/:courseId
 // @desc    lấy thông tin chi tiết của khóa học cho guest
 // @access  Public
-router.get(
-  '/guest-course-info/:courseId',
-  (req, res) => {
 
-    async function run() {
-      try {
-
-        var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, code: 1, students: 1}).lean()
-
-        var course_detail = await  
-        CourseDetail.findOne(
-          { 'courseId' : req.params.courseId },
-          { studyTime: 1, openingDay: 1, endDay: 1, fee: 1, info: 1}
-        ).lean()
-
-        var schedule = await
-        Schedule.findOne(
-          { courseId: req.params.courseId }
-        )
-        .populate('events.lessonId','text')
-        .lean()
-
-        schedule.events.map(e=>{
-          e.text = e.lessonId.text
-          e.lessonId = e.lessonId._id
-        })
-
-        const result = {
-          course,
-          course_detail,
-          schedule,
-        }
-
-        res.json(result)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    run();
-  }
-);
 
 // @route   GET api/courses/course-info/:courseId
 // @desc    lấy thông tin chi tiết của khóa học
@@ -370,10 +371,10 @@ router.get(
 
     async function run() {
       try {
-
         var course = await 
-        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1, days:1, students: 1 }).lean()
-
+        Course.findById(req.params.courseId, {coursePhoto: 1, title: 1, intro: 1, enrollDeadline: 1, pointColumns: 1, code:1, days:1, students: 1 })
+        .populate('infrastructure')
+        .lean();
         var course_detail = await  
         CourseDetail.findOne(
           { 'courseId' : req.params.courseId },
@@ -404,7 +405,7 @@ router.get(
           course_detail,
           schedule,
           isEnroll: true
-        }
+        }       
 
         if(result.course_detail.enrollStudents === undefined)
         {
@@ -426,6 +427,8 @@ router.get(
 // @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
   Course.find({ '_id': { $in: req.user.courses} })
+        .populate('coursedetail', 'openingDay endDay')
+        .populate('infrastructure')
         .sort({created: -1})
         .then(courses => res.json(courses));
 });
@@ -453,6 +456,7 @@ router.get('/get-active-course', (req, res) => {
                                       { '_id': { $in: course_detail} },
                                       'title coursePhoto created code'
                                 )
+                                .populate('infrastructure')
                                .sort({created: -1})
       res.json(course)
     } catch (err) {
@@ -471,6 +475,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Course.find({},{coursePhoto: 1, title: 1, code: 1})
+    .populate('infrastructure')
     .then(courses => {
       res.json(courses)
     })
@@ -485,6 +490,7 @@ router.get('/:studentId', passport.authenticate('jwt', { session: false }), (req
   User.findById(req.params.studentId)
   .then(student =>{
     Course.find({'_id': { $in: student.courses}})
+          .populate('infrastructure')
           .sort({created: -1})
           .then(courses => res.json(courses));
   });
@@ -660,6 +666,47 @@ router.post(
           req.params.teacherId ,
           { 
             $push: {
+              courses: req.params.courseId
+            }
+          }
+        )
+
+        res.json("Duyệt thành công")
+      }catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   POST api/courses/delete/teacher/:courseId/:teacherId
+// @desc    delete teacher
+// @access  Private
+router.post(
+  '/delete/teacher/:courseId/:teacherId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+
+        await 
+        Course.findByIdAndUpdate(
+          req.params.courseId ,
+          { 
+            $pull: {
+              teachers: req.params.teacherId
+            }
+          }
+        )
+        
+        await
+        User.findByIdAndUpdate(
+          req.params.teacherId ,
+          { 
+            $pull: {
               courses: req.params.courseId
             }
           }

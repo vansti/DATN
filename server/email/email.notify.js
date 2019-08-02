@@ -173,7 +173,7 @@ module.exports = {
                         <table border="0" cellpadding="0" cellspacing="0">
                           <tr>
                             <td align="center" bgcolor="#1a82e2" style="border-radius: 6px; width: 400px">
-                              <a href="${process.env.CLIENT_URL}/choose-option/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Chọn phương án khi không thể mở lớp</a>
+                              <a href="${process.env.LMSAIEDU_URL}/choose-option/${student._id}/${course._id}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Chọn phương án khi không thể mở lớp</a>
                             </td>
                           </tr>
                         </table>

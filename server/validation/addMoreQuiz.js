@@ -12,9 +12,11 @@ module.exports = function validateAddMoreQuizInput(data) {
       const quizErrors = {};
       if(!quiz || !quiz.question) {
         quizErrors.question = 'Yêu cầu';
+        quizArrayErrors[quizIndex] = quizErrors;
       }
       if(!quiz || !quiz.correctAnswer) {
         quizErrors.correctAnswer = 'Yêu cầu';
+        quizArrayErrors[quizIndex] = quizErrors;
       }
       if (quiz || !quiz.answers || !quiz.answers.length) {
         //validate array answer

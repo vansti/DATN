@@ -3,50 +3,25 @@ const isEmpty = require('./is-empty');
 
 module.exports = function validateAddTestQuizInput(data) {
   let errors = {};
-  data.testTitle = !isEmpty(data.testTitle) ? data.testTitle : '';
-  data.testTime = !isEmpty(data.testTime) ? data.testTime : '';
+  data.title = !isEmpty(data.title) ? data.title : '';
+  data.time = !isEmpty(data.time) ? data.time : '';
+  data.description = !isEmpty(data.description) ? data.description : '';
 
-  if (Validator.isEmpty(data.testTitle)) {
-    errors.testTitle = 'Hãy điền tiêu đề bài tập';
+  if (Validator.isEmpty(data.title)) {
+    errors.title = 'Hãy điền tiêu đề bài tập';
   }
 
-  if (Validator.isEmpty(data.testTime)) {
-    errors.testTime = 'Hãy điền thời gian làm bài';
+  if (Validator.isEmpty(data.time)) {
+    errors.time = 'Hãy điền thời gian làm bài';
+  }else{
+    if(data.time < 1)
+      errors.time = 'Thời gian làm bài phải lớn hơn 1';
   }
 
-  if (!data.listQuiz || !data.listQuiz.length) {
-    errors.listQuiz = { _error: 'Bài kiểm tra phải có ít nhất một câu hỏi' };
-  } else {
-    //validate array question
-    const quizArrayErrors = [];
-    data.listQuiz.forEach((quiz, quizIndex) => {
-      const quizErrors = {};
-      if(!quiz || !quiz.question) {
-        quizErrors.question = 'Yêu cầu';
-      }
-      if(!quiz || !quiz.correctAnswer) {
-        quizErrors.correctAnswer = 'Yêu cầu';
-      }
-      if (quiz || !quiz.answers || !quiz.answers.length) {
-        //validate array answer
-        const answerArrayErrors = [];
-        quiz.answers.forEach((answer, answerIndex) => {
-          if(!answer || !answer.length) {
-            answerArrayErrors[answerIndex] = 'Yêu cầu';
-          }
-        })
-        if (answerArrayErrors.length) {
-          quizErrors.answers = answerArrayErrors;
-          quizArrayErrors[quizIndex] = quizErrors;
-        }
-        //end array answer
-      }
-    });
-    if(quizArrayErrors.length) {
-      errors.listQuiz = quizArrayErrors;
-    }
-    //end array question
+  if (Validator.isEmpty(data.description)) {
+    errors.description = 'Hãy điền mô tả bài tập';
   }
+
   return {
     errors,
     isValid: isEmpty(errors)

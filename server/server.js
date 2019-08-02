@@ -23,6 +23,12 @@ const schedule = require('./routes/api/schedule');
 
 const lesson = require('./routes/api/lesson');
 
+const accounts = require('./routes/api/accounts');
+
+const infrastructure = require('./routes/api/infrastructure');
+
+const quizbank = require('./routes/api/quizbank');
+
 const app = express();
 
 //Bodyparser Middleware
@@ -75,6 +81,15 @@ app.use('/api/test', test);
 
 // lesson Route
 app.use('/api/lesson', lesson);
+
+// accounts Route
+app.use('/api/accounts', accounts);
+
+// infrastructure Route
+app.use('/api/infrastructure', infrastructure);
+
+// quizbank Route
+app.use('/api/quizbank', quizbank);
 
 const port = process.env.PORT || 5000;
 

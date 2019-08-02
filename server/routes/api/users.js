@@ -7,6 +7,7 @@ const keys = require('../../config/keys');
 const passport = require('passport');
 require('dotenv').config()
 const moment = require('moment');
+const isEmpty = require('../../validation/is-empty')
 
 const formData = require('express-form-data')
 var cloudinary = require('cloudinary');
@@ -408,7 +409,8 @@ router.post('/add-student', (req, res) => {
         confirmed: true,
         phone: req.body.phone,
         idCard: req.body.idCard,
-        code: code
+        code: code,
+        courses: req.body.courseId
       });
 
       await
@@ -443,15 +445,15 @@ router.post('/add-student', (req, res) => {
         }
       )
 
-      await
-      User.findByIdAndUpdate(
-        newUser._id ,
-        { 
-          $push: {
-            courses: req.body.courseId
-          }
-        }
-      )
+      // await
+      // User.findByIdAndUpdate(
+      //   newUser._id ,
+      //   { 
+      //     $push: {
+      //       courses: req.body.courseId
+      //     }
+      //   }
+      // )
       
       const coursedetail = 
       await
@@ -770,7 +772,9 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
       photo: req.user.photo,
       idCard: req.user.idCard,
       role: req.user.role,
-      code: req.user.code
+      code: req.user.code,
+      teacherDegree: req.user.teacherDegree,
+      teacherIntro: req.user.teacherIntro
     });
   }
 );
@@ -797,6 +801,8 @@ router.post(
     if (req.body.name) profileFields.name = req.body.name;
     if (req.body.phone) profileFields.phone = req.body.phone;
     if (req.body.idCard) profileFields.idCard = req.body.idCard;
+    if (req.body.teacherDegree) profileFields.teacherDegree = req.body.teacherDegree;
+    if (req.body.teacherIntro) profileFields.teacherIntro = req.body.teacherIntro;
 
     User.findByIdAndUpdate(req.user.id, profileFields, {new: true})
     .then(res.json({"mes":"Thay đổi thành công"}))
@@ -1290,6 +1296,340 @@ router.post(
         console.log(err)
       }
     }
+    run();
+  }
+);
+
+// @route   get api/users/get-my-rating/:teacherId/:courseId
+// @desc    get rating teacher
+// @access  Private
+router.get(
+  '/get-my-rating/:teacherId/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const user = await 
+        User.findOne(
+          { '_id' : req.params.teacherId },
+          {
+            teacherRating:  
+            {
+              $elemMatch: {
+                'user': req.user.id,
+                'course': req.params.courseId
+              }
+            }
+          }
+        ).lean()
+
+        if(user.teacherRating === undefined)
+          return res.json({
+            star: 0,
+            text: ''
+          })
+        else
+          return res.json(user.teacherRating[0])
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   POST api/users/rating/:teacherId/:courseId
+// @desc    rate teacher
+// @access  Private
+router.post(
+  '/rating/:teacherId/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const user = await 
+        User.findOne(
+          { '_id' : req.params.teacherId },
+          {
+            teacherRating:  
+            {
+              $elemMatch: {
+                'user': req.user.id,
+                'course': req.params.courseId
+              }
+            }
+          }
+        ).lean()
+
+        if(user.teacherRating === undefined || user.teacherRating.length === 0)
+        {
+
+          await 
+          User.findByIdAndUpdate(
+            req.params.teacherId,
+            { 
+              $push: {
+                teacherRating: {
+                  $each:[{
+                    user: req.user.id,
+                    course: req.params.courseId,
+                    star1: req.body.star1,
+                    star2: req.body.star2,
+                    star3: req.body.star3,
+                    star4: req.body.star4,
+                    star5: req.body.star5,
+                    star: req.body.star,
+                    text: req.body.text
+                  }],
+                  $position: 0
+                }
+              }
+            }
+          )
+        }else{
+          await
+          User.updateOne(
+            { _id : req.params.teacherId, "teacherRating.user": req.user.id },
+            { 
+              $set: 
+              { 
+                "teacherRating.$.star1": req.body.star1,
+                "teacherRating.$.star2": req.body.star2,
+                "teacherRating.$.star3": req.body.star3,
+                "teacherRating.$.star4": req.body.star4,
+                "teacherRating.$.star5": req.body.star5,
+                "teacherRating.$.star" : req.body.star,    
+                "teacherRating.$.text" : req.body.text
+              } 
+            }
+          )
+        }
+
+
+        res.json({ mes: 'Đánh giá thành công' })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   POST api/users/rating2/:teacherId/:teacherRatingId
+// @desc    rate teacher
+// @access  Private
+router.post(
+  '/rating2/:teacherId/:teacherRatingId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        await
+        User.updateOne(
+          { _id : req.params.teacherId, "teacherRating._id": req.params.teacherRatingId },
+          { 
+            $set: 
+            { 
+              "teacherRating.$.star1": req.body.star1,
+              "teacherRating.$.star2": req.body.star2,
+              "teacherRating.$.star3": req.body.star3,
+              "teacherRating.$.star4": req.body.star4,
+              "teacherRating.$.star5": req.body.star5,
+              "teacherRating.$.star" : req.body.star,    
+              "teacherRating.$.text" : req.body.text
+            } 
+          }
+        )
+        
+        res.json({ mes: 'Đánh giá 2 thành công' })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   get api/users/get-teacher-rating/:teacherId
+// @desc    get teacher rating
+// @access  Private
+router.get(
+  '/get-teacher-rating/:teacherId',
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const user = await 
+        User.findOne(
+          { '_id' : req.params.teacherId },
+          { teacherRating: { $slice: 10 } }
+        )
+        .populate('teacherRating.user', '_id name email photo')
+        .lean()
+
+        return res.json(user.teacherRating)
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   get api/users/teacher-rating/:teacherId/:teacherRatingId
+// @desc    get teacher rating
+// @access  Private
+router.get(
+  '/teacher-rating/:teacherId/:teacherRatingId',
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const user = await 
+        User.findOne(
+          { '_id' : req.params.teacherId },
+          {
+            teacherRating:  
+            {
+              $elemMatch: {
+                '_id': req.params.teacherRatingId
+              }
+            }
+          }
+        )
+        .lean()
+
+        return res.json(user.teacherRating[0])
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   get api/users/get-my-teacher-rating/:courseId
+// @desc    get teacher rating
+// @access  Private
+router.get(
+  '/get-my-teacher-rating/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const user = await 
+        User.findOne(
+          { '_id' : req.user.id },
+          { teacherRating: 1 }
+        ).lean()
+        
+        var rate = user.teacherRating
+        
+        var result = []
+
+        if(rate)
+          result = await rate.filter(e => e.course.toString() === req.params.courseId);
+          
+        return res.json(result)
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
+// @route   get api/users/get-my-statistic/:courseId
+// @desc    get my statistic
+// @access  Private
+router.get(
+  '/get-my-statistic/:courseId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+
+    async function run() {
+      try {
+        
+        const courses = await 
+          Course.findById(req.params.courseId, { minAbsent: 1, minScore: 1 })
+                .lean()
+    
+        var point = await
+          Course.findById(
+            req.params.courseId,
+            { pointColumns: 1 }
+          )
+          .populate({
+            path: 'pointColumns.submit',
+            match: { 'studentSubmission.userId': req.user.id },
+            select: { 
+              studentSubmission:  
+              {
+                $elemMatch: {
+                  'userId': req.user.id
+                }
+              }
+            }
+          })
+
+        var totalPoint = 0; 
+        for(var j=0; j<point.pointColumns.length; j++)
+        {
+          if(!isEmpty(point.pointColumns[j].submit) )
+            if(!isEmpty(point.pointColumns[j].submit.studentSubmission[0].point))
+              totalPoint = totalPoint + point.pointColumns[j].submit.studentSubmission[0].point * point.pointColumns[j].pointRate / 100
+        }
+
+        courses.totalPoint = totalPoint.toFixed(1);
+
+        const attendance = await
+          Attendance.find(
+            {
+              'courseId': req.params.courseId,
+              students: { $elemMatch: { 'userId': req.user.id, isPresent: false } } 
+            },
+            {
+              date: 1
+            }
+          );
+
+        courses.absent = attendance.length
+
+        courses.student = {
+          _id: req.user.id,
+          photo: req.user.photo,
+          code: req.user.code,
+          name: req.user.name
+        }
+
+        return res.json(courses)
+
+
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
     run();
   }
 );

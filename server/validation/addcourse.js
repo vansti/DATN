@@ -4,6 +4,13 @@ const isEmpty = require('./is-empty');
 module.exports = function validateAddCourseInput(data) {
   let errors = {};
 
+  data.code = !isEmpty(data.code) ? data.code : '';
+  data.title = !isEmpty(data.title) ? data.title : '';
+  data.intro = !isEmpty(data.intro) ? data.intro : '';
+  data.enrollDeadline = !isEmpty(data.enrollDeadline) ? data.enrollDeadline : '';
+  data.fee = !isEmpty(data.fee) ? data.fee : '';
+  data.infrastructure = !isEmpty(data.infrastructure) ? data.infrastructure : '';
+
   if (Validator.isEmpty(data.code)) 
     errors.code = 'Hãy điền mã khóa học';
 
@@ -16,8 +23,14 @@ module.exports = function validateAddCourseInput(data) {
   if (Validator.isEmpty(data.listId)) 
     errors.listId = 'Hãy chọn danh sách bài học';
 
+  if (Validator.isEmpty(data.infrastructure)) 
+    errors.infrastructure = 'Hãy chọn cơ sở học';
+
   if (Validator.isEmpty(data.title)) 
     errors.title = 'Hãy điền tên khóa học';
+
+  if (Validator.isEmpty(data.infrastructure)) 
+    errors.title = 'Hãy Chọn cơ sở giảng dạy';
 
   if (Validator.isEmpty(data.intro)) 
     errors.intro = 'Hãy điền giới thiệu ngắn';

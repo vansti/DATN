@@ -126,6 +126,43 @@ router.post(
   }
 );
 
+// @route   POST api/exercise/edit-exercise
+// @desc    edit exercise
+// @access  Private
+router.post(
+  '/edit-exercise',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateAddExerciseInput(req.body);
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    async function run() {
+      try {
+        await Exercise.findByIdAndUpdate(
+          req.body._id,
+          {
+            title: req.body.title,
+            text: req.body.text,
+            attachFiles: req.body.attachFiles,
+            deadline: req.body.deadline,
+            password: req.body.password
+          }
+        )
+
+        res.json({'mes':"Chỉnh sửa bài tập thành công"})
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    run();
+  }
+);
+
 // @route   GET api/exercises/:courseId
 // @desc    Return exercise list
 // @access  Private
@@ -201,7 +238,7 @@ router.get('/exercisePointOP/:id', (req, res) => {
     { exerciseId: req.params.id }, 
     { studentSubmission: 1, _id:0 }
     
-  ).populate('studentSubmission.userId', '_id name email photo')
+  ).populate('studentSubmission.userId', '_id name code photo')
   .then(studentSubmission => {
     res.json(studentSubmission)
   })
@@ -397,6 +434,46 @@ router.delete('/:exerciseId/delete', passport.authenticate('jwt', { session: fal
     }catch(e){
       console.log(e);
       res.json("Không thể xóa");
+    }
+  }
+
+  run();
+});
+
+// @route   POST api/exercises/:exerciseId/get-my-submission
+// @desc    get my submission
+// @access  Private
+router.get('/:exerciseId/get-my-submission', passport.authenticate('jwt', { session: false }),(req, res) => {
+  async function run() {
+    try {      
+      const sub = 
+      await SubExercise.findOne(
+        { 'exerciseId' : req.params.exerciseId },
+        {
+          studentSubmission:
+          {
+            $elemMatch: {
+              'userId': req.user.id
+            }
+          }
+        }
+      )
+      .lean()
+
+      if(sub.studentSubmission === undefined || sub.studentSubmission.length === 0)
+      {
+        var rep = {
+          isSubmit: false,
+          exerciseId: req.params.exerciseId
+        }
+        res.json(rep)
+      }else{
+        sub.studentSubmission[0].exerciseId = req.params.exerciseId
+        res.json(sub.studentSubmission[0])
+      }
+
+    } catch (err) {
+      console.log(err)
     }
   }
 

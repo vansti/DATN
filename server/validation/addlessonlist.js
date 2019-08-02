@@ -8,6 +8,10 @@ module.exports = function validateAddLessonListInput(data) {
     errors.title = 'Hãy điền tiêu đề';
   }
 
+  if (Validator.isEmpty(data.certification)) {
+    errors.certification = 'Hãy điền tên chứng chỉ';
+  }
+
   if (Validator.isEmpty(data.noLesson)) {
     errors.noLesson = 'Hãy điền số bài học';
   }

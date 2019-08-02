@@ -45,7 +45,49 @@ const UserSchema = new Schema({
   confirmed: {
     type: Boolean,
     default: false
-  }
+  },
+  teacherDegree: {
+    type: String
+  },
+  teacherIntro: {
+    type: String
+  },
+  teacherRating: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId, ref: 'users'
+      },
+      course: {
+        type: Schema.Types.ObjectId,
+        ref: "courses"
+      },
+      star1: {
+        type: Number
+      },
+      star2: {
+        type: Number
+      },
+      star3: {
+        type: Number
+      },
+      star4: {
+        type: Number
+      },
+      star5: {
+        type: Number
+      },
+      star: {
+        type: Number
+      },
+      text: {
+        type: String
+      },
+      created: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ]
 });
 
 module.exports = User = mongoose.model('users',UserSchema)

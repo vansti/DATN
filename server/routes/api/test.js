@@ -31,10 +31,9 @@ router.post('/add-quiz', passport.authenticate('jwt', {session: false}),(req, re
     }
     
     const newQuiz = new Quiz({
-      title: req.body.testTitle,
-      description: req.body.testDescription,
-      time: req.body.testTime,
-      listQuiz: req.body.listQuiz
+      title: req.body.title,
+      description: req.body.description,
+      time: req.body.time
     });
 
     newQuiz
@@ -293,6 +292,68 @@ router.get('/is-do-quiz/:courseId/:quizId', passport.authenticate('jwt', { sessi
 
   run();
 
+});
+
+// @route   POST api/test/add-quiz-from-cat/:quizId
+// @desc    teachcer create test quiz
+// @access  Private
+router.post('/add-quiz-from-cat/:quizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+
+  Quiz.updateOne(
+    { _id: req.params.quizId },
+    {
+      $push: {
+        listQuiz: {
+           $each: req.body.listQuiz
+        }
+      }
+    }
+  )    
+  .then(res.json({ mes: 'Thêm câu hỏi vào bài kiểm tra thành công' }))
+  .catch(err => console.log(err));
+
+});
+
+
+// @route   get api/test/:courseId/get-my-submission/:quizId
+// @desc    teachcer create test quiz
+// @access  Private
+router.get('/:courseId/get-my-submission/:quizId', passport.authenticate('jwt', {session: false}),(req, res) => {
+
+  async function run() {
+    try {      
+      const sub = 
+      await SubQuiz.findOne(
+        { 'quizId' : req.params.quizId, 'courseId': req.params.courseId },
+        {
+          studentSubmission:
+          {
+            $elemMatch: {
+              'userId': req.user.id
+            }
+          }
+        }
+      )
+      .lean()
+      
+      if(sub.studentSubmission === undefined || sub.studentSubmission.length === 0)
+      {
+        var rep = {
+          isSubmit: false,
+          quizId: req.params.quizId
+        }
+        res.json(rep)
+      }else{
+        sub.studentSubmission[0].quizId = req.params.quizId
+        res.json(sub.studentSubmission[0])
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  run();
 });
 
 module.exports = router;

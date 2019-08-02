@@ -6,6 +6,9 @@ const CourseSchema = new Schema({
   code:{
     type: String
   },
+  coursedetail: {
+    type: mongoose.Schema.ObjectId, ref: 'coursedetail'
+  },
   title: {
     type: String,
     required: true
@@ -57,6 +60,9 @@ const CourseSchema = new Schema({
       enum: ['subexcercise', 'subquiz']
     }
   }],
+  infrastructure: {
+    type: mongoose.Schema.ObjectId, ref: 'infrastructures',
+  },
   teachers: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   students: [{type: mongoose.Schema.ObjectId, ref: 'users'}],
   exercises: [{type: mongoose.Schema.ObjectId, ref: 'exercises'}],
@@ -65,6 +71,16 @@ const CourseSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  certification: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'certification'
+  },
+  minScore: {
+    type: Number
+  },
+  minAbsent: {
+    type: Number
+  }
 })
 
 module.exports = Course = mongoose.model('courses', CourseSchema)

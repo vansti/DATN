@@ -27,7 +27,16 @@ const SchoolSchema = new Schema({
   },
   intro:{
     type: String
-  }
+  },
+  mapPosition: {
+    lat: {
+      type: Number,
+    },
+    lng: {
+      type: Number,
+    }
+},
+
 });
 
 module.exports = School = mongoose.model('school', SchoolSchema)
